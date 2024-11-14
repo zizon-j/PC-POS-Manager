@@ -11,7 +11,7 @@ public class Seat_UI extends JPanel{
             }
 
     //setBounds(가로위치, 세로위치, 가로길이, 세로길이);
-        //좌석 버튼 크리 76 x 59
+        //좌석 버튼 크기 76 x 59
         setLayout(null);
         seat[0].setBounds(20, 20, 76, 59);
         seat[1].setBounds(96, 20, 76, 59);
