@@ -12,7 +12,7 @@ public class InfoFrame extends JFrame {
         add(name);
 
         setSize(200, 200);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setVisible(true);
     }
     public static void main(String[] args) {

@@ -104,12 +104,16 @@ public class Seat_UI extends JPanel{
         add(seat[31]);
         add(seat[32]);
 
+        JPanel seat_top = new JPanel();
+        seat_top.setLayout(new GridLayout());
+        seat_top.add(seat[0]);
+        add(seat_top);
+
         for (int i = 0; i<seat.length; i++){
             seat[i].addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     new InfoFrame();
-
                 }
             });
         }
