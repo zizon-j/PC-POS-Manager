@@ -78,9 +78,9 @@ public class Seat_UI extends JPanel {
 
                     //버튼 panel 에 정보, textField 추가
                     btnPanels[i] = new JPanel(new BorderLayout());
-                    btnInfos[i] = new JButton("정보보기" + (i + 1));
+                    btnInfos[i] = new JButton("정보보기");
                     btnActivates[i] = new JButton("황성화/비활성화");
-                    seat_Infos[i] = new JTextArea("좌석 정보 ㅁㄴㅇㄹ");
+                    seat_Infos[i] = new JTextArea((i+1)+"좌석 정보");
                     seat_Infos[i].setEditable(false);
 
 
