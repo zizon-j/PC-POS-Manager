@@ -5,122 +5,182 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class Seat_UI extends JPanel{
-    JButton[] seat = new JButton[100];
+public class Seat_UI extends JPanel {
 
-    GridBagLayout grid = new GridBagLayout();
-    GridBagConstraints gbc = new GridBagConstraints();
-    public  Seat_UI(){
-        for (int i = 0; i <seat.length; i++){
-            seat[i] = new JButton(Integer.toString(i+1));
-            }
+    public Seat_UI() {
+        setLayout(new BorderLayout());
 
-    //setBounds(가로위치, 세로위치, 가로길이, 세로길이);
-        //좌석 버튼 크리 76 x 59
-        setLayout(null);
-        seat[0].setBounds(20, 20, 76, 59);
-        seat[1].setBounds(96, 20, 76, 59);
-        seat[2].setBounds(172, 20, 76, 59);
-        seat[3].setBounds(248, 20, 76, 59);
-        seat[4].setBounds(324,20,76,59);
-        seat[5].setBounds(400, 20, 76, 59);
-        seat[6].setBounds(476, 20, 76, 59);
-        seat[7].setBounds(552,20,76,59);
-        seat[8].setBounds(628, 20, 76, 59);
+        //초기 입력창
+        JPanel inputPanel = new JPanel(new FlowLayout());
+        setLayout(new BorderLayout());
+        JLabel inputLabel = new JLabel("자리");
+        JTextField textFieldx = new JTextField(10);
+        JLabel x = new JLabel("X");
+        JTextField textFieldy = new JTextField(10);
+        JButton btnGenerate = new JButton("자리 생성");
 
-        seat[9].setBounds(20, 79, 76, 59);
-        seat[10].setBounds(96,79,76,59);
-        seat[11].setBounds(172,79,76,59);
-        seat[12].setBounds(248, 79, 76, 59);
-        seat[13].setBounds(324,79,76,59);
-        seat[14].setBounds(400, 79, 76, 59);
-        seat[15].setBounds(476, 79, 76, 59);
-        seat[16].setBounds(552,79,76,59);
-        seat[17].setBounds(628, 79, 76, 59);
+        inputPanel.add(inputLabel);
+        inputPanel.add(textFieldx);
+        inputPanel.add(x);
+        inputPanel.add(textFieldy);
+        inputPanel.add(btnGenerate);
 
-        seat[18].setBounds(20, 171, 76,59);
-        seat[19].setBounds(96,171,76,59);
-        seat[11].setBounds(172,171,76,59);
-        seat[12].setBounds(248, 171, 76, 59);
-        seat[13].setBounds(324,171,76,59);
-        seat[14].setBounds(400, 171, 76, 59);
-        seat[15].setBounds(476, 171, 76, 59);
-        seat[16].setBounds(552,171,76,59);
-        seat[17].setBounds(628, 171, 76, 59);
+        add(inputPanel, BorderLayout.NORTH);
 
-        seat[18].setBounds(20, 230, 76,59);
-        seat[19].setBounds(96,230,76,59);
-        seat[20].setBounds(172,230,76,59);
+        // 자리 배치창
+        JPanel editPanel = new JPanel(); // 버튼 편집 버튼 묶기
+        editPanel.setLayout(new FlowLayout());
+        JButton btnEdit = new JButton("편집");
+        JButton btnReset = new JButton("초기화");
 
-        seat[21].setBounds(476, 322, 76, 59);
-        seat[22].setBounds(552,322,76,59);
-        seat[23].setBounds(628, 322, 76, 59);
+        editPanel.add(btnEdit);
+        editPanel.add(btnReset);
+        JPanel seat_panel = new JPanel();
 
-        seat[24].setBounds(20, 381, 76,59);
-        seat[25].setBounds(96,381,76,59);
-        seat[26].setBounds(172,381,76,59);
-        seat[27].setBounds(248, 381, 76, 59);
-        seat[28].setBounds(324,381,76,59);
-        seat[29].setBounds(400, 381, 76, 59);
-        seat[30].setBounds(476, 381, 76, 59);
-        seat[31].setBounds(552,381,76,59);
-        seat[32].setBounds(628, 381, 76, 59);
+        //버튼 패널
+        //borderlayout은하나의 영역에하나의 컴포넌트만 배치가능
+        //하나의 영역에여러 개의컴포넌트를 한번에 배치하기 위해서는 Jpanel 사용
+        JPanel btnPanel = new JPanel();
+        btnPanel.setLayout(new BorderLayout());
+        JButton btnactivate = new JButton("활성화/비활성화");
+        JButton btnInfo = new JButton("정보보기");
+        JTextArea seat_info = new JTextArea();
 
-        add(seat[0]);
-        add(seat[1]);
-        add(seat[2]);
-        add(seat[3]);
-        add(seat[4]);
-        add(seat[5]);
-        add(seat[6]);
-        add(seat[7]);
-        add(seat[8]);
+        JPanel btnPanelTop = new JPanel(new FlowLayout());
+        btnPanelTop.add(btnInfo);
+        btnPanelTop.add(btnactivate);
 
-        add(seat[9]);
-        add(seat[10]);
-        add(seat[11]);
-        add(seat[12]);
-        add(seat[13]);
-        add(seat[14]);
-        add(seat[15]);
-        add(seat[16]);
-        add(seat[17]);
+        btnPanel.add(btnPanelTop, BorderLayout.NORTH);
+        btnPanel.add(seat_info);
 
-        add(seat[18]);
-        add(seat[19]);
-        add(seat[20]);
+        //편집 완료 버튼
+        JButton btnEditFinish = new JButton("완료");
 
-        add(seat[21]);
-        add(seat[22]);
-        add(seat[23]);
+        // 자리 생성 메소드후 이것저것
+        btnGenerate.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                seat_panel.removeAll(); // 필요없긴함 필요한가?
 
-        add(seat[24]);
-        add(seat[25]);
-        add(seat[26]);
-        add(seat[27]);
-        add(seat[28]);
-        add(seat[29]);
-        add(seat[30]);
-        add(seat[31]);
-        add(seat[32]);
+                int inputx = Integer.parseInt(textFieldx.getText());
+                int inputy = Integer.parseInt(textFieldy.getText());
 
-        JPanel seat_top = new JPanel();
-        seat_top.setLayout(new GridLayout());
-        seat_top.add(seat[0]);
-        add(seat_top);
+                seat_panel.setLayout(new GridLayout(inputx, inputy, 5, 5));
+                add(editPanel, BorderLayout.NORTH); // 여기서 2번째 인수 없으면 배치 안되서 있어야됨 아마도
+                add(seat_panel, BorderLayout.CENTER);
 
-        for (int i = 0; i<seat.length; i++){
-            seat[i].addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    new InfoFrame();
+                JPanel[] btnPanels = new JPanel[inputx * inputy];
+                JButton[] btnInfos = new JButton[inputx * inputy];
+                JButton[] btnActivates = new JButton[inputx * inputy];
+                JTextArea[] seat_Infos = new JTextArea[inputx * inputy];
+
+                for (int i = 0; i < btnPanels.length; i++) {
+
+                    //버튼 panel 에 정보, textField 추가
+                    btnPanels[i] = new JPanel(new BorderLayout());
+                    btnInfos[i] = new JButton("정보보기" + (i + 1));
+                    btnActivates[i] = new JButton("황성화/비활성화");
+                    seat_Infos[i] = new JTextArea("좌석 정보 ㅁㄴㅇㄹ");
+                    seat_Infos[i].setEditable(false);
+
+
+                    //좌석 추가
+                    JPanel topPanel = new JPanel(new FlowLayout());
+                    topPanel.add(btnInfos[i]);
+                    topPanel.add(btnActivates[i]);
+
+                    btnPanels[i].add(topPanel, BorderLayout.NORTH);
+                    btnPanels[i].add(seat_Infos[i], BorderLayout.CENTER);
+                    seat_panel.add(btnPanels[i]);
+                    btnActivates[i].setVisible(false);
+                    btnActivates[i].setEnabled(false);
+
+
+                    //정보보기 버튼 클릭시 정보창 팝업
+                    int index = i;
+                    btnInfos[index].addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            new InfoFrame();
+                        }
+                    });
+
+
                 }
-            });
-        }
+
+                editPanel.setVisible(true);
+                inputPanel.setVisible(false);
+
+
+                //자리 수정, 자리 활성화 | 비활성화 메소드
+                // 편집 완료 버튼 추가
+                btnEdit.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                        btnEditFinish.setEnabled(true);
+                        btnEditFinish.setVisible(true);
+                        editPanel.add(btnEditFinish);
+                        editPanel.revalidate();
+                        editPanel.repaint();
+
+                        for (int i = 0; i < btnPanels.length; i++) {
+                            btnActivates[i].setEnabled(true);
+                            btnActivates[i].setVisible(true);
+
+                            editPanel.revalidate();
+                            editPanel.repaint();
+
+                            int index = i;
+                            btnActivates[index].addActionListener(new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    boolean t = btnPanels[index].isEnabled();
+                                    btnPanels[index].setEnabled(!t);
+                                    seat_Infos[index].setEnabled(!t);
+                                    btnInfos[index].setEnabled(!t);
+                                }
+                            });
+                        }
+
+
+                        //편집 완료 버튼 메소드
+                        btnEditFinish.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                for (int i = 0; i < btnPanels.length; i++) {
+                                    btnActivates[i].setVisible(false);
+                                    btnActivates[i].setEnabled(false);
+                                }
+
+                                btnEditFinish.setEnabled(false);
+                                btnEditFinish.setVisible(false);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        //버튼 초기화 메소드
+        btnReset.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //입력값을 초기화 해야되는구나
+                textFieldx.setText("");
+                textFieldy.setText("");
+                seat_panel.removeAll();
+                inputPanel.setVisible(true);
+                editPanel.setVisible(false);
+                revalidate(); // ui 갱신
+                repaint();
+            }
+        });
 
 
         setVisible(true);
-        setSize(1600,900);
+        setSize(1600, 900);
+
 
     }
 

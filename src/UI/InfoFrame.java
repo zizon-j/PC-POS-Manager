@@ -1,8 +1,6 @@
 package UI;
 
 import javax.swing.*;
-import java.awt.*;
-
 public class InfoFrame extends JFrame {
 
     public InfoFrame(){
@@ -11,7 +9,9 @@ public class InfoFrame extends JFrame {
 
         add(name);
 
-        setSize(200, 200);
+
+        setLocationRelativeTo(null);
+        setSize(800, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setVisible(true);
     }
