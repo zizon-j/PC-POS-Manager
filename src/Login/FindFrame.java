@@ -16,7 +16,8 @@ class FindFrame extends JFrame implements ActionListener {
         setTitle(title);
         setResizable(false);
         setBounds(100, 100, 350, 300);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //창 종료시 찾기 창만 꺼지게 수정
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         setLocationRelativeTo(null);
 

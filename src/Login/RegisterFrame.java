@@ -16,7 +16,8 @@ class RegisterFrame extends JFrame implements ActionListener {
     public RegisterFrame(String title) {
         setTitle(title);
         setBounds(100, 100, 350, 300);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // 창 누르면 회원가입 창만 꺼지게 수정
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         setLocationRelativeTo(null);
 
