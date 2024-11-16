@@ -1,5 +1,6 @@
 package main;
 
+import Product.Product_UI;
 import UI.MemberManagement_UI;
 import UI.Seat_UI;
 import Login.LoginFrame;
@@ -13,7 +14,7 @@ public class Main extends JFrame{
 
     Seat_UI seat_ui = new Seat_UI();
     MemberManagement_UI mmu = new MemberManagement_UI();
-    Product_UI pu = new Product_UI();
+    Product.Product_UI pu = new Product_UI();
     public Main(){
         super("PC방 POS");
         // 각 add 뒤에 자신이 만든 페이지 추가 , JPanel을 받아와야됨
