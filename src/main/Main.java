@@ -5,7 +5,7 @@ import UI.Sales_UI;
 import UI.Seat_UI;
 import Login.LoginFrame;
 import UI.Test_UI;
-
+import UI.*;
 import javax.swing.*;
 
 public class Main extends JFrame{
@@ -16,6 +16,7 @@ public class Main extends JFrame{
     MemberManagement_UI mmu = new MemberManagement_UI();
     Sales_UI su = new Sales_UI();
 
+    Product_UI pu = new Product_UI();
     public Main(){
         super("PC방 POS");
         // 각 add 뒤에 자신이 만든 페이지 추가 , JPanel을 받아와야됨
@@ -23,6 +24,8 @@ public class Main extends JFrame{
         main.add("회원관리",mmu);
         main.add("운영매출", su);
         main.add("상품관리",new JTextArea());
+        main.add("운영매출", new JTextArea());
+        main.add("상품관리",pu);
         main.add("로그분석", new JTextArea());
         main.add("주문내역", new JTextArea());
 
