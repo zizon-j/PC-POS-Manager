@@ -1,10 +1,16 @@
 package UI;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 
 public class Sales_UI extends JPanel {
+
+    private JScrollPane scrollPane;
+    private JTable table;
+    private S_month_UI smonth_UI;
+    private JPanel centerPanel;
+    private CardLayout cardLayout;
+
     public Sales_UI() {
         setLayout(new BorderLayout());
 
@@ -23,34 +29,48 @@ public class Sales_UI extends JPanel {
         String[] columnNames = {"결제일시", "상품", "가격", "결제방법", "합계"};
         Object[][] data = {};  // 초기데이터 빈값
 
-        // 중앙 데이터 테이블
-        JTable table = new JTable(data, columnNames);
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setVisible(false); // 처음엔 숨김
-        add(scrollPane, BorderLayout.CENTER);
+        // 중앙 CardLayout 패널생성
+        cardLayout = new CardLayout();
+        centerPanel = new JPanel(cardLayout);
 
-        // 버튼 클릭이벤트
-        daybtn.addActionListener(e -> {
-            Object[][] sampleData = {
-                    {"2024-11-16 12:34", "상품 A", "10000", "카드", "10000"},
-                    {"2024-11-16 13:45", "상품 B", "20000", "현금", "20000"}
-            };
-            // 데이터 갱신
-            table.setModel(new javax.swing.table.DefaultTableModel(
-                    sampleData,columnNames
-            ));
-            // 숨겨놧던 테이블 보이기
-            scrollPane.setVisible(true);
-            revalidate();
-            repaint();
-        });
+        // 초기화면 (아무것도 없는 화면)
+        JPanel emptyPanel = new JPanel();
+        centerPanel.add(emptyPanel, "Empty");
+
+        // 중앙 데이터 테이블
+        table = new JTable(data, columnNames);
+        scrollPane = new JScrollPane(table);
+        centerPanel.add(scrollPane, "Table");
+
+        // 월별매출 UI 패널 추가
+        smonth_UI = new S_month_UI();
+        centerPanel.add(smonth_UI, "Calendar");
+
+        add(centerPanel, BorderLayout.CENTER);
+
+        // 초기화면은 비어있는 화면으로
+        cardLayout.show(centerPanel, "Empty");
+
+        // 버튼 이벤트
+        daybtn.addActionListener(e -> showTable());
+        monthbtn.addActionListener(e -> showCalendar());
     }
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("매출 관리");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800,600);
-        frame.add(new Sales_UI());
-        frame.setVisible(true);
+    // 일별매출
+    private void showTable() {
+        Object[][] sampleData = {
+                {"2024-11-16 12:34", "상품 A", "10000", "카드", "10000"},
+                {"2024-11-16 13:45", "상품 B", "20000", "현금", "30000"}
+        };
+        // 데이터 갱신
+        table.setModel(new javax.swing.table.DefaultTableModel(
+                sampleData, new String[]{"결제일시" , "상품", "가격", "결제방법", "합계"}
+        ));
+
+        cardLayout.show(centerPanel, "Table");
+    }
+
+    private void showCalendar() {
+        cardLayout.show(centerPanel, "Calendar");
     }
 }
