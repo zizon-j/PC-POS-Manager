@@ -109,21 +109,21 @@ class AddMenu extends JFrame implements ActionListener {
 		JPanel p2 = new JPanel();
 		p2.setLayout(new FlowLayout(FlowLayout.LEFT));
 		label2 = new JLabel("상품명             :");
-		text2 = new JTextField(10);
+		text2 = new JTextField(10); // 상품명
 		p2.add(label2); p2.add(text2);
 		ct.add(p2);
 		
 		JPanel p3 = new JPanel();
 		p3.setLayout(new FlowLayout(FlowLayout.LEFT));
 		label3 = new JLabel("가격                 :");
-		text3 = new JTextField(10);
+		text3 = new JTextField(10); // 가격
 		p3.add(label3); p3.add(text3);
 		ct.add(p3);
 		
 		JPanel p4 = new JPanel();
 		p4.setLayout(new FlowLayout(FlowLayout.LEFT));
 		label4 = new JLabel("재고                 :");
-		text4 = new JTextField(10);
+		text4 = new JTextField(10); //재고
 		p4.add(label4); p4.add(text4);
 		ct.add(p4);
 		
