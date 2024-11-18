@@ -5,8 +5,7 @@ import UI.MemberManagement_UI;
 import UI.Sales_UI;
 import UI.Seat_UI;
 import Login.LoginFrame;
-import UI.Test_UI;
-import UI.*;
+
 import javax.swing.*;
 
 public class Main extends JFrame{
