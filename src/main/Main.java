@@ -1,10 +1,6 @@
 package main;
 
-import Product.Product_UI;
-import UI.MemberManagement_UI;
-import UI.OrderList_UI;
-import UI.Sales_UI;
-import UI.Seat_UI;
+import UI.*;
 import Login.LoginFrame;
 
 import javax.swing.*;
@@ -17,7 +13,7 @@ public class Main extends JFrame{
     //panel 객체 선언
     Seat_UI seat_ui = new Seat_UI();
     MemberManagement_UI memberManagement_ui = new MemberManagement_UI();
-    Product.Product_UI product_ui = new Product_UI();
+    Product_UI product_ui = new Product_UI();
     OrderList_UI orderList_ui = new OrderList_UI();
     Sales_UI sales_ui = new Sales_UI();
     public Main(){
