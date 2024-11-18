@@ -11,7 +11,7 @@ import java.util.List;
 public class OrderList_UI extends JPanel {
 
     private DefaultTableModel tableModel;
-    private List<OrderStatusFrame.Order> orders;
+    private List<OrderList_UI_Status_Frame.Order> orders;
 
     public OrderList_UI() {
         setLayout(new BorderLayout());
@@ -50,7 +50,7 @@ public class OrderList_UI extends JPanel {
                 tableModel.setRowCount(0);
 
                 // 데이터 필터 부분
-                for (OrderStatusFrame.Order order : orders) {
+                for (OrderList_UI_Status_Frame.Order order : orders) {
                     if (keyword.isEmpty() || order.getProduct().toLowerCase().contains(keyword)) {
                         tableModel.addRow(new Object[]{order.getOrderID(), order.getMemberID(), order.getSeatNumber(), order.getProduct(), order.getPrice(), order.getPaymentMethod(), order.getStatus()});
                     }
@@ -63,30 +63,30 @@ public class OrderList_UI extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // OrderStatusFrame 열기
-                OrderStatusFrame orderStatusFrame = new OrderStatusFrame(orders);
+                OrderList_UI_Status_Frame orderStatusFrame = new OrderList_UI_Status_Frame(orders);
                 orderStatusFrame.setVisible(true);
             }
         });
     }
     
         // 추후 데이터베이스 연동 시 수정
-    private List<OrderStatusFrame.Order> createSampleOrders() {
-        List<OrderStatusFrame.Order> sampleOrders = new ArrayList<>();
+    private List<OrderList_UI_Status_Frame.Order> createSampleOrders() {
+        List<OrderList_UI_Status_Frame.Order> sampleOrders = new ArrayList<>();
 
         // 주문 1
-        sampleOrders.add(new OrderStatusFrame.Order("001", "user123", "1", "짜파게티, 웰치스 포도", "5,000원", "카드", "주문 대기"));
+        sampleOrders.add(new OrderList_UI_Status_Frame.Order("001", "user123", "1", "짜파게티, 웰치스 포도", "5,000원", "카드", "주문 대기"));
 
         // 주문 2
-        sampleOrders.add(new OrderStatusFrame.Order("002", "user456", "2", "매콤라볶이, 꿀복숭아에이드", "5,000원", "카드", "주문 대기"));
+        sampleOrders.add(new OrderList_UI_Status_Frame.Order("002", "user456", "2", "매콤라볶이, 꿀복숭아에이드", "5,000원", "카드", "주문 대기"));
 
         // 주문 3
-        sampleOrders.add(new OrderStatusFrame.Order("003", "user789", "3", "매콤닭갈비덮밥", "5,000원", "현금", "주문 대기"));
+        sampleOrders.add(new OrderList_UI_Status_Frame.Order("003", "user789", "3", "매콤닭갈비덮밥", "5,000원", "현금", "주문 대기"));
 
         return sampleOrders;
     }
 
     private void loadOrdersToTable() {
-        for (OrderStatusFrame.Order order : orders) {
+        for (OrderList_UI_Status_Frame.Order order : orders) {
             tableModel.addRow(new Object[]{order.getOrderID(), order.getMemberID(), order.getSeatNumber(), order.getProduct(), order.getPrice(), order.getPaymentMethod(), order.getStatus()});
         }
     }

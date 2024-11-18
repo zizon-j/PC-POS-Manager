@@ -5,12 +5,12 @@ import java.awt.*;
 import java.time.LocalDate;
 import java.time.YearMonth;
 
-public class S_month_UI extends JPanel {
+public class Sales_UI_Month extends JPanel {
     private LocalDate currentDate; // 현재 날짜
     private JLabel monthLabel; // 월 표시
     private JPanel gridPanel; // 날짜 버튼 그리드 패널
 
-    public S_month_UI() {
+    public Sales_UI_Month() {
         setLayout(new BorderLayout());
         currentDate = LocalDate.now(); // 날짜 초기화
 

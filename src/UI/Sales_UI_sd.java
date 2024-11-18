@@ -4,13 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
 
-public class S_sd_UI extends JDialog {
+public class Sales_UI_sd extends JDialog {
     private JComboBox<Integer> startYear, startMonth, startDay;
     private JComboBox<Integer> endYear, endMonth, endDay;
     private JButton confirmButton;
     private LocalDate[] selectedDates = new LocalDate[2]; // 시작/종료 날짜 저장
 
-    public S_sd_UI(JFrame parent) {
+    public Sales_UI_sd(JFrame parent) {
         super(parent, "기간 설정", true); // 모달 다이얼로그
         setLayout(new GridLayout(3, 1, 10, 10));
 

@@ -3,9 +3,9 @@ package UI;
 import javax.swing.*;
 import java.awt.*;
 
-public class InfoFrame extends JFrame {
+public class Seat_UI_InfoFrame extends JFrame {
 
-    public InfoFrame(){
+    public Seat_UI_InfoFrame(){
 
         setTitle("좌석정보");
         JPanel seat_Info = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -64,6 +64,6 @@ public class InfoFrame extends JFrame {
         setVisible(true);
     }
     public static void main(String[] args) {
-        new InfoFrame();
+        new Seat_UI_InfoFrame();
     }
 }

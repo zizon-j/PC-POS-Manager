@@ -8,7 +8,7 @@ public class Sales_UI extends JPanel {
 
     private JScrollPane scrollPane;
     private JTable table;
-    private S_month_UI smonth_UI;
+    private Sales_UI_Month smonth_UI;
     private JPanel centerPanel;
     private CardLayout cardLayout;
     private JButton cancelButton;
@@ -45,7 +45,7 @@ public class Sales_UI extends JPanel {
         centerPanel.add(scrollPane, "Table");
 
         // 월별매출 UI 패널 추가
-        smonth_UI = new S_month_UI();
+        smonth_UI = new Sales_UI_Month();
         centerPanel.add(smonth_UI, "Calendar");
 
         add(centerPanel, BorderLayout.CENTER);
@@ -58,7 +58,7 @@ public class Sales_UI extends JPanel {
         monthbtn.addActionListener(e -> showCalendar());
         searchbtn.addActionListener(e -> {
             // 기간설정 다이얼로그
-            S_sd_UI sd = new S_sd_UI((JFrame) SwingUtilities.getWindowAncestor(this));
+            Sales_UI_sd sd = new Sales_UI_sd((JFrame) SwingUtilities.getWindowAncestor(this));
             sd.setVisible(true);
 
             // 날짜 선택

@@ -7,7 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-public class OrderStatusFrame extends JFrame {
+public class OrderList_UI_Status_Frame extends JFrame {
 
     private List<Order> orderList;
     private DefaultTableModel newOrderTableModel;
@@ -15,7 +15,7 @@ public class OrderStatusFrame extends JFrame {
     private DefaultTableModel completedOrderTableModel;
     private DefaultTableModel cancelledOrderTableModel;
 
-    public OrderStatusFrame(List<Order> sharedOrders) {
+    public OrderList_UI_Status_Frame(List<Order> sharedOrders) {
         // 데이터 공유 및 기본 설정
         this.orderList = sharedOrders;
         setTitle("현재 주문 현황");
