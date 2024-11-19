@@ -69,8 +69,6 @@ public class MemberDAO implements DAO<MemberDTO, String>{
         return false;
     }
 
-
-
     @Override
     public ArrayList<MemberDTO> findAll() {
         return null;
