@@ -2,7 +2,7 @@ package DTO;
 
 import java.util.Date;
 
-public class DTO_member {
+public class MemberDTO {
 
     //dao 와 db 사이의 데이터를 주고 받는 클래스
     //로직을 가지지 않는 순수한 getter setter 만 있는 클래스
@@ -15,8 +15,8 @@ public class DTO_member {
     //dto에서 데이터 받아서 저장하기 위한 테이블 만들기
     //dao에서 전달받은 dto를 사용해 db로 저장 (insert)
     int member_no, left_time;
-    String member_name, member_id, member_pwd, sex, phone, varchar;
-    Date birthday, reg_date;
+    String member_name, member_id, member_pwd, sex, phone, address;
+    java.sql.Date birthday, reg_date;
 
     public int getMember_no(){
         return member_no;
@@ -73,27 +73,27 @@ public class DTO_member {
         this.phone = phone;
     }
 
-    // Getter and Setter for varchar
-    public String getVarchar() {
-        return varchar;
+    // Getter and Setter for address
+    public String getAddress() {
+        return address;
     }
-    public void setVarchar(String varchar) {
-        this.varchar = varchar;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     // Getter and Setter for birthday
-    public Date getBirthday() {
+    public java.sql.Date getBirthday() {
         return birthday;
     }
-    public void setBirthday(Date birthday) {
+    public void setBirthday(java.sql.Date birthday) {
         this.birthday = birthday;
     }
 
     // Getter and Setter for reg_date
-    public Date getReg_date() {
+    public java.sql.Date getReg_date() {
         return reg_date;
     }
-    public void setReg_date(Date reg_date) {
+    public void setReg_date(java.sql.Date reg_date) {
         this.reg_date = reg_date;
     }
 

@@ -1,13 +1,13 @@
-package UI;
+package Login;
 
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 
-public class MessageDialog extends JDialog implements ActionListener {
+public class Login_MessageDialog extends JDialog implements ActionListener {
     JButton ok;
 
-    public MessageDialog(JFrame parent, String title, boolean modal, String msg) {
+    public Login_MessageDialog(JFrame parent, String title, boolean modal, String msg) {
         super(parent, title, modal);
         JPanel pc = new JPanel();
         JLabel label = new JLabel(msg);

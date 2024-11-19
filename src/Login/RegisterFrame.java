@@ -1,7 +1,5 @@
 package Login;
 
-import UI.MessageDialog;
-
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
@@ -41,7 +39,8 @@ class RegisterFrame extends JFrame implements ActionListener {
 
         JPanel p1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel idLabel = new JLabel("POS 기기 ID  :  ");
-        idField = new JTextField(8);
+        //id
+        idField = new JTextField(8); 
         idCheckButton = new JButton("ID 확인");
         idCheckButton.addActionListener(this);
         p1.add(idLabel);
@@ -51,13 +50,15 @@ class RegisterFrame extends JFrame implements ActionListener {
 
         JPanel p2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel pwdLabel = new JLabel("PASSWORD :  ");
-        passwordField = new JPasswordField(8);
+        // 비밀번호
+        passwordField = new JPasswordField(8); 
         p2.add(pwdLabel);
         p2.add(passwordField);
         topPanel.add(p2);
 
         JPanel p3 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel nameLabel = new JLabel("이름                :  ");
+        //이름
         nameField = new JTextField(8);
         p3.add(nameLabel);
         p3.add(nameField);
@@ -65,6 +66,7 @@ class RegisterFrame extends JFrame implements ActionListener {
 
         JPanel p4 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel phoneLabel = new JLabel("연락처            :  ");
+        //전화번호
         phoneComboBox = new JComboBox<>(phoneCodes);
         phoneField = new JTextField(10);
         p4.add(phoneLabel);
@@ -74,6 +76,7 @@ class RegisterFrame extends JFrame implements ActionListener {
 
         JPanel p5 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel addressLabel = new JLabel("주소                :  ");
+        //주소
         addressField = new JTextField(20);
         p5.add(addressLabel);
         p5.add(addressField);
@@ -92,15 +95,15 @@ class RegisterFrame extends JFrame implements ActionListener {
             String enteredId = idField.getText().trim();
 
             if (enteredId.isEmpty()) {
-                MessageDialog md = new MessageDialog(this, "ID 확인", true, "ID를 입력해주세요.");
+                Login_MessageDialog md = new Login_MessageDialog(this, "ID 확인", true, "ID를 입력해주세요.");
                 md.setLocationRelativeTo(this);
                 md.setVisible(true);
             } else if (enteredId.equals("2020081049")) { // Temporary ID for checking
-                MessageDialog md = new MessageDialog(this, "ID 확인", true, "알맞은 ID입니다.");
+                Login_MessageDialog md = new Login_MessageDialog(this, "ID 확인", true, "알맞은 ID입니다.");
                 md.setLocationRelativeTo(this);
                 md.setVisible(true);
             } else {
-                MessageDialog md = new MessageDialog(this, "ID 확인", true, "ID가 맞지 않습니다.");
+                Login_MessageDialog md = new Login_MessageDialog(this, "ID 확인", true, "ID가 맞지 않습니다.");
                 md.setLocationRelativeTo(this);
                 md.setVisible(true);
             }

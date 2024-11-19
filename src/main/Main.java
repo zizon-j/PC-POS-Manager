@@ -2,6 +2,7 @@ package main;
 
 import UI.*;
 import Login.LoginFrame;
+import User_Login.User_LoginFrame;
 
 import javax.swing.*;
 
@@ -41,6 +42,15 @@ public class Main extends JFrame{
         SwingUtilities.invokeLater(() -> {
             LoginFrame loginFrame = new LoginFrame("명전 PC방 POS - 로그인 화면");
             loginFrame.setVisible(true);
+        });
+
+        //user login 창
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                User_LoginFrame user_loginFrame = new User_LoginFrame("사용 시작");
+                user_loginFrame.setVisible(true);
+            }
         });
     }
 }

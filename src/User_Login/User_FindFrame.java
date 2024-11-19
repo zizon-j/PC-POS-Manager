@@ -1,16 +1,17 @@
-package Login;
+package User_Login;
 
-import java.awt.*;
 import javax.swing.*;
-import java.awt.event.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-class FindFrame extends JFrame implements ActionListener {
+class User_FindFrame extends JFrame implements ActionListener {
     JTextField posIdField, nameField, phoneField;
     JComboBox<String> phoneComboBox;
     JButton confirmButton, cancelButton;
     String[] phoneCodes = { "010", "070", "02", "031", "032" };
 
-    public FindFrame(String title) {
+    public User_FindFrame(String title) {
         setTitle(title);
         setResizable(false);
         setBounds(100, 100, 350, 300);
@@ -77,12 +78,12 @@ class FindFrame extends JFrame implements ActionListener {
             String phone = phoneField.getText();
 
             if (id.isEmpty() || name.isEmpty() || phone.isEmpty()) {
-                Login_MessageDialog md = new Login_MessageDialog(this, "오류", true, "모든 항목들을 입력해주세요.");
+                User_Login_MessageDialog md = new User_Login_MessageDialog(this, "오류", true, "모든 항목들을 입력해주세요.");
                 md.setLocationRelativeTo(this);
                 md.setVisible(true);
             } else {
                 // Implement password retrieval logic
-                Login_MessageDialog md = new Login_MessageDialog(this, "비밀번호 찾기", true, "---님의 비밀번호는 --- 입니다. (추후 연동 후 구현)");
+                User_Login_MessageDialog md = new User_Login_MessageDialog(this, "비밀번호 찾기", true, "---님의 비밀번호는 --- 입니다. (추후 연동 후 구현)");
                 md.setLocationRelativeTo(this);
                 md.setVisible(true);
             }

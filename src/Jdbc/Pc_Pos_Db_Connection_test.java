@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class Pc_Pos_Db_Connection {
+public class Pc_Pos_Db_Connection_test {
     public static void main(String[] args) {
         Connection connection = null;
         String url = "jdbc:mysql://223.130.151.16:3306/pc_pos_db";
