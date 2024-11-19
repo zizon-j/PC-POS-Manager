@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/PC-POS-Manager.iml" filepath="$PROJECT_DIR$/PC-POS-Manager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PC_POS_Mananger.iml" filepath="$PROJECT_DIR$/PC_POS_Mananger.iml" />
     </modules>
   </component>
 </project>
