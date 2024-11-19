@@ -1036,7 +1036,7 @@ pc_pos_db|schema||pc_pos_root||UPDATE|G</Grants>
     </schema>
     <schema id="325" parent="1" name="pc_pos_db">
       <Current>1</Current>
-      <LastIntrospectionLocalTimestamp>2024-11-19.13:18:40</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2024-11-19.13:43:35</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_general_ci</CollationName>
     </schema>
     <user id="326" parent="1" name="pc_pos_root"/>
@@ -1409,64 +1409,69 @@ pc_pos_db|schema||pc_pos_root||UPDATE|G</Grants>
       <NotNull>1</NotNull>
       <Position>5</Position>
     </column>
-    <foreign-key id="405" parent="333" name="product_ibfk_1">
+    <foreign-key id="405" parent="333" name="fk_category">
       <ColNames>category_no</ColNames>
       <RefColNames>category_no</RefColNames>
       <RefTableName>category</RefTableName>
     </foreign-key>
-    <index id="406" parent="333" name="PRIMARY">
+    <foreign-key id="406" parent="333" name="product_ibfk_1">
+      <ColNames>category_no</ColNames>
+      <RefColNames>category_no</RefColNames>
+      <RefTableName>category</RefTableName>
+    </foreign-key>
+    <index id="407" parent="333" name="PRIMARY">
       <ColNames>product_no</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="407" parent="333" name="product_name">
+    <index id="408" parent="333" name="product_name">
       <ColNames>product_name</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="408" parent="333" name="category_no">
+    <index id="409" parent="333" name="fk_category">
       <ColNames>category_no</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="409" parent="333" name="PRIMARY">
+    <key id="410" parent="333" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <key id="410" parent="333" name="product_name">
+    <key id="411" parent="333" name="product_name">
       <UnderlyingIndexName>product_name</UnderlyingIndexName>
     </key>
-    <column id="411" parent="334" name="seat_no">
+    <column id="412" parent="334" name="seat_no">
       <AutoIncrement>1</AutoIncrement>
       <DasType>int(11)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
     </column>
-    <column id="412" parent="334" name="seat_state">
+    <column id="413" parent="334" name="seat_state">
       <DasType>varchar(8)|0s</DasType>
       <DefaultExpression>&apos;미사용&apos;</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>2</Position>
     </column>
-    <column id="413" parent="334" name="member_no">
+    <column id="414" parent="334" name="member_no">
       <DasType>int(11)|0s</DasType>
       <Position>3</Position>
     </column>
-    <foreign-key id="414" parent="334" name="seat_ibfk_1">
+    <foreign-key id="415" parent="334" name="seat_ibfk_1">
       <ColNames>member_no</ColNames>
       <RefColNames>member_no</RefColNames>
       <RefTableName>member</RefTableName>
     </foreign-key>
-    <index id="415" parent="334" name="PRIMARY">
+    <index id="416" parent="334" name="PRIMARY">
       <ColNames>seat_no</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="416" parent="334" name="member_no">
+    <index id="417" parent="334" name="member_no">
       <ColNames>member_no</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="417" parent="334" name="PRIMARY">
+    <key id="418" parent="334" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>

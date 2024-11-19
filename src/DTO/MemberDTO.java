@@ -1,6 +1,6 @@
 package DTO;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class MemberDTO {
 
@@ -17,6 +17,23 @@ public class MemberDTO {
     int member_no, left_time;
     String member_name, member_id, member_pwd, sex, phone, address;
     java.sql.Date birthday, reg_date;
+
+    public MemberDTO(){}
+
+    public MemberDTO(int member_no, String member_name, String member_id, String member_pwd, Date birthday, String sex, Date reg_date, String phone, String address, int left_time){
+        this.member_no = member_no;
+        this.member_name = member_name;
+        this.member_id = member_id;
+        this.member_pwd = member_pwd;
+        this.birthday = birthday;
+        this.sex = sex;
+        this.reg_date = reg_date;
+        this.phone = phone;
+        this.address = address;
+        this.left_time = left_time;
+
+    }
+
 
     public int getMember_no(){
         return member_no;
