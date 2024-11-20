@@ -26,7 +26,7 @@ public class MemberDAO implements DAO<MemberDTO, String>{
     public boolean insert(MemberDTO member) {
         PreparedStatement pstmt = null;
         try{
-            String sql = "INSERT INTO member_test (member_name, member_id, member_pwd, birthday, sex, phone, address) VALUES (?,?,?,?,?,?,?)";
+            String sql = "INSERT INTO member (member_name, member_id, member_pwd, birthday, sex, phone, address) VALUES (?,?,?,?,?,?,?)";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, member.getMember_name());
             pstmt.setString(2, member.getMember_id());
