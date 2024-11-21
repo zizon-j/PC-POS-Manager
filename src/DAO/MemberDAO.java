@@ -102,7 +102,26 @@ public class MemberDAO implements DAO<MemberDTO, String>{
 
 
     @Override
-    public boolean delete(String s) {
+    public boolean delete(String s) { //회원 삭제
+        PreparedStatement pstmt = null; //SQL문 바구니
+        try {
+            String sql = "DELETE FROM member WHERE member_no = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, s);
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (pstmt != null)
+                    pstmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
         return false;
     }
 

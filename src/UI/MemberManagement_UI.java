@@ -69,14 +69,17 @@ public class MemberManagement_UI extends JPanel {
 
     private void deleteMember() { // 회원 삭제
         selectedRow = member_table.getSelectedRow(); //선택된 행
+        String memberNo = String.valueOf(model.getValueAt(selectedRow, 0)); //회원 번호
         String memberName = String.valueOf(model.getValueAt(selectedRow, 1)); //회원 이름
 
         if (selectedRow != -1) { //선택 됐다면
             int option  = JOptionPane.showConfirmDialog(this,
                     "정말로 회원 " + memberName + "을(를) 삭제하시겠습니까?", "회원 삭제 확인", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
-            if(option == JOptionPane.YES_OPTION) //확인 버튼을 눌렀다면
+            if(option == JOptionPane.YES_OPTION) {//확인 버튼을 눌렀다면
                 model.removeRow(selectedRow); //삭제
+                memberDAO.delete(memberNo);
+            }
         }
         else
             JOptionPane.showMessageDialog(this, "삭제할 회원을 선택해주세요.");
