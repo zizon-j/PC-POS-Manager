@@ -135,11 +135,13 @@ public class Sales_UI extends JPanel {
                 sampleData, new String[]{"결제일시" , "상품", "가격", "결제방법", "합계"}
         ));
 
+        deleteButton.setEnabled(false);
         cardLayout.show(centerPanel, "Table");
     }
 
     // 월별매출
     private void showCalendar() {
+        deleteButton.setEnabled(false); // 매출취소버튼 비활성화
         cardLayout.show(centerPanel, "Calendar");
     }
 }
