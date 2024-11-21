@@ -25,7 +25,7 @@ public class LoginFrame extends JFrame implements ActionListener {
 
         JLabel titleLabel = new JLabel("명전 PC방 POS");
         titleLabel.setFont(new Font("나눔고딕", Font.BOLD, 30));
-        titleLabel.setBounds(198, 28, 203, 79);
+        titleLabel.setBounds(185, 28, 310, 79);
         ct.add(titleLabel);
 
         JLabel idLabel = new JLabel("아이디    : ");

@@ -1,6 +1,6 @@
 package UI;
 
-import Login.Login_MessageDialog;
+
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -21,7 +21,7 @@ public class OrderList_UI_Status_Frame extends JFrame {
         // 데이터 공유 및 기본 설정
         this.orderList = sharedOrders;
         setTitle("현재 주문 현황");
-        setSize(800, 600);
+        setSize(850, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -45,7 +45,7 @@ public class OrderList_UI_Status_Frame extends JFrame {
         JTable orderTable = new JTable(tableModel);
 
         // 테이블 설정
-        tableModel.setColumnIdentifiers(new String[]{"주문 번호", "회원 ID", "좌석 번호", "상품", "가격", "결제 방법", "상태"});
+        tableModel.setColumnIdentifiers(new String[]{"주문 번호", "회원 ID", "좌석 번호", "상품", "가격", "결제 방법", "상태", "결재 일시"});
         JScrollPane scrollPane = new JScrollPane(orderTable);
         tabPanel.add(scrollPane, BorderLayout.CENTER);
 
@@ -86,9 +86,9 @@ public class OrderList_UI_Status_Frame extends JFrame {
 
         // 선택된 행이 없는 경우 MessageDialog 사용
         if (selectedRow == -1) {
-            Login_MessageDialog messageDialog = new Login_MessageDialog(this, "알림", true, "먼저 주문을 선택하세요.");
-            messageDialog.setLocationRelativeTo(this);
-            messageDialog.setVisible(true);
+            UI.Login_MessageDialog loginMessageDialog = new UI.Login_MessageDialog(this, "알림", true, "먼저 주문을 선택하세요.");
+            loginMessageDialog.setLocationRelativeTo(this);
+            loginMessageDialog.setVisible(true);
             return;
         }
 
@@ -114,7 +114,7 @@ public class OrderList_UI_Status_Frame extends JFrame {
 
         // 상태별 데이터 추가
         for (Order order : orderList) {
-            String[] rowData = {order.getOrderID(), order.getMemberID(), order.getSeatNumber(), order.getProduct(), order.getPrice(), order.getPaymentMethod(), order.getStatus()};
+            String[] rowData = {order.getOrderID(), order.getMemberID(), order.getSeatNumber(), order.getProduct(), order.getPrice(), order.getPaymentMethod(), order.getStatus(), order.getTime()};
 
             switch (order.getStatus()) {
                 case "주문 대기":
@@ -132,7 +132,6 @@ public class OrderList_UI_Status_Frame extends JFrame {
             }
         }
     }
-
     public static class Order {
         private String orderID;
         private String memberID;
@@ -141,8 +140,9 @@ public class OrderList_UI_Status_Frame extends JFrame {
         private String price;
         private String paymentMethod;
         private String status;
+        private String time;
 
-        public Order(String orderID, String memberID, String seatNumber, String product, String price, String paymentMethod, String status) {
+        public Order(String orderID, String memberID, String seatNumber, String product, String price, String paymentMethod, String status, String time) {
             this.orderID = orderID;
             this.memberID = memberID;
             this.seatNumber = seatNumber;
@@ -150,6 +150,7 @@ public class OrderList_UI_Status_Frame extends JFrame {
             this.price = price;
             this.paymentMethod = paymentMethod;
             this.status = status;
+            this.time = time;
         }
 
         public String getOrderID() {
@@ -183,5 +184,10 @@ public class OrderList_UI_Status_Frame extends JFrame {
         public void setStatus(String status) {
             this.status = status;
         }
+
+        public String getTime() {
+            return time;
+        }
+
     }
 }

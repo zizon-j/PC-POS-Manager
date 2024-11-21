@@ -1,9 +1,18 @@
 package UI;
 
+import DAO.MemberDAO;
+import DAO.SeatDAO;
+import DTO.MemberDTO;
+import DTO.SeatDTO;
+import Jdbc.PCPosDBConnection;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+
+import static com.sun.deploy.uitoolkit.ToolkitStore.dispose;
 
 public class Seat_UI extends JPanel {
 
@@ -96,6 +105,10 @@ public class Seat_UI extends JPanel {
                     btnActivates[i].setEnabled(false);
 
 
+
+
+
+
                     //정보보기 버튼 클릭시 정보창 팝업
                     int index = i;
                     btnInfos[index].addActionListener(new ActionListener() {
@@ -107,6 +120,31 @@ public class Seat_UI extends JPanel {
 
 
                 }
+                //seat table에 자리 개수 만큼 column 생성
+                SeatDTO seat = new SeatDTO();
+                Connection conn = PCPosDBConnection.getConnection();
+                boolean success = true; // 초기화
+
+                for (int i = 0; i < btnPanels.length; i++) {
+                    SeatDAO seatDAO = new SeatDAO(conn);
+                    boolean insertSuccess = seatDAO.insert(seat);
+                    if (!insertSuccess) {
+                        success = false; // 실패가 발생하면 success를 false로 변경
+                        break; // 실패 시 더 이상 반복할 필요가 없으므로 종료
+                    }
+                }
+
+                if (success) {
+                    JOptionPane.showMessageDialog(null, "생성되었습니다."); // 올바른 사용법
+                    try {
+                        dispose(); // 현재 창 닫기
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "오류가 발생했습니다."); // 올바른 사용법
+                }
+
 
                 editPanel.setVisible(true);
                 inputPanel.setVisible(false);
@@ -174,6 +212,27 @@ public class Seat_UI extends JPanel {
                 editPanel.setVisible(false);
                 revalidate(); // ui 갱신
                 repaint();
+
+                //자리 초기화 deleteAll 메소드
+                Connection conn = PCPosDBConnection.getConnection();
+                if(conn != null){
+                    SeatDAO seatDAO = new SeatDAO(conn);
+                    boolean success = seatDAO.deleteAll();
+                    seatDAO.resetAuto_increment();
+                    if(success){
+                        JOptionPane.showMessageDialog(null, "초기화 완료");
+                        try {
+                            dispose();
+                        } catch (Exception ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }else {
+                        JOptionPane.showMessageDialog(null, "db연결 시패");
+                    }
+                }
+
+
+
             }
         });
 
