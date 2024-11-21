@@ -17,10 +17,12 @@ import java.util.List;
 public class MemberManagement_UI extends JPanel {
     private JButton searchBtn, addBtn, editBtn, deleteBtn;
     private JPanel search, btnPanel;
+    private JTable member_table; //회원 테이블
     private DefaultTableModel model;
     private JTextField searchField;
     private MemberDAO memberDAO; //회원DAO 객체
     private UsageHistoryDAO usageHistoryDAO; // 사용기록DAO 객체
+    private int selectedRow; //열 선택
 
     public MemberManagement_UI() {
         try {
@@ -66,7 +68,18 @@ public class MemberManagement_UI extends JPanel {
     }
 
     private void deleteMember() { // 회원 삭제
+        selectedRow = member_table.getSelectedRow(); //선택된 행
+        String memberName = String.valueOf(model.getValueAt(selectedRow, 1)); //회원 이름
 
+        if (selectedRow != -1) { //선택 됐다면
+            int option  = JOptionPane.showConfirmDialog(this,
+                    "정말로 회원 " + memberName + "을(를) 삭제하시겠습니까?", "회원 삭제 확인", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+            if(option == JOptionPane.YES_OPTION) //확인 버튼을 눌렀다면
+                model.removeRow(selectedRow); //삭제
+        }
+        else
+            JOptionPane.showMessageDialog(this, "삭제할 회원을 선택해주세요.");
     }
 
     private void addMember() { // 회원 추가
@@ -158,7 +171,7 @@ public class MemberManagement_UI extends JPanel {
         String[] colums = {"회원번호", "이름", "성별", "연락처", "남은시간", "사용시간", "총사용금액", "생년월일", "가입날짜"};
 
         model = new DefaultTableModel(colums, 0); //테이블 모델 초기화
-        JTable member_table = new JTable(model); //테이블 생성
+        member_table = new JTable(model); //테이블 생성
         member_table.setRowHeight(20); //행 높이 설정
 
         JScrollPane jScrollPane = new JScrollPane(member_table); //스크롤 패널
