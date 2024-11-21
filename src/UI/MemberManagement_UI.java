@@ -1,6 +1,7 @@
 package UI;
 
 import DAO.MemberDAO;
+import DAO.UsageHistoryDAO;
 import DTO.MemberDTO;
 import Jdbc.PCPosDBConnection;
 
@@ -18,7 +19,8 @@ public class MemberManagement_UI extends JPanel {
     private JPanel search, btnPanel;
     private DefaultTableModel model;
     private JTextField searchField;
-    private MemberDAO memberDAO; //DAO 객체
+    private MemberDAO memberDAO; //회원DAO 객체
+    private UsageHistoryDAO usageHistoryDAO; // 사용기록DAO 객체
 
     public MemberManagement_UI() {
         try {
@@ -39,7 +41,7 @@ public class MemberManagement_UI extends JPanel {
         }
     }
 
-    private void fetchAndUpdateTable() {
+    private void fetchAndUpdateTable() {//정보 가져오기 및 업데이트
         try {
             List<MemberDTO> members = memberDAO.findAll(); //모든 회원정보 가져옴
             model.setRowCount(0); // 기존 데이터 초기화
@@ -48,7 +50,7 @@ public class MemberManagement_UI extends JPanel {
                         m.getMember_no(), //번호
                         m.getMember_name(), //이름
                         m.getSex(), //성별
-                        //연령
+                        m.getPhone(),
                         m.getLeft_time(),
                         //사용시간
                         //총사용금액
@@ -76,10 +78,32 @@ public class MemberManagement_UI extends JPanel {
     }
 
     private void searchMember(String keyword) { //회원 검색
+        try {
+            List<MemberDTO> member = memberDAO.findAll();
+            for (MemberDTO m : member) {
+                if (keyword.equals(m.getMember_name())) { //검색 내용과 같다면
+                    model.setRowCount(0); // 기존 데이터 초기화
+                    Object[] row = {
+                            m.getMember_no(), //번호
+                            m.getMember_name(), //이름
+                            m.getSex(), //성별
+                            m.getPhone(),
+                            m.getLeft_time(),
+                            //사용시간
+                            //총사용금액
+                            m.getBirthday(),
+                            m.getReg_date()
+                    };
+                    model.addRow(row);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
-    void create_BtnPanel() { //수정, 추가, 삭제 버튼
+    private void create_BtnPanel() { //수정, 추가, 삭제 버튼
         btnPanel = new JPanel();
 
         editBtn = new JButton("회원수정");
@@ -112,7 +136,7 @@ public class MemberManagement_UI extends JPanel {
         add(btnPanel);
     }
 
-    void create_search() { //검색 패널 생성 및 검색 필드, 버튼 추가
+    private void create_search() { //검색 패널 생성 및 검색 필드, 버튼 추가
         search = new JPanel();
         searchField = new JTextField(20); //검색창
         searchBtn = new JButton("검색"); //검색버튼
@@ -130,8 +154,8 @@ public class MemberManagement_UI extends JPanel {
         add(search);
     }
 
-    void create_memberTable() { //테이블 생성 및 설정
-        String[] colums = {"회원번호", "이름", "성별", "연령", "남은시간", "사용시간", "총사용금액", "생년월일", "가입날자"};
+    private void create_memberTable() { //테이블 생성 및 설정
+        String[] colums = {"회원번호", "이름", "성별", "연락처", "남은시간", "사용시간", "총사용금액", "생년월일", "가입날짜"};
 
         model = new DefaultTableModel(colums, 0); //테이블 모델 초기화
         JTable member_table = new JTable(model); //테이블 생성
