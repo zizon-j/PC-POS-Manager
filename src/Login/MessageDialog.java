@@ -1,4 +1,4 @@
-package UI;
+package Login;
 
 import java.awt.*;
 import javax.swing.*;
