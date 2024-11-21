@@ -95,15 +95,15 @@ class RegisterFrame extends JFrame implements ActionListener {
             String enteredId = idField.getText().trim();
 
             if (enteredId.isEmpty()) {
-                MessageDialog md = new MessageDialog(this, "ID 확인", true, "ID를 입력해주세요.");
+                Login_MessageDialog md = new Login_MessageDialog(this, "ID 확인", true, "ID를 입력해주세요.");
                 md.setLocationRelativeTo(this);
                 md.setVisible(true);
             } else if (enteredId.equals("2020081049")) { // Temporary ID for checking
-                MessageDialog md = new MessageDialog(this, "ID 확인", true, "알맞은 ID입니다.");
+                Login_MessageDialog md = new Login_MessageDialog(this, "ID 확인", true, "알맞은 ID입니다.");
                 md.setLocationRelativeTo(this);
                 md.setVisible(true);
             } else {
-                MessageDialog md = new MessageDialog(this, "ID 확인", true, "ID가 맞지 않습니다.");
+                Login_MessageDialog md = new Login_MessageDialog(this, "ID 확인", true, "ID가 맞지 않습니다.");
                 md.setLocationRelativeTo(this);
                 md.setVisible(true);
             }
