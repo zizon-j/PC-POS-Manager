@@ -15,7 +15,7 @@ public class User_LoginFrame extends JFrame implements ActionListener {
     public User_LoginFrame(String title) {
         setTitle(title);
         setResizable(false);
-        setBounds(0, 0, 600, 400);
+        setBounds(100, 100, 800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // 창을 화면 중앙에 위치

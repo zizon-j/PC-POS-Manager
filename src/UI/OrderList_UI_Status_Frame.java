@@ -1,6 +1,6 @@
 package UI;
 
-import Login.Login_MessageDialog;
+
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -86,7 +86,7 @@ public class OrderList_UI_Status_Frame extends JFrame {
 
         // 선택된 행이 없는 경우 MessageDialog 사용
         if (selectedRow == -1) {
-            Login_MessageDialog loginMessageDialog = new Login_MessageDialog(this, "알림", true, "먼저 주문을 선택하세요.");
+            UI.Login_MessageDialog loginMessageDialog = new UI.Login_MessageDialog(this, "알림", true, "먼저 주문을 선택하세요.");
             loginMessageDialog.setLocationRelativeTo(this);
             loginMessageDialog.setVisible(true);
             return;
