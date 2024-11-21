@@ -77,12 +77,12 @@ class FindFrame extends JFrame implements ActionListener {
             String phone = phoneField.getText();
 
             if (id.isEmpty() || name.isEmpty() || phone.isEmpty()) {
-                MessageDialog md = new MessageDialog(this, "오류", true, "모든 항목들을 입력해주세요.");
+                Login_MessageDialog md = new Login_MessageDialog(this, "오류", true, "모든 항목들을 입력해주세요.");
                 md.setLocationRelativeTo(this);
                 md.setVisible(true);
             } else {
                 // Implement password retrieval logic
-                MessageDialog md = new MessageDialog(this, "비밀번호 찾기", true, "---님의 비밀번호는 --- 입니다. (추후 연동 후 구현)");
+                Login_MessageDialog md = new Login_MessageDialog(this, "비밀번호 찾기", true, "---님의 비밀번호는 --- 입니다. (추후 연동 후 구현)");
                 md.setLocationRelativeTo(this);
                 md.setVisible(true);
             }
