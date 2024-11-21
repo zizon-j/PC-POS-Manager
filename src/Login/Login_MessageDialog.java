@@ -4,11 +4,11 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 
-public class MessageDialog extends JDialog implements ActionListener {
+public class Login_MessageDialog extends JDialog implements ActionListener {
     JButton ok; // "OK" 버튼을 위한 JButton 객체
 
     // 생성자: MessageDialog 객체를 초기화하고 구성 요소를 설정
-    public MessageDialog(JFrame parent, String title, boolean modal, String msg) {
+    public Login_MessageDialog(JFrame parent, String title, boolean modal, String msg) {
         super(parent, title, modal); // 부모 프레임, 제목, 모달 여부를 설정
         JPanel pc = new JPanel(); // 메시지를 표시할 패널 생성
         JLabel label = new JLabel(msg); // 전달받은 메시지를 JLabel로 생성
