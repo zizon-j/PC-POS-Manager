@@ -4,6 +4,13 @@ public class SeatDTO {
     int seat_no, member_no;
     String seat_state;
 
+    public SeatDTO(){}
+
+    public SeatDTO( int seat_no
+    ){
+        this.seat_no = seat_no;
+    }
+
     public int getSeat_no() {
         return seat_no;
     }

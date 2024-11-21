@@ -17,6 +17,7 @@ public class Main extends JFrame{
     Product_UI product_ui = new Product_UI();
     OrderList_UI orderList_ui = new OrderList_UI();
     Sales_UI sales_ui = new Sales_UI();
+//    Log_UI log_ui = new Log_UI();
     public Main(){
         super("PC방 POS");
         // 각 add 뒤에 자신이 만든 페이지 추가 , JPanel을 받아와야됨
@@ -25,7 +26,7 @@ public class Main extends JFrame{
         main.add("운영매출", sales_ui);
         main.add("상품관리",product_ui);
         main.add("주문내역", orderList_ui);
-        main.add("로그분석", new JTextArea("보류")); // 보류
+//        main.add("로그분석", log_ui); 보류
 
         add(main);
 
