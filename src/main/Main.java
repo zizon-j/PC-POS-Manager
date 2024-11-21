@@ -24,8 +24,8 @@ public class Main extends JFrame{
         main.add("회원관리",memberManagement_ui);
         main.add("운영매출", sales_ui);
         main.add("상품관리",product_ui);
-        main.add("로그분석", new JTextArea("보류")); // 보류
         main.add("주문내역", orderList_ui);
+        main.add("로그분석", new JTextArea("보류")); // 보류
 
         add(main);
 

@@ -11,7 +11,7 @@ public class Sales_UI extends JPanel {
     private Sales_UI_Month smonth_UI;
     private JPanel centerPanel;
     private CardLayout cardLayout;
-    private JButton cancelButton;
+    private JButton deleteButton;
 
     public Sales_UI() {
         setLayout(new BorderLayout());
@@ -52,6 +52,16 @@ public class Sales_UI extends JPanel {
 
         // 초기화면은 비어있는 화면으로
         cardLayout.show(centerPanel, "Empty");
+
+        // 삭제 버튼 추가
+        deleteButton = new JButton("결제 취소");
+        deleteButton.setEnabled(false); // 초기 비활성화
+        deleteButton.addActionListener(e -> deleteRows());
+
+        // 삭제버튼을 패널에 추가
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        bottomPanel.add(deleteButton);
+        add(bottomPanel, BorderLayout.SOUTH);
 
         // 버튼 이벤트
         daybtn.addActionListener(e -> showTable());
@@ -95,7 +105,23 @@ public class Sales_UI extends JPanel {
                 new String[]{"결제일시", "상품", "가격", "결제방법", "합계"}
         ));
 
+        deleteButton.setEnabled(true);
         cardLayout.show(centerPanel, "Table");
+    }
+
+    // 테이블에서 선택된 매출 삭제
+    private void deleteRows() {
+        int[] selectedRows = table.getSelectedRows();
+
+        if (selectedRows.length == 0) {
+            JOptionPane.showMessageDialog(this, "취소할 결제를 선택하세요.");
+            return;
+        }
+
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) table.getModel();
+        for (int i = selectedRows.length - 1; i >= 0; i--) {
+            model.removeRow(selectedRows[i]);
+        }
     }
 
     // 일별매출
@@ -109,11 +135,13 @@ public class Sales_UI extends JPanel {
                 sampleData, new String[]{"결제일시" , "상품", "가격", "결제방법", "합계"}
         ));
 
+        deleteButton.setEnabled(false);
         cardLayout.show(centerPanel, "Table");
     }
 
     // 월별매출
     private void showCalendar() {
+        deleteButton.setEnabled(false); // 매출취소버튼 비활성화
         cardLayout.show(centerPanel, "Calendar");
     }
 }
