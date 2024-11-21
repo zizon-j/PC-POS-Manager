@@ -38,7 +38,7 @@ class RegisterFrame extends JFrame implements ActionListener {
         topPanel.setLayout(new GridLayout(5, 1));
 
         JPanel p1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel idLabel = new JLabel("POS 기기 ID  :  ");
+        JLabel idLabel = new JLabel("POS 기기 ID   :  ");
         //id
         idField = new JTextField(8); 
         idCheckButton = new JButton("ID 확인");
@@ -49,7 +49,7 @@ class RegisterFrame extends JFrame implements ActionListener {
         topPanel.add(p1);
 
         JPanel p2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel pwdLabel = new JLabel("PASSWORD :  ");
+        JLabel pwdLabel = new JLabel("비밀번호        :  ");
         // 비밀번호
         passwordField = new JPasswordField(8); 
         p2.add(pwdLabel);
@@ -89,7 +89,7 @@ class RegisterFrame extends JFrame implements ActionListener {
         if (s.equals("취소")) {
             dispose();
         } else if (s.equals("확인")) {
-            // Handle confirmation (DB interaction)
+            // DB 연동시 로직 수정
             dispose();
         } else if (s.equals("ID 확인")) {
             String enteredId = idField.getText().trim();
@@ -98,7 +98,7 @@ class RegisterFrame extends JFrame implements ActionListener {
                 Login_MessageDialog md = new Login_MessageDialog(this, "ID 확인", true, "ID를 입력해주세요.");
                 md.setLocationRelativeTo(this);
                 md.setVisible(true);
-            } else if (enteredId.equals("2020081049")) { // Temporary ID for checking
+            } else if (enteredId.equals("2020081049")) { // 임시 ID
                 Login_MessageDialog md = new Login_MessageDialog(this, "ID 확인", true, "알맞은 ID입니다.");
                 md.setLocationRelativeTo(this);
                 md.setVisible(true);
