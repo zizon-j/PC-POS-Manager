@@ -1036,7 +1036,7 @@ pc_pos_db|schema||pc_pos_root||UPDATE|G</Grants>
     </schema>
     <schema id="325" parent="1" name="pc_pos_db">
       <Current>1</Current>
-      <LastIntrospectionLocalTimestamp>2024-11-21.09:59:51</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2024-11-22.06:28:02</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_general_ci</CollationName>
     </schema>
     <user id="326" parent="1" name="pc_pos_root"/>
@@ -1142,7 +1142,7 @@ pc_pos_db|schema||pc_pos_root||UPDATE|G</Grants>
       <UnderlyingIndexName>emp_id</UnderlyingIndexName>
     </key>
     <column id="349" parent="329" name="member_no">
-      <AutoIncrement>15</AutoIncrement>
+      <AutoIncrement>16</AutoIncrement>
       <DasType>int(11)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -1273,7 +1273,8 @@ pc_pos_db|schema||pc_pos_root||UPDATE|G</Grants>
       <Position>1</Position>
     </column>
     <column id="376" parent="331" name="order_time">
-      <DasType>datetime|0s</DasType>
+      <DasType>time|0s</DasType>
+      <DefaultExpression>curtime()</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>2</Position>
     </column>
@@ -1448,7 +1449,7 @@ pc_pos_db|schema||pc_pos_root||UPDATE|G</Grants>
       <UnderlyingIndexName>product_name</UnderlyingIndexName>
     </key>
     <column id="413" parent="334" name="seat_no">
-      <AutoIncrement>26</AutoIncrement>
+      <AutoIncrement>17</AutoIncrement>
       <DasType>int(11)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>

@@ -112,7 +112,6 @@ public class User_LoginFrame extends JFrame implements ActionListener {
             User_FindFrame userFindFrame = new User_FindFrame("비밀번호 찾기");
             userFindFrame.setVisible(true);
         } else if (s.equals("로그인")) {
-            // 로그인 처리 (DB 연동 후 추가 예정)
             //e드가자
             // id 와 passwd 가 일치할때 로그인
             // id를 사용해서 dto 객체를 가져와서 받은 pwd와 dto.pwd가 같은지 화깅ㄴ
@@ -125,8 +124,10 @@ public class User_LoginFrame extends JFrame implements ActionListener {
                 if (member != null) {
                     if (member.getMember_pwd().equals(passwd.getText())) {
                         seatDAO.updateSeat(member.getMember_no(), (int) seatChombo.getSelectedItem());
-
-                        this.dispose(); // //로그인 창 닫기
+                        User_OrderProduct op = new User_OrderProduct();
+                        op.setVisible(true);
+                        this.dispose();
+                        // //로그인 창 닫기
                     } else
                         JOptionPane.showMessageDialog(this, "틀렸습니다.");
                 } else
