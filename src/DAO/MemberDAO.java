@@ -105,17 +105,17 @@ public class MemberDAO implements DAO<MemberDTO, String>{
     public boolean delete(String s) { //회원 삭제
         PreparedStatement pstmt = null; //SQL문 바구니
         try {
-            String sql = "DELETE FROM member WHERE member_no = ?";
-            pstmt = conn.prepareStatement(sql);
+            String sql = "DELETE FROM member WHERE member_no = ?"; //쿼리문
+            pstmt = conn.prepareStatement(sql); //바구니에 담아서
             pstmt.setString(1, s);
-            pstmt.executeUpdate();
+            pstmt.executeUpdate(); //실행
 
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         } finally {
             try {
-                if (pstmt != null)
+                if (pstmt != null) //정상작동 했다면
                     pstmt.close();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -126,7 +126,9 @@ public class MemberDAO implements DAO<MemberDTO, String>{
     }
 
     @Override
-    public boolean update(MemberDTO memberDTO) {
+    public boolean update(MemberDTO memberDTO) { //회원 수정
+
+
         return false;
     }
 
