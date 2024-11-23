@@ -60,15 +60,15 @@ public class MemberDAO implements DAO<MemberDTO, String>{
     //executeUpdate(): insert, update, delete와 같은 dml에서 실행 결과로 영향을받은 레코드 수를변환
     //행의 개수를 반환하기 때문에 rs를 사용할 필요가 없다.
     @Override
-    public MemberDTO findById(String member_id_search) {
+    public MemberDTO findById(String member_no_search) {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         MemberDTO member = null;
 
         try{
-            String sql = "SELECT * FROM member WHERE member_id = ?";
+            String sql = "SELECT * FROM member WHERE member_no = ?";
             pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, member_id_search);
+            pstmt.setString(1, member_no_search);
             rs = pstmt.executeQuery();
 
             if(rs.next()){

@@ -13,18 +13,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.util.List;
-
+class NotSelectedRowException extends Exception {}
 public class MemberManagement_UI extends JPanel {
-    private JButton searchBtn, addBtn, editBtn, deleteBtn;
-    private JPanel search, btnPanel, EditMemberDialog_leftP, EditMemberDialog_rightP;
+    private JButton searchBtn, addBtn, editBtn, deleteBtn, saveEditBtn, cancelEditBtn, resetpwdBtn;
+    private JPanel search, btnPanel, EditMember_leftPanel, EditMember_rightPanel, EditMemberPanel;
     private JTable member_table; //회원 테이블
     private DefaultTableModel model;
     private JTextField searchField;
-    private JDialog EditMemberDialog;
-    private JTextField idField, pwdField, nameField, birthdayField, phoneField, addressField;
+    private JDialog EditMemberDialog, AddMemberDialog;
+    private JTextField idField, pwdField, nameField, birthdayField, phoneField, addressField,
+            totalUsage_Money, totalUsage_time, joinDate;
     private JRadioButton man, woman;
     private ButtonGroup group;
-    private JSplitPane splitPane; //회원수정 다이얼로그 left, right를 담는패널
 
     private MemberDAO memberDAO; //회원DAO 객체
     private UsageHistoryDAO usageHistoryDAO; // 사용기록DAO 객체
@@ -71,10 +71,6 @@ public class MemberManagement_UI extends JPanel {
         }
 
     }
-
-    private void addMember() { // 회원 추가
-
-    }
     private void searchMember(String keyword) { //회원 검색
         try {
             List<MemberDTO> member = memberDAO.findAll();
@@ -118,10 +114,10 @@ public class MemberManagement_UI extends JPanel {
                 EditMemberDialog();
             }
         });
-        addBtn.addActionListener(new ActionListener() { //추가
+        addBtn.addActionListener(new ActionListener() { //회원 추가
             @Override
             public void actionPerformed(ActionEvent e) {
-                addMember();
+
             }
         });
         deleteBtn.addActionListener(new ActionListener() { //회원 삭제
@@ -179,64 +175,164 @@ public class MemberManagement_UI extends JPanel {
 
         add(jScrollPane, BorderLayout.CENTER);
     }
+    private void AddMemberDialog() { //회원 추가 다이얼로그 생성
+        AddMemberDialog = new JDialog(new Frame(), "회원 추가", true);
+        AddMemberDialog.setSize(700, 520);
+    }
     private void EditMemberDialog() { //회원 수정 다이얼로그 생성
-        EditMemberDialog = new JDialog(new Frame(), "회원 수정", true);
-        EditMemberDialog.setSize(1280, 720); //사이즈 설정
-        EditMemberDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        int selectedRow = member_table.getSelectedRow(); //선택한 회원
+        if (selectedRow == -1){ //선택하지 않았다면 return
+            JOptionPane.showMessageDialog(this, "수정할 회원을 선택해주세요.");
+            return;
+        }
 
-        EditMemberDialog_leftP = new JPanel(new GridLayout(7, 1)); //왼쪽 패널 생성
+        String memberNo = String.valueOf(model.getValueAt(selectedRow, 0)); //가져온 회원의 번호
+        try {
+            MemberDTO member = memberDAO.findById(memberNo); //회원 정보 가져오기
 
-        //회원 아이디 필드
-        EditMemberDialog_leftP.add(new JLabel("회원 아이디 "));
-        idField = new JTextField();
-        idField.setEditable(false); //수정불가하게 함
-        EditMemberDialog_leftP.add(idField);
+            if(member == null) {
+                JOptionPane.showMessageDialog(this, "회원 정보를 가져오지 못했습니다.");
+                return;
+            }
 
-        //비밀번호 필드
-        EditMemberDialog_leftP.add(new JLabel("비밀번호 "));
-        pwdField = new JTextField();
-        EditMemberDialog_leftP.add(pwdField);
-
-        //이름 필드
-        EditMemberDialog_leftP.add(new JLabel("이름 "));
-        nameField = new JTextField();
-        EditMemberDialog_leftP.add(nameField);
-
-        //생년월일 필드
-        EditMemberDialog_leftP.add(new JLabel("생년월일 "));
-        birthdayField = new JTextField();
-        EditMemberDialog_leftP.add(birthdayField);
-
-        //성별 라디오 버튼
-        group = new ButtonGroup();
-        EditMemberDialog_leftP.add(new JLabel("성별 "));
-        man = new JRadioButton("남자");
-        woman = new JRadioButton("여자");
-        group.add(man);
-        group.add(woman);
-        EditMemberDialog_leftP.add(man);
-        EditMemberDialog_leftP.add(woman);
-
-        //휴대전화
-        EditMemberDialog_leftP.add(new JLabel("휴대전화 "));
-        phoneField = new JTextField();
-        EditMemberDialog_leftP.add(phoneField);
-
-        //주소
-        EditMemberDialog_leftP.add(new JLabel("주소 "));
-        addressField = new JTextField();
-        EditMemberDialog_leftP.add(addressField);
-
-        //오른쪽 패널
-        EditMemberDialog_rightP = new JPanel(new GridLayout());
-
-        //Jsplit으로 왼쪽 오른쪽을 분할
-        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, EditMemberDialog_leftP,EditMemberDialog_rightP);
-        splitPane.setDividerLocation(640); //분할 위치 설정
-        EditMemberDialog.add(splitPane);
+            EditMemberDialog = new JDialog(new Frame(), "회원 수정", true);
+            EditMemberDialog.setSize(1280, 720); //사이즈 설정
+            EditMemberDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
 
-        EditMemberDialog.setLocationRelativeTo(null); // 화면의 중앙에 배치
-        EditMemberDialog.setVisible(true); //다이얼로그 표시
+            EditMemberPanel = new JPanel(new BorderLayout());
+            EditMember_leftPanel = new JPanel(new GridBagLayout());
+            EditMember_rightPanel = new JPanel(new GridLayout(5, 1));
+
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(5, 5, 5, 5);
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+
+            EditMember_leftPanel.setBorder(BorderFactory.createTitledBorder("회원 정보"));
+
+            // 아이디 필드
+            gbc.gridx = 0; gbc.gridy = 0;
+            EditMember_leftPanel.add(new JLabel("아이디"), gbc);
+            gbc.gridx = 1; gbc.gridy = 0;
+            idField = new JTextField(member.getMember_id());
+            idField.setEditable(false); //수정불가능
+            EditMember_leftPanel.add(idField, gbc);
+
+            // 비밀번호 필드
+            gbc.gridx = 0; gbc.gridy = 1;
+            EditMember_leftPanel.add(new JLabel("비밀번호"), gbc);
+            gbc.gridx = 1; gbc.gridy = 1;
+            pwdField = new JTextField(member.getMember_pwd());
+            EditMember_leftPanel.add(pwdField, gbc);
+            gbc.gridx = 2; gbc.gridy = 1;
+            resetpwdBtn = new JButton("초기화");
+            EditMember_leftPanel.add(resetpwdBtn, gbc);
+
+
+            // 이름 필드
+            gbc.gridx = 0; gbc.gridy = 2;
+            EditMember_leftPanel.add(new JLabel("이름"), gbc);
+            gbc.gridx = 1; gbc.gridy = 2;
+            nameField = new JTextField(member.getMember_name());
+            nameField.setEditable(false);
+            EditMember_leftPanel.add(nameField, gbc);
+
+            // 생년월일 필드
+            gbc.gridx = 0; gbc.gridy = 3;
+            EditMember_leftPanel.add(new JLabel("생년월일"), gbc);
+            gbc.gridx = 1; gbc.gridy = 3;
+            birthdayField = new JTextField(String.valueOf(member.getBirthday()));
+            birthdayField.setEditable(false);
+            EditMember_leftPanel.add(birthdayField, gbc);
+
+            // 전화번호 필드
+            gbc.gridx = 0; gbc.gridy = 4;
+            EditMember_leftPanel.add(new JLabel("전화번호"), gbc);
+            gbc.gridx = 1; gbc.gridy = 4;
+            phoneField = new JTextField(member.getPhone());
+            EditMember_leftPanel.add(phoneField, gbc);
+
+            // 주소 필드
+            gbc.gridx = 0; gbc.gridy = 5;
+            EditMember_leftPanel.add(new JLabel("주소"), gbc);
+            gbc.gridx = 1; gbc.gridy = 5;
+            addressField = new JTextField(member.getAddress());
+            EditMember_leftPanel.add(addressField, gbc);
+
+            // 성별 선택
+            gbc.gridx = 0; gbc.gridy = 6;
+            EditMember_leftPanel.add(new JLabel("성별"), gbc);
+            gbc.gridx = 1; gbc.gridy = 6;
+            JPanel genderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            man = new JRadioButton("남성");
+            woman = new JRadioButton("여성");
+            group = new ButtonGroup();
+            group.add(man);
+            group.add(woman);
+            genderPanel.add(man);
+            genderPanel.add(woman);
+
+            if (member.getSex().equals("남자")) //남자인지 여자인지
+                man.setSelected(true);
+            else
+                woman.setSelected(true);
+            EditMember_leftPanel.add(genderPanel, gbc);
+
+            EditMember_rightPanel.setBorder(BorderFactory.createTitledBorder("회원 이용 내역"));
+            EditMember_rightPanel.add(new JLabel("총 사용시간"));
+            totalUsage_time = new JTextField();
+            EditMember_rightPanel.add(new JLabel("총 사용금액"));
+            totalUsage_Money = new JTextField();
+            EditMember_rightPanel.add(new JLabel("가입일"));
+            joinDate = new JTextField(String.valueOf(member.getReg_date()));
+            joinDate.setEditable(false);
+            EditMember_rightPanel.add(joinDate);
+
+
+
+
+
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            saveEditBtn = new JButton("저장");
+            cancelEditBtn = new JButton("취소");
+
+            resetpwdBtn.addActionListener(new ActionListener() { //비밀번호를 초기화하고 재생성
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String newpwd = "a1234567890";
+                    pwdField.setText(newpwd);
+
+                }
+            });
+            cancelEditBtn.addActionListener(new ActionListener() { //취소버튼 클릭시 종료
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    EditMemberDialog.dispose();
+                }
+            });
+            saveEditBtn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                        String newpwd = pwdField.getText();
+                        member.setMember_pwd(newpwd);
+
+                        EditMemberDialog.dispose();
+                }
+            });
+
+            buttonPanel.add(saveEditBtn);
+            buttonPanel.add(cancelEditBtn);
+
+            //패널 추가 및 컴포넌트 추가
+            EditMemberPanel.add(EditMember_leftPanel, BorderLayout.CENTER); //왼쪽 패널
+            EditMemberPanel.add(EditMember_rightPanel, BorderLayout.EAST); //오른쪽 패널
+            EditMemberPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+            EditMemberDialog.add(EditMemberPanel);
+            EditMemberDialog.setLocationRelativeTo(null); // 화면의 중앙에 배치
+            EditMemberDialog.setVisible(true); //다이얼로그 표시
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
