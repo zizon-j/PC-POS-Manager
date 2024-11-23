@@ -50,6 +50,8 @@ public class SeatDAO implements DAO<SeatDTO, String> {
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, seat_no_search);
 
+            rs = pstmt.executeQuery();
+
             if(rs.next()){
                 int seat_no = rs.getInt("seat_no");
                 String seat_state = rs.getString("seat_state");
@@ -61,6 +63,7 @@ public class SeatDAO implements DAO<SeatDTO, String> {
             }
         }catch (SQLException e){
             e.printStackTrace();
+            return null;
         }
         return seat;
     }
