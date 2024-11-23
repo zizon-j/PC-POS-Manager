@@ -102,7 +102,7 @@ class RegisterFrame extends JFrame implements ActionListener {
         topPanel.add(p7);
     }
 
-    public void actionPerformed(ActionEvent ae) {
+    public void actionPerformed(ActionEvent ae) { // member 아니고 employee 에 넣어야함
         String s = ae.getActionCommand();
 
         if (s.equals("취소")) {
