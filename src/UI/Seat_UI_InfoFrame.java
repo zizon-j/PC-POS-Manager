@@ -57,6 +57,10 @@ public class Seat_UI_InfoFrame extends JFrame {
 //            member_info = memberDAO.findById(member_info.getMember_no());
 //        }
 
+        //TODO
+        //좌석번호 seat, 이름 member, 닉네임 member, 사용시간,남은시간 usage_history, 좌석상태 seat
+        // 3개 테이블 불러와야함
+
         setLayout(new GridLayout(6,1,0,10));
         add(seat_Info);
         add(name_Info);
