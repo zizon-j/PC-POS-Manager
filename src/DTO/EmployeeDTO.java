@@ -1,10 +1,28 @@
 package DTO;
 
+import java.sql.Date;
+
 public class EmployeeDTO {
+    // 필드 선언
+    private int emp_no;
+    private String emp_name, emp_id, emp_pwd, emp_phone, priority;
 
-    int emp_no;
-    String emp_name, emp_id, emp_pwd, priority;
+    // 기본 생성자
+    public EmployeeDTO() {
+    }
 
+    // 모든 필드를 초기화하는 생성자
+    public EmployeeDTO(int emp_no, String emp_name, String emp_id, String emp_pwd, String emp_phone, String priority) {
+        this.emp_no = emp_no;
+        this.emp_name = emp_name;
+        this.emp_id = emp_id;
+        this.emp_pwd = emp_pwd;
+        this.emp_phone = emp_phone;
+        this.priority = priority;
+
+    }
+
+    // Getter와 Setter 메서드들
     public int getEmp_no() {
         return emp_no;
     }
@@ -35,6 +53,14 @@ public class EmployeeDTO {
 
     public void setEmp_pwd(String emp_pwd) {
         this.emp_pwd = emp_pwd;
+    }
+
+    public String getEmp_phone() {
+        return emp_phone;
+    }
+
+    public void setEmp_phone(String emp_phone) {
+        this.emp_phone = emp_phone;
     }
 
     public String getPriority() {

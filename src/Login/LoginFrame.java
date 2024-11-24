@@ -1,8 +1,8 @@
 package Login;
 
 import main.Main;
-import DAO.MemberDAO;
-import DTO.MemberDTO;
+import DAO.EmployeeDAO;
+import DTO.EmployeeDTO;
 import Jdbc.PCPosDBConnection;
 
 import java.awt.*;
@@ -11,20 +11,21 @@ import java.awt.event.*;
 import java.sql.Connection;
 
 public class LoginFrame extends JFrame implements ActionListener {
-    // 로그인 화면에 필요한 UI 요소들 선언
-    JTextField loginId; // 사용자 아이디 입력 필드
-    JPasswordField loginPw; // 비밀번호 입력 필드
-    JButton btnLogin, btnClear, btnJoin, btnFindPw; // 버튼들
+
+    JTextField loginId;
+    JPasswordField loginPw;
+    JButton btnLogin, btnClear, btnJoin, btnFindPw;
+    JRadioButton adminRadio, employeeRadio;
+    ButtonGroup roleGroup;
 
     public LoginFrame(String title) {
-        setTitle(title); // 프레임 제목 설정
-        setResizable(false); // 프레임 크기 조절 불가
-        setBounds(100, 100, 600, 400); // 프레임 위치와 크기 설정
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // 종료 시 프로그램 종료
+        setTitle(title);
+        setResizable(false);
+        setBounds(100, 100, 600, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
 
-        setLocationRelativeTo(null); // 화면 중앙에 위치
-
-        makeScreen(); // UI 구성 메서드 호출
+        makeScreen();
     }
 
     // UI 구성 메서드
@@ -37,6 +38,21 @@ public class LoginFrame extends JFrame implements ActionListener {
         lblTitle.setFont(new Font("나눔고딕", Font.BOLD, 30));
         lblTitle.setBounds(185, 28, 310, 79);
         container.add(lblTitle);
+
+        // 역할 선택 라디오 버튼
+        roleGroup = new ButtonGroup();
+        adminRadio = new JRadioButton("관리자");
+        employeeRadio = new JRadioButton("직원");
+        employeeRadio.setSelected(true); // 기본값으로 직원 선택
+
+        adminRadio.setBounds(138, 100, 80, 20);
+        employeeRadio.setBounds(238, 100, 80, 20);
+
+        roleGroup.add(adminRadio);
+        roleGroup.add(employeeRadio);
+
+        container.add(adminRadio);
+        container.add(employeeRadio);
 
         // 아이디 레이블 및 입력 필드 생성
         JLabel lblId = new JLabel("아이디    : ");
@@ -119,8 +135,8 @@ public class LoginFrame extends JFrame implements ActionListener {
     private void tryLogin() {
         String id = loginId.getText().trim();
         String pw = new String(loginPw.getPassword()).trim();
+        boolean isAdmin = adminRadio.isSelected();
 
-        // 입력값이 비어있는지 확인
         if (id.isEmpty() || pw.isEmpty()) {
             showMessage("로그인 오류", "아이디와 비밀번호를 입력해주세요.");
             return;
@@ -134,13 +150,29 @@ public class LoginFrame extends JFrame implements ActionListener {
         }
 
         try {
-            MemberDAO dao = new MemberDAO(conn);
-            MemberDTO user = dao.findById(id);
+            EmployeeDAO dao = new EmployeeDAO(conn);
+            EmployeeDTO user = dao.findById(id);
 
-            if (user != null && user.getMember_pwd().equals(pw)) {
-                showMessage("로그인 성공", "환영합니다!");
-                new Main();
-                dispose();
+            if (user != null && user.getEmp_pwd().equals(pw)) {
+                // 관리자 권한 체크 수정
+                if (isAdmin) {
+                    if ("관리자".equals(user.getPriority())) {
+                        showMessage("로그인 성공", "관리자님 환영합니다!");
+                        new Main();
+                        dispose();
+                    } else {
+                        showMessage("로그인 실패", "관리자 권한이 없습니다.");
+                    }
+                } else {
+                    // 직원 로그인
+                    if ("직원".equals(user.getPriority())) {
+                        showMessage("로그인 성공", "직원님 환영합니다!");
+                        new Main();
+                        dispose();
+                    } else {
+                        showMessage("로그인 실패", "직원 계정이 아닙니다.");
+                    }
+                }
             } else {
                 showMessage("로그인 실패", "아이디 또는 비밀번호가 일치하지 않습니다.");
             }
