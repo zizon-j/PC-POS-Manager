@@ -41,5 +41,4 @@ public class UsageHistoryDTO {
     public void setUsage_date(java.sql.Date usage_date) {
         this.usage_date = usage_date;
     }
-
 }
