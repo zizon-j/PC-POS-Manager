@@ -3,180 +3,248 @@ package Login;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
-import DAO.MemberDAO;
-import DTO.MemberDTO;
+
+import DAO.EmployeeDAO;
+import DTO.EmployeeDTO;
 import Jdbc.PCPosDBConnection;
 import java.sql.Connection;
 
 class RegisterFrame extends JFrame implements ActionListener {
-    JTextField idField, nameField, phoneField, addressField, birthdayField;
-    JPasswordField passwordField;
-    JComboBox<String> phoneComboBox, sexComboBox;
-    JButton idCheckButton, confirmButton, cancelButton;
-    String[] phoneCodes = { "010", "070", "02", "031", "032" };
-    String[] sexCodes = { "남자", "여자" };
+    // 입력창들
+    JTextField posIdInput, idInput, nameInput, phoneInput;
+    JPasswordField pwInput;
+
+    // 버튼들
+    JButton checkPosBtn, checkIdBtn, okBtn, cancelBtn;
+
+    // 전화번호 앞자리
+    String[] phoneStart = { "010", "070", "02", "031", "032" };
+
+    // 체크 여부
+    boolean isPosIdOk = false;
+    boolean isIdOk = false;
+
+    // 라디오 버튼
+    JRadioButton adminBtn, staffBtn;
+
+    // POS ID 입력 패널
+    JPanel posIdPanel;
+
+    // 전화번호 선택
+    JComboBox<String> phoneSelect;
 
     public RegisterFrame(String title) {
+        // 기본 창 설정
         setTitle(title);
         setBounds(100, 100, 350, 300);
-        // 창 누르면 회원가입 창만 꺼지게 수정
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
         setLocationRelativeTo(null);
 
-        Container ct = getContentPane();
-        ct.setLayout(new BorderLayout(0, 0));
+        // 메인 화면
+        Container mainScreen = getContentPane();
+        mainScreen.setLayout(new BorderLayout(0, 0));
 
+        // 하단 버튼 패널
         JPanel bottomPanel = new JPanel();
-        ct.add(bottomPanel, BorderLayout.SOUTH);
+        mainScreen.add(bottomPanel, BorderLayout.SOUTH);
 
-        cancelButton = new JButton("취소");
-        cancelButton.addActionListener(this);
-        bottomPanel.add(cancelButton);
+        // 취소, 확인 버튼
+        cancelBtn = new JButton("취소");
+        cancelBtn.addActionListener(this);
+        bottomPanel.add(cancelBtn);
 
-        confirmButton = new JButton("확인");
-        confirmButton.addActionListener(this);
-        bottomPanel.add(confirmButton);
+        okBtn = new JButton("확인");
+        okBtn.addActionListener(this);
+        bottomPanel.add(okBtn);
 
-        JPanel topPanel = new JPanel();
-        ct.add(topPanel, BorderLayout.CENTER);
-        topPanel.setLayout(new GridLayout(7, 1));
+        // 입력 필드들 패널
+        JPanel inputPanel = new JPanel();
+        mainScreen.add(inputPanel, BorderLayout.CENTER);
+        inputPanel.setLayout(new GridLayout(6, 1));
 
-        JPanel p1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel idLabel = new JLabel("POS 기기 ID  :  ");
-        // id
-        idField = new JTextField(8);
-        idCheckButton = new JButton("ID 확인");
-        idCheckButton.addActionListener(this);
-        p1.add(idLabel);
-        p1.add(idField);
-        p1.add(idCheckButton);
-        topPanel.add(p1);
+        // 관리자/직원 선택
+        JPanel userType = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        adminBtn = new JRadioButton("관리자");
+        staffBtn = new JRadioButton("직원", true);
+        ButtonGroup group = new ButtonGroup();
+        group.add(adminBtn);
+        group.add(staffBtn);
+        userType.add(adminBtn);
+        userType.add(staffBtn);
+        inputPanel.add(userType);
 
-        JPanel p2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel pwdLabel = new JLabel("PASSWORD :  ");
-        // 비밀번호
-        passwordField = new JPasswordField(8);
-        p2.add(pwdLabel);
-        p2.add(passwordField);
-        topPanel.add(p2);
+        // POS ID 입력창
+        posIdPanel = makeInputPanel("POS 기기 ID  :  ", posIdInput = new JTextField(8));
+        checkPosBtn = new JButton("ID 확인");
+        checkPosBtn.addActionListener(this);
+        posIdPanel.add(checkPosBtn);
+        inputPanel.add(posIdPanel);
 
-        JPanel p3 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel nameLabel = new JLabel("이름                :  ");
-        // 이름
-        nameField = new JTextField(8);
-        p3.add(nameLabel);
-        p3.add(nameField);
-        topPanel.add(p3);
+        // 아이디 입력창
+        JPanel idPanel = makeInputPanel("아이디            :  ", idInput = new JTextField(8));
+        checkIdBtn = new JButton("중복 확인");
+        checkIdBtn.addActionListener(this);
+        idPanel.add(checkIdBtn);
+        inputPanel.add(idPanel);
 
-        JPanel p4 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel phoneLabel = new JLabel("연락처            :  ");
-        // 전화번호
-        phoneComboBox = new JComboBox<>(phoneCodes);
-        phoneField = new JTextField(10);
-        p4.add(phoneLabel);
-        p4.add(phoneComboBox);
-        p4.add(phoneField);
-        topPanel.add(p4);
+        // 비밀번호 입력창
+        inputPanel.add(makeInputPanel("비밀번호        :  ", pwInput = new JPasswordField(8)));
 
-        JPanel p5 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel addressLabel = new JLabel("주소                :  ");
-        // 주소
-        addressField = new JTextField(20);
-        p5.add(addressLabel);
-        p5.add(addressField);
-        topPanel.add(p5);
+        // 이름 입력창
+        inputPanel.add(makeInputPanel("이름                :  ", nameInput = new JTextField(8)));
 
-        JPanel p6 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel birthdayLabel = new JLabel("생년월일        :  ");
-        birthdayField = new JTextField(10);
-        p6.add(birthdayLabel);
-        p6.add(birthdayField);
-        topPanel.add(p6);
+        // 전화번호 입력창
+        JPanel phonePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        phonePanel.add(new JLabel("연락처            :  "));
+        phoneSelect = new JComboBox<>(phoneStart);
+        phoneInput = new JTextField(10);
+        phonePanel.add(phoneSelect);
+        phonePanel.add(phoneInput);
+        inputPanel.add(phonePanel);
 
-        JPanel p7 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel sexLabel = new JLabel("성별                :  ");
-        sexComboBox = new JComboBox<>(sexCodes);
-        p7.add(sexLabel);
-        p7.add(sexComboBox);
-        topPanel.add(p7);
+        // 라디오 버튼 동작
+        adminBtn.addActionListener(e -> showHidePosId());
+        staffBtn.addActionListener(e -> showHidePosId());
+        showHidePosId();
     }
 
-    public void actionPerformed(ActionEvent ae) { // member 아니고 employee 에 넣어야함
-        String s = ae.getActionCommand();
+    // 입력창 만들기
+    private JPanel makeInputPanel(String text, JTextField input) {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panel.add(new JLabel(text));
+        panel.add(input);
+        return panel;
+    }
 
-        if (s.equals("취소")) {
+    // POS ID창 보이기/숨기기
+    private void showHidePosId() {
+        posIdPanel.setVisible(adminBtn.isSelected());
+        revalidate();
+        repaint();
+    }
+
+    // 버튼 클릭시 동작
+    public void actionPerformed(ActionEvent e) {
+        String cmd = e.getActionCommand();
+
+        if (cmd.equals("취소")) {
             dispose();
-        } else if (s.equals("확인")) {
-            // 입력값 유효성 검사
-            if (idField.getText().trim().isEmpty() ||
-                    passwordField.getText().trim().isEmpty() ||
-                    nameField.getText().trim().isEmpty() ||
-                    phoneField.getText().trim().isEmpty() ||
-                    addressField.getText().trim().isEmpty() ||
-                    birthdayField.getText().trim().isEmpty()) {
+        } else if (cmd.equals("ID 확인")) {
+            checkPosId();
+        } else if (cmd.equals("중복 확인")) {
+            checkDuplicateId();
+        } else if (cmd.equals("확인")) {
+            saveEmployee();
+        }
+    }
 
-                Login_MessageDialog md = new Login_MessageDialog(this, "오류", true, "모든 항목을 입력해주세요.");
-                md.setLocationRelativeTo(this);
-                md.setVisible(true);
-                return;
-            }
+    // POS ID 확인
+    private void checkPosId() {
+        String posId = posIdInput.getText().trim();
+        if (posId.isEmpty()) {
+            showMsg("ID 확인", "ID를 입력해주세요.");
+        } else if (posId.equals("2020081049")) {
+            isPosIdOk = true;
+            showMsg("ID 확인", "알맞은 ID입니다.");
+        } else {
+            isPosIdOk = false;
+            showMsg("ID 확인", "ID가 맞지 않습니다.");
+        }
+    }
 
-            // MemberDTO 객체 생성 및 데이터 설정
-            MemberDTO member = new MemberDTO();
-            member.setMember_id(idField.getText().trim());
-            member.setMember_pwd(passwordField.getText().trim());
-            member.setMember_name(nameField.getText().trim());
-            member.setPhone(phoneComboBox.getSelectedItem().toString() + phoneField.getText().trim());
-            member.setAddress(addressField.getText().trim());
+    // ID 중복 확인
+    private void checkDuplicateId() {
+        String id = idInput.getText().trim();
+        if (id.isEmpty()) {
+            showMsg("중복 확인", "ID를 입력해주세요.");
+            return;
+        }
 
+        Connection db = PCPosDBConnection.getConnection();
+        if (db != null) {
             try {
-                java.sql.Date birthday = java.sql.Date.valueOf(birthdayField.getText().trim());
-                member.setBirthday(birthday);
-                member.setSex(sexComboBox.getSelectedItem().toString());
-            } catch (IllegalArgumentException e) {
-                Login_MessageDialog md = new Login_MessageDialog(this, "오류", true, "생년월일 형식이 올바르지 않습니다. (YYYY-MM-DD)");
-                md.setLocationRelativeTo(this);
-                md.setVisible(true);
-                return;
-            }
-
-            // DB 연결 및 데이터 저장
-            Connection conn = PCPosDBConnection.getConnection();
-            if (conn != null) {
-                MemberDAO memberDAO = new MemberDAO(conn);
-                boolean success = memberDAO.insert(member);
-                if (success) {
-                    Login_MessageDialog md = new Login_MessageDialog(this, "성공", true, "회원가입이 완료되었습니다.");
-                    md.setLocationRelativeTo(this);
-                    md.setVisible(true);
-                    dispose();
+                EmployeeDAO dao = new EmployeeDAO(db);
+                if (dao.findById(id) == null) {
+                    isIdOk = true;
+                    showMsg("중복 확인", "사용 가능한 ID입니다.");
                 } else {
-                    Login_MessageDialog md = new Login_MessageDialog(this, "오류", true, "회원가입에 실패했습니다.");
-                    md.setLocationRelativeTo(this);
-                    md.setVisible(true);
+                    isIdOk = false;
+                    showMsg("중복 확인", "이미 사용 중인 ID입니다.");
                 }
-            } else {
-                Login_MessageDialog md = new Login_MessageDialog(this, "오류", true, "데이터베이스 연결에 실패했습니다.");
-                md.setLocationRelativeTo(this);
-                md.setVisible(true);
-            }
-        } else if (s.equals("ID 확인")) {
-            String enteredId = idField.getText().trim();
-
-            if (enteredId.isEmpty()) {
-                Login_MessageDialog md = new Login_MessageDialog(this, "ID 확인", true, "ID를 입력해주세요.");
-                md.setLocationRelativeTo(this);
-                md.setVisible(true);
-            } else if (enteredId.equals("2020081049")) { // Temporary ID for checking
-                Login_MessageDialog md = new Login_MessageDialog(this, "ID 확인", true, "알맞은 ID입니다.");
-                md.setLocationRelativeTo(this);
-                md.setVisible(true);
-            } else {
-                Login_MessageDialog md = new Login_MessageDialog(this, "ID 확인", true, "ID가 맞지 않습니다.");
-                md.setLocationRelativeTo(this);
-                md.setVisible(true);
+            } finally {
+                try {
+                    db.close();
+                } catch (Exception ex) {
+                }
             }
         }
+    }
+
+    // 직원 정보 저장
+    private void saveEmployee() {
+        // 입력 확인
+        if (adminBtn.isSelected() && !isPosIdOk) {
+            showMsg("오류", "POS 기기 ID 확인이 필요합니다.");
+            return;
+        }
+
+        if (!isIdOk) {
+            showMsg("오류", "ID 중복 확인이 필요합니다.");
+            return;
+        }
+
+        // 필수 입력 확인
+        if (idInput.getText().trim().isEmpty() ||
+                pwInput.getText().trim().isEmpty() ||
+                nameInput.getText().trim().isEmpty() ||
+                phoneInput.getText().trim().isEmpty()) {
+            showMsg("오류", "모든 항목을 입력해주세요.");
+            return;
+        }
+
+        // 전화번호 형식 확인
+        String phone = phoneInput.getText().trim().replaceAll("[^0-9]", "");
+        if (phone.length() != 8) {
+            showMsg("오류", "전화번호를 8자리로 입력해주세요.");
+            return;
+        }
+
+        // 직원 정보 생성
+        EmployeeDTO emp = new EmployeeDTO();
+        emp.setEmp_id(idInput.getText().trim());
+        emp.setEmp_pwd(pwInput.getText().trim());
+        emp.setEmp_name(nameInput.getText().trim());
+        emp.setEmp_phone(String.format("%s-%s-%s",
+                phoneSelect.getSelectedItem(),
+                phone.substring(0, 4),
+                phone.substring(4)));
+        emp.setPriority(adminBtn.isSelected() ? "관리자" : "직원");
+
+        // DB에 저장
+        Connection db = PCPosDBConnection.getConnection();
+        if (db != null) {
+            try {
+                if (new EmployeeDAO(db).insert(emp)) {
+                    showMsg("성공", "회원가입이 완료되었습니다.");
+                    dispose();
+                } else {
+                    showMsg("오류", "회원가입에 실패했습니다.");
+                }
+            } finally {
+                try {
+                    db.close();
+                } catch (Exception ex) {
+                }
+            }
+        } else {
+            showMsg("오류", "DB 연결 실패!");
+        }
+    }
+
+    // 메시지 표시
+    private void showMsg(String title, String msg) {
+        Login_MessageDialog dialog = new Login_MessageDialog(this, title, true, msg);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
     }
 }
