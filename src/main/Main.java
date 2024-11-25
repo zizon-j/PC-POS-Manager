@@ -23,9 +23,11 @@ public class Main extends JFrame{
     Product_UI product_ui = new Product_UI();
     OrderList_UI orderList_ui = new OrderList_UI();
     Sales_UI sales_ui = new Sales_UI();
+    public Boolean isAdmin;
 //    Log_UI log_ui = new Log_UI();
-    public Main(){
+    public Main(Boolean isAdmin){
         super("PC방 POS");
+        this.isAdmin = isAdmin;
         // 각 add 뒤에 자신이 만든 페이지 추가 , JPanel을 받아와야됨
         //x,y 값 존재 할때 안할때 관리
 
@@ -44,6 +46,14 @@ public class Main extends JFrame{
         main.add("상품관리",product_ui);
         main.add("주문내역", orderList_ui);
 //        main.add("로그분석", log_ui); 보류
+
+        //직원으로 로그인 시 상품탭의 버튼 비활성화
+        if(!isAdmin){
+            product_ui.amountBtn.setEnabled(false);
+            product_ui.addBtn.setEnabled(false);
+            product_ui.updateBtn.setEnabled(false);
+            product_ui.DelBtn.setEnabled(false);
+        }
 
         add(main);
 
