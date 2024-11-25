@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="dataSourceStorageLocal" created-in="IU-243.21565.193">
+  <component name="dataSourceStorageLocal" created-in="IU-233.13135.103">
     <data-source name="pc_pos_db@223.130.151.16" uuid="67ea5a08-b2cd-492a-a4f3-97e3af11f893">
-      <database-info product="MySQL" version="5.5.5-10.3.39-MariaDB-0ubuntu0.20.04.2" jdbc-version="4.2" driver-name="MySQL Connector/J" driver-version="mysql-connector-j-8.2.0 (Revision: 06a1f724497fd81c6a659131fda822c9e5085b6c)" dbms="MARIADB" exact-version="10.3.39" exact-driver-version="8.2">
+      <database-info product="MariaDB" version="10.3.39-MariaDB-0ubuntu0.20.04.2" jdbc-version="4.2" driver-name="MariaDB Connector/J" driver-version="3.3.3" dbms="MARIADB" exact-version="10.3.39" exact-driver-version="3.3">
         <extra-name-characters>#@</extra-name-characters>
         <identifier-quote-string>`</identifier-quote-string>
-        <jdbc-catalog-is-schema>true</jdbc-catalog-is-schema>
       </database-info>
       <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact" />
       <secret-storage>master_key</secret-storage>

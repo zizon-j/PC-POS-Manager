@@ -12,8 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 
-import static com.sun.deploy.uitoolkit.ToolkitStore.dispose;
-
 public class Seat_UI extends JPanel {
 
     public Seat_UI() {
@@ -105,10 +103,6 @@ public class Seat_UI extends JPanel {
                     btnActivates[i].setEnabled(false);
 
 
-
-
-
-
                     //정보보기 버튼 클릭시 정보창 팝업
                     int index = i;
                     btnInfos[index].addActionListener(new ActionListener() {
@@ -127,6 +121,8 @@ public class Seat_UI extends JPanel {
 
                 for (int i = 0; i < btnPanels.length; i++) {
                     SeatDAO seatDAO = new SeatDAO(conn);
+                    seat.setX(inputx);
+                    seat.setY(inputy);
                     boolean insertSuccess = seatDAO.insert(seat);
                     if (!insertSuccess) {
                         success = false; // 실패가 발생하면 success를 false로 변경
@@ -137,7 +133,7 @@ public class Seat_UI extends JPanel {
                 if (success) {
                     JOptionPane.showMessageDialog(null, "생성되었습니다."); // 올바른 사용법
                     try {
-                        dispose(); // 현재 창 닫기
+                         // 현재 창 닫기
                     } catch (Exception ex) {
                         throw new RuntimeException(ex);
                     }
@@ -151,6 +147,8 @@ public class Seat_UI extends JPanel {
 
 
                 //자리 수정, 자리 활성화 | 비활성화 메소드
+                //자리 선점중인지 확인하고 활성화 비활성화 체크
+                //Todo. 자리 선점
                 // 편집 완료 버튼 추가
                 btnEdit.addActionListener(new ActionListener() {
                     @Override
@@ -222,7 +220,7 @@ public class Seat_UI extends JPanel {
                     if(success){
                         JOptionPane.showMessageDialog(null, "초기화 완료");
                         try {
-                            dispose();
+
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -235,6 +233,9 @@ public class Seat_UI extends JPanel {
 
             }
         });
+
+
+
 
 
         setVisible(true);

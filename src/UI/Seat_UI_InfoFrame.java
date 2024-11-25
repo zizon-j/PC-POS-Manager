@@ -1,7 +1,12 @@
 package UI;
 
+import DAO.MemberDAO;
+import DTO.MemberDTO;
+import Jdbc.PCPosDBConnection;
+
 import javax.swing.*;
 import java.awt.*;
+import java.sql.Connection;
 
 public class Seat_UI_InfoFrame extends JFrame {
 
@@ -40,11 +45,21 @@ public class Seat_UI_InfoFrame extends JFrame {
 
         JPanel seat_State_Info = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel seat_State_Label = new JLabel("좌석 상태: ");
-        JLabel seat_State = new JLabel("사용 중");
+        JLabel seat_State = new JLabel();
         seat_State_Info.add(seat_State_Label);
         seat_State_Info.add(seat_State);
 
 
+//        Connection conn = PCPosDBConnection.getConnection();
+//        MemberDTO member_info = new MemberDTO();
+//        try{
+//            MemberDAO memberDAO = new MemberDAO(conn);
+//            member_info = memberDAO.findById(member_info.getMember_no());
+//        }
+
+        //TODO
+        //좌석번호 seat, 이름 member, 닉네임 member, 사용시간,남은시간 usage_history, 좌석상태 seat
+        // 3개 테이블 불러와야함
 
         setLayout(new GridLayout(6,1,0,10));
         add(seat_Info);
