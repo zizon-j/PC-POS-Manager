@@ -4,6 +4,16 @@ public class ProductDTO {
     int product_no, price, stock, category_no;
     String product_name;
 
+    public ProductDTO(){}
+
+    public ProductDTO(int product_no, String product_name, int price, int stock, int category_no){
+        this.product_no = product_no;
+        this.product_name = product_name;
+        this.price = price;
+        this.stock = stock;
+        this.category_no = category_no;
+    }
+
 
     public int getProduct_no() {
         return product_no;

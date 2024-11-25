@@ -1,93 +1,177 @@
 package Login;
 
-import UI.Login_MessageDialog;
+import DAO.EmployeeDAO;
+import DTO.EmployeeDTO;
+import Jdbc.PCPosDBConnection;
 
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
+import java.sql.Connection;
 
 class FindFrame extends JFrame implements ActionListener {
-    JTextField posIdField, nameField, phoneField;
-    JComboBox<String> phoneComboBox;
-    JButton confirmButton, cancelButton;
-    String[] phoneCodes = { "010", "070", "02", "031", "032" };
+    private JTextField posIdBox;
+    private JTextField idBox;
+    private JTextField nameBox;
+    private JTextField phoneBox;
+    private JComboBox<String> phoneFirst;
+    private JButton okBtn, cancelBtn;
+    private String[] phoneNumbers = { "010", "070", "02", "031", "032" };
+    private JRadioButton adminBtn, empBtn;
+    private JPanel posPanel;
 
     public FindFrame(String title) {
         setTitle(title);
-        setResizable(false);
-        setBounds(100, 100, 350, 300);
-        //창 종료시 찾기 창만 꺼지게 수정
+        setSize(350, 300);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
         setLocationRelativeTo(null);
 
-        Container ct = getContentPane();
-        ct.setLayout(new BorderLayout());
+        Container main = getContentPane();
+        main.setLayout(new BorderLayout());
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(null);
-        ct.add(mainPanel, BorderLayout.CENTER);
+        JPanel bottom = new JPanel();
+        main.add(bottom, BorderLayout.SOUTH);
 
-        JLabel idLabel = new JLabel("POS ID    :");
-        idLabel.setBounds(31, 34, 70, 15);
-        mainPanel.add(idLabel);
+        cancelBtn = new JButton("취소");
+        cancelBtn.addActionListener(this);
+        bottom.add(cancelBtn);
 
-        posIdField = new JTextField();
-        posIdField.setBounds(113, 31, 116, 21);
-        mainPanel.add(posIdField);
+        okBtn = new JButton("확인");
+        okBtn.addActionListener(this);
+        bottom.add(okBtn);
 
-        JLabel nameLabel = new JLabel("이름         : ");
-        nameLabel.setBounds(31, 85, 70, 15);
-        mainPanel.add(nameLabel);
+        JPanel inputPanel = new JPanel();
+        main.add(inputPanel, BorderLayout.CENTER);
+        inputPanel.setLayout(new GridLayout(5, 1));
 
-        nameField = new JTextField();
-        nameField.setBounds(113, 82, 116, 21);
-        mainPanel.add(nameField);
+        JPanel userType = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        adminBtn = new JRadioButton("관리자");
+        empBtn = new JRadioButton("직원", true);
+        ButtonGroup group = new ButtonGroup();
+        group.add(adminBtn);
+        group.add(empBtn);
+        userType.add(adminBtn);
+        userType.add(empBtn);
+        inputPanel.add(userType);
 
-        JLabel phoneLabel = new JLabel("전화번호 : ");
-        phoneLabel.setBounds(31, 136, 70, 15);
-        mainPanel.add(phoneLabel);
+        posPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        posPanel.add(new JLabel("POS ID     :  "));
+        posIdBox = new JTextField(8);
+        posPanel.add(posIdBox);
+        inputPanel.add(posPanel);
 
-        phoneComboBox = new JComboBox<>(phoneCodes);
-        phoneComboBox.setBounds(113, 130, 50, 21);
-        mainPanel.add(phoneComboBox);
+        makeInputRow(inputPanel, "아이디        :  ", idBox = new JTextField(8));
+        makeInputRow(inputPanel, "이름           :  ", nameBox = new JTextField(8));
 
-        phoneField = new JTextField();
-        phoneField.setBounds(170, 130, 116, 21);
-        mainPanel.add(phoneField);
+        JPanel phonePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        phonePanel.add(new JLabel("전화번호    :  "));
+        phoneFirst = new JComboBox<>(phoneNumbers);
+        phoneBox = new JTextField(10);
+        phonePanel.add(phoneFirst);
+        phonePanel.add(phoneBox);
+        inputPanel.add(phonePanel);
 
-        JPanel bottomPanel = new JPanel();
-        ct.add(bottomPanel, BorderLayout.SOUTH);
-
-        cancelButton = new JButton("취소");
-        cancelButton.addActionListener(this);
-        bottomPanel.add(cancelButton);
-
-        confirmButton = new JButton("확인");
-        confirmButton.addActionListener(this);
-        bottomPanel.add(confirmButton);
+        adminBtn.addActionListener(e -> showHidePosId());
+        empBtn.addActionListener(e -> showHidePosId());
+        showHidePosId();
     }
 
-    public void actionPerformed(ActionEvent ae) {
-        String s = ae.getActionCommand();
+    private void makeInputRow(JPanel parent, String label, JTextField field) {
+        JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        row.add(new JLabel(label));
+        row.add(field);
+        parent.add(row);
+    }
 
-        if (s.equals("취소")) {
+    private void showHidePosId() {
+        posPanel.setVisible(adminBtn.isSelected());
+        revalidate();
+        repaint();
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        String cmd = e.getActionCommand();
+
+        if (cmd.equals("취소")) {
             dispose();
-        } else if (s.equals("확인")) {
-            String id = posIdField.getText();
-            String name = nameField.getText();
-            String phone = phoneField.getText();
+        } else if (cmd.equals("확인")) {
+            checkAndFind();
+        }
+    }
 
-            if (id.isEmpty() || name.isEmpty() || phone.isEmpty()) {
-                Login_MessageDialog md = new Login_MessageDialog(this, "오류", true, "모든 항목들을 입력해주세요.");
-                md.setLocationRelativeTo(this);
-                md.setVisible(true);
-            } else {
-                // Implement password retrieval logic
-                Login_MessageDialog md = new Login_MessageDialog(this, "비밀번호 찾기", true, "---님의 비밀번호는 --- 입니다. (추후 연동 후 구현)");
-                md.setLocationRelativeTo(this);
-                md.setVisible(true);
+    private void checkAndFind() {
+        String id = idBox.getText().trim();
+        String name = nameBox.getText().trim();
+        String phone = phoneBox.getText().trim();
+
+        if (adminBtn.isSelected()) {
+            String posId = posIdBox.getText().trim();
+            if (!posId.equals("2020081049")) {
+                showError("포스기 ID가 맞지 않습니다.");
+                return;
             }
         }
+
+        if (id.isEmpty() || name.isEmpty() || phone.isEmpty()) {
+            showError("모든 항목을 입력해주세요.");
+            return;
+        }
+
+        if (phone.length() != 8) {
+            showError("전화번호를 8자리로 입력해주세요.\n예: 12345678");
+            return;
+        }
+
+        String fullPhone = phoneFirst.getSelectedItem() + "-" +
+                phone.substring(0, 4) + "-" +
+                phone.substring(4);
+
+        findPassword(id, name, fullPhone);
+    }
+
+    private void findPassword(String id, String name, String phone) {
+        Connection db = PCPosDBConnection.getConnection();
+        if (db == null) {
+            showError("DB 연결 실패!");
+            return;
+        }
+
+        try {
+            EmployeeDAO dao = new EmployeeDAO(db);
+            EmployeeDTO user = dao.findById(id);
+
+            if (user == null) {
+                showError("일치하는 회원이 없습니다.");
+                return;
+            }
+
+            if (empBtn.isSelected() && user.getPriority().equals("관리자")) {
+                showError("관리자 정보를 볼 수 없습니다!");
+                return;
+            }
+
+            if (user.getEmp_name().equals(name) && user.getEmp_phone().equals(phone)) {
+                showMessage("비밀번호 찾기 성공",
+                        user.getEmp_name() + "님의 비밀번호는 " + user.getEmp_pwd() + " 입니다.");
+                dispose();
+            } else {
+                showError("입력한 정보가 일치하지 않습니다.");
+            }
+        } finally {
+            try {
+                db.close();
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    private void showError(String msg) {
+        showMessage("오류", msg);
+    }
+
+    private void showMessage(String title, String msg) {
+        Login_MessageDialog dialog = new Login_MessageDialog(this, title, true, msg);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
     }
 }

@@ -60,15 +60,15 @@ public class MemberDAO implements DAO<MemberDTO, String>{
     //executeUpdate(): insert, update, delete와 같은 dml에서 실행 결과로 영향을받은 레코드 수를변환
     //행의 개수를 반환하기 때문에 rs를 사용할 필요가 없다.
     @Override
-    public MemberDTO findById(String member_id_search) {
+    public MemberDTO findById(String member_no_search) {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         MemberDTO member = null;
 
         try{
-            String sql = "SELECT * FROM member WHERE member_id = ?";
+            String sql = "SELECT * FROM member WHERE member_no = ?";
             pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, member_id_search);
+            pstmt.setString(1, member_no_search);
             rs = pstmt.executeQuery();
 
             if(rs.next()){
@@ -102,12 +102,33 @@ public class MemberDAO implements DAO<MemberDTO, String>{
 
 
     @Override
-    public boolean delete(String s) {
+    public boolean delete(String s) { //회원 삭제
+        PreparedStatement pstmt = null; //SQL문 바구니
+        try {
+            String sql = "DELETE FROM member WHERE member_no = ?"; //쿼리문
+            pstmt = conn.prepareStatement(sql); //바구니에 담아서
+            pstmt.setString(1, s);
+            pstmt.executeUpdate(); //실행
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (pstmt != null) //정상작동 했다면
+                    pstmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
         return false;
     }
 
     @Override
-    public boolean update(MemberDTO memberDTO) {
+    public boolean update(MemberDTO memberDTO) { //회원 수정
+
+
         return false;
     }
 

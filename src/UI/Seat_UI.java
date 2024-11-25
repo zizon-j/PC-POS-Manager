@@ -12,8 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 
-import static com.sun.deploy.uitoolkit.ToolkitStore.dispose;
-
 public class Seat_UI extends JPanel {
 
     public Seat_UI() {
@@ -135,7 +133,7 @@ public class Seat_UI extends JPanel {
                 if (success) {
                     JOptionPane.showMessageDialog(null, "생성되었습니다."); // 올바른 사용법
                     try {
-                        dispose(); // 현재 창 닫기
+                         // 현재 창 닫기
                     } catch (Exception ex) {
                         throw new RuntimeException(ex);
                     }
@@ -222,7 +220,7 @@ public class Seat_UI extends JPanel {
                     if(success){
                         JOptionPane.showMessageDialog(null, "초기화 완료");
                         try {
-                            dispose();
+
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
