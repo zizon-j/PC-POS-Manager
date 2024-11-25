@@ -2,8 +2,10 @@ package Common_Panel;
 
 import DAO.MemberDAO;
 import DAO.TimeDAO;
+import DAO.Time_Plus_LogDAO;
 import DTO.MemberDTO;
 import DTO.TimeDTO;
+import DTO.Time_Plus_LogDTO;
 import Jdbc.PCPosDBConnection;
 
 import javax.swing.*;
@@ -48,14 +50,26 @@ public class Time_Plus_Jpanel extends JPanel {
         money_plus_btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String selected_money = null;
+                selected_money = money_select.getSelectedItem().toString();
+
                 TimeDAO timeDAO = new TimeDAO(conn);
                 MemberDAO memberDAO = new MemberDAO(conn);
+                Time_Plus_LogDAO Time_Plus_LogDAO = new Time_Plus_LogDAO(conn);
 
                 MemberDTO member = memberDAO.findById(id_search_field.getText());
-                TimeDTO time = timeDAO.findById((String) money_select.getSelectedItem());
+                TimeDTO time = timeDAO.findById(selected_money);
+
 
                 if(member != null){
                     memberDAO.update_left_time(member, time);
+
+                    Time_Plus_LogDTO time_plus = new Time_Plus_LogDTO();
+                    time_plus.setMember_id(member.getMember_id());
+                    time_plus.setMoney(time.getMoney());
+
+                    Time_Plus_LogDAO.insert(time_plus);
+
                     JOptionPane.showMessageDialog(null, time.getPlus_time()+"분 추가 되었습니다.");
 
 
