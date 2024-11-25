@@ -173,5 +173,45 @@ public class MemberDAO implements DAO<MemberDTO, String>{
         }
         return members;
     }
+
+    public MemberDTO findByNo(String member_no_search) {
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        MemberDTO member = null;
+
+        try{
+            String sql = "SELECT * FROM member WHERE member_no = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, member_no_search);
+            rs = pstmt.executeQuery();
+
+            if(rs.next()){
+                int member_no = rs.getInt("member_no");
+                String member_name = rs.getString("member_name");
+                String member_id = rs.getString("member_id");
+                String member_pwd = rs.getString("member_pwd");
+                Date birthday = rs.getDate("birthday");
+                String sex = rs.getString("sex");
+                Date reg_date = rs.getDate("reg_date");
+                String phone = rs.getString("phone");
+                String address = rs.getString("address");
+                int left_time = rs.getInt("left_time");
+
+                member = new MemberDTO(member_no, member_name, member_id, member_pwd, birthday, sex, reg_date, phone, address, left_time);
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }finally {
+            try {
+                if (rs != null)
+                    rs.close();
+                if (pstmt != null)
+                    pstmt.close();
+            }catch (SQLException e){
+                e.printStackTrace();
+            }
+        }
+        return member;
+    }
     
 }
