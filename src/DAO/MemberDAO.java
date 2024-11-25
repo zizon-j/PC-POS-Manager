@@ -66,7 +66,7 @@ public class MemberDAO implements DAO<MemberDTO, String>{
         MemberDTO member = null;
 
         try{
-            String sql = "SELECT * FROM member WHERE member_no = ?";
+            String sql = "SELECT * FROM member WHERE member_id = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, member_no_search);
             rs = pstmt.executeQuery();
