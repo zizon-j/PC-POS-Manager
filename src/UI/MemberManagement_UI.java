@@ -2,6 +2,7 @@ package UI;
 
 import DAO.MemberDAO;
 import DAO.PaymentDAO;
+import DAO.Time_Plus_LogDAO;
 import DAO.UsageHistoryDAO;
 import DTO.MemberDTO;
 import Jdbc.PCPosDBConnection;
@@ -29,7 +30,7 @@ public class MemberManagement_UI extends JPanel {
 
     private MemberDAO memberDAO; //회원DAO 객체
     private UsageHistoryDAO usageHistoryDAO; // 사용기록DAO 객체
-    private PaymentDAO paymentDAO;
+    private Time_Plus_LogDAO time_Plus_LogDAO;
 
     public MemberManagement_UI() {
         try {
@@ -37,6 +38,7 @@ public class MemberManagement_UI extends JPanel {
             Connection conn = new PCPosDBConnection().getConnection();
             memberDAO = new MemberDAO(conn);
             usageHistoryDAO = new UsageHistoryDAO(conn);
+            time_Plus_LogDAO = new Time_Plus_LogDAO(conn);
 
             //UI 구성요소
             create_search();
@@ -57,7 +59,7 @@ public class MemberManagement_UI extends JPanel {
             model.setRowCount(0); // 기존 데이터 초기화
             for (MemberDTO m : members) { //연령, 사용시간, 총 사용금액(아직 못함)
                 int totalUsageTime = usageHistoryDAO.calTotalPaymentAmount(m.getMember_no());
-                double totalPaymentAmount = paymentDAO.calTotalUsageMoney(m.getMember_no());
+                double totalPaymentAmount = time_Plus_LogDAO.calTotalUsageMoney(m.getMember_id());
 
                 Object[] row = {
                         m.getMember_no(), //번호
@@ -65,7 +67,7 @@ public class MemberManagement_UI extends JPanel {
                         m.getSex(), //성별
                         m.getPhone(),
                         m.getLeft_time(),
-                        totalUsageTime,
+                        totalUsageTime + "분",
                         totalPaymentAmount,
                         m.getBirthday(),
                         m.getReg_date()
@@ -75,34 +77,6 @@ public class MemberManagement_UI extends JPanel {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-    private void searchMember(String keyword) { //회원 검색
-        try {
-            List<MemberDTO> member = memberDAO.findAll();
-            for (MemberDTO m : member) {
-                if (keyword.equals(m.getMember_name())) { //검색 내용과 같다면
-                    int totalUsageTime = usageHistoryDAO.calTotalPaymentAmount(m.getMember_no());
-                    double totalPaymentAmount = paymentDAO.calTotalUsageMoney(m.getMember_no());
-
-                    model.setRowCount(0); // 기존 데이터 초기화
-                    Object[] row = {
-                            m.getMember_no(), //번호
-                            m.getMember_name(), //이름
-                            m.getSex(), //성별
-                            m.getPhone(),
-                            m.getLeft_time(),
-                            totalUsageTime,
-                            totalPaymentAmount,
-                            m.getBirthday(),
-                            m.getReg_date()
-                    };
-                    model.addRow(row);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
     private void create_BtnPanel() { //수정, 추가, 삭제 버튼
@@ -163,8 +137,35 @@ public class MemberManagement_UI extends JPanel {
         searchBtn.addActionListener(new ActionListener() {// 회원 검색
             @Override
             public void actionPerformed(ActionEvent e) {
-                String keyword = searchField.getText();
-                searchMember(keyword);
+                String keyword = searchField.getText(); // 검색어 입력
+
+                try {
+                    List<MemberDTO> member = memberDAO.findAll();
+
+                    for (MemberDTO m : member) {
+                        if (keyword.equals(m.getMember_name())) { //검색 내용과 같다면
+                            int totalUsageTime = usageHistoryDAO.calTotalPaymentAmount(m.getMember_no());
+                            double totalPaymentAmount = time_Plus_LogDAO.calTotalUsageMoney(m.getMember_id());
+
+                            model.setRowCount(0); // 기존 데이터 초기화
+                            Object[] row = {
+                                    m.getMember_no(), //번호
+                                    m.getMember_name(), //이름
+                                    m.getSex(), //성별
+                                    m.getPhone(),
+                                    m.getLeft_time(),
+                                    totalUsageTime + "분",
+                                    totalPaymentAmount,
+                                    m.getBirthday(),
+                                    m.getReg_date()
+                            };
+                            model.addRow(row);
+                        } else if (keyword.isEmpty())
+                            fetchAndUpdateTable();
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 
@@ -390,10 +391,14 @@ public class MemberManagement_UI extends JPanel {
             gbcRight.insets = new Insets(5, 5, 5, 5); // 여백 설정
             gbcRight.fill = GridBagConstraints.HORIZONTAL; // 컴포넌트 크기 조정
 
+            int totalUsageTime = usageHistoryDAO.calTotalPaymentAmount(member.getMember_no());
+            double totalPaymentAmount = time_Plus_LogDAO.calTotalUsageMoney(member.getMember_id());
+
+            //총 사용시간
             gbcRight.gridx = 0; gbcRight.gridy = 0;
             EditMember_rightPanel.add(new JLabel("총 사용시간"), gbcRight);
             gbcRight.gridx = 1; gbcRight.gridy = 0;
-            totalUsage_time = new JTextField(15);
+            totalUsage_time = new JTextField(totalUsageTime);
             totalUsage_time.setEditable(false); // 수정 불가능
             EditMember_rightPanel.add(totalUsage_time, gbcRight);
 
@@ -401,7 +406,7 @@ public class MemberManagement_UI extends JPanel {
             gbcRight.gridx = 0; gbcRight.gridy = 1;
             EditMember_rightPanel.add(new JLabel("총 사용금액"), gbcRight);
             gbcRight.gridx = 1; gbcRight.gridy = 1;
-            totalUsage_Money = new JTextField(15);
+            totalUsage_Money = new JTextField(String.valueOf(totalPaymentAmount));
             totalUsage_Money.setEditable(false);
             EditMember_rightPanel.add(totalUsage_Money, gbcRight);
 
@@ -424,7 +429,6 @@ public class MemberManagement_UI extends JPanel {
                 public void actionPerformed(ActionEvent e) {
                     String newpwd = "a1234567890";
                     pwdField.setText(newpwd);
-
                 }
             });
             cancelEditBtn.addActionListener(new ActionListener() { //취소버튼 클릭시 종료
@@ -436,10 +440,19 @@ public class MemberManagement_UI extends JPanel {
             saveEditBtn.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                        String newpwd = pwdField.getText();
-                        member.setMember_pwd(newpwd);
+                    String newPwd = pwdField.getText().toString();
+                    String newPhone = phoneField.getText().toString();
+                    String newAddress = addressField.getText().toString();
 
-                        EditMemberDialog.dispose();
+                    MemberDTO member = new MemberDTO();
+                    member.setMember_pwd(newPwd);
+                    member.setPhone(newPhone);
+                    member.setAddress(newAddress);
+                    member.setMember_no(Integer.parseInt(memberNo));
+
+                    memberDAO.updateMemberInfo(member);
+
+                    EditMemberDialog.dispose();
                 }
             });
 

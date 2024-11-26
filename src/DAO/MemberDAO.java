@@ -128,9 +128,36 @@ public class MemberDAO implements DAO<MemberDTO, String>{
 
     @Override
     public boolean update(MemberDTO memberDTO) { //회원 수정
-
-
         return false;
+    }
+
+    public boolean updateMemberInfo(MemberDTO memberDTO) { //회원 수정
+        PreparedStatement pstmt = null;
+
+        try {
+            String sql = "update member " +
+                    "set member_pwd = ?, phone = ?, address = ? " +
+                    "where member_no = ?";
+
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, memberDTO.getMember_pwd());
+            pstmt.setString(2, memberDTO.getPhone());
+            pstmt.setString(3, memberDTO.getAddress());
+            pstmt.setInt(4, memberDTO.getMember_no());
+
+            int editRow = pstmt.executeUpdate();
+            return editRow > 0; //수정된 행이 있다면 true 반환
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (pstmt != null)
+                    pstmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override

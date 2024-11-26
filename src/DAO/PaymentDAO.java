@@ -35,18 +35,15 @@ public class PaymentDAO implements DAO<PaymentDTO, String> {
         return null;
     }
 
-    public double calTotalUsageMoney(int memberNo) {
+    //로직 수정으로 인한 주석처리
+    /*
+    public double calTotalUsageMoney_(int memberNo) {
         PreparedStatement ps = null;
         ResultSet rs = null;
         double totalUsageMoney = 0.0;
 
         try {
-            String sql = "select sum(od.quantity * cast(pr.price as double)) " +
-                    "from payment p " +
-                    "join order o ON p.order_no = o.order_no" +
-                    "join order_details od using(order_no) " +
-                    "join product pr using(product_no) " +
-                    "where p.member_no = ?";
+            String sql = "";
 
             ps = conn.prepareStatement(sql);
             ps.setInt(1, memberNo);
@@ -68,5 +65,5 @@ public class PaymentDAO implements DAO<PaymentDTO, String> {
         }
 
         return totalUsageMoney;
-    }
+    } */
 }
