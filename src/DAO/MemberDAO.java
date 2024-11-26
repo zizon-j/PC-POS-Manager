@@ -1,6 +1,7 @@
 package DAO;
 
 import DTO.MemberDTO;
+import DTO.TimeDTO;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -172,6 +173,11 @@ public class MemberDAO implements DAO<MemberDTO, String>{
             }
         }
         return members;
+
+
+
+
+
     }
 
     public MemberDTO findByNo(String member_no_search) {
@@ -213,5 +219,30 @@ public class MemberDAO implements DAO<MemberDTO, String>{
         }
         return member;
     }
-    
+    public boolean update_left_time(MemberDTO member, TimeDTO time) { //회원 수정
+        PreparedStatement pspmt = null;
+        try{
+            String sql = "update member set left_time = left_time + ? where member_id = ?";
+            pspmt = conn.prepareStatement(sql);
+            pspmt.setInt(1, time.getPlus_time());
+            pspmt.setString(2, member.getMember_id());
+
+            pspmt.executeUpdate();
+
+
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }finally {
+            try {
+                if (pspmt != null)
+                    pspmt.close();
+            }catch (SQLException e){
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+
 }
