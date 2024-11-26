@@ -1,12 +1,12 @@
 package UI;
 
 import DAO.MemberDAO;
+import DAO.PaymentDAO;
 import DAO.UsageHistoryDAO;
 import DTO.MemberDTO;
 import Jdbc.PCPosDBConnection;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -29,12 +29,14 @@ public class MemberManagement_UI extends JPanel {
 
     private MemberDAO memberDAO; //회원DAO 객체
     private UsageHistoryDAO usageHistoryDAO; // 사용기록DAO 객체
+    private PaymentDAO paymentDAO;
 
     public MemberManagement_UI() {
         try {
             //데이터베이스 연결
             Connection conn = new PCPosDBConnection().getConnection();
             memberDAO = new MemberDAO(conn);
+            usageHistoryDAO = new UsageHistoryDAO(conn);
 
             //UI 구성요소
             create_search();
@@ -54,14 +56,17 @@ public class MemberManagement_UI extends JPanel {
             List<MemberDTO> members = memberDAO.findAll(); //모든 회원정보 가져옴
             model.setRowCount(0); // 기존 데이터 초기화
             for (MemberDTO m : members) { //연령, 사용시간, 총 사용금액(아직 못함)
+                int totalUsageTime = usageHistoryDAO.calTotalPaymentAmount(m.getMember_no());
+                double totalPaymentAmount = paymentDAO.calTotalUsageMoney(m.getMember_no());
+
                 Object[] row = {
                         m.getMember_no(), //번호
                         m.getMember_name(), //이름
                         m.getSex(), //성별
                         m.getPhone(),
                         m.getLeft_time(),
-                        //사용시간
-                        //총사용금액
+                        totalUsageTime,
+                        totalPaymentAmount,
                         m.getBirthday(),
                         m.getReg_date()
                 };
@@ -70,13 +75,15 @@ public class MemberManagement_UI extends JPanel {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
     private void searchMember(String keyword) { //회원 검색
         try {
             List<MemberDTO> member = memberDAO.findAll();
             for (MemberDTO m : member) {
                 if (keyword.equals(m.getMember_name())) { //검색 내용과 같다면
+                    int totalUsageTime = usageHistoryDAO.calTotalPaymentAmount(m.getMember_no());
+                    double totalPaymentAmount = paymentDAO.calTotalUsageMoney(m.getMember_no());
+
                     model.setRowCount(0); // 기존 데이터 초기화
                     Object[] row = {
                             m.getMember_no(), //번호
@@ -84,8 +91,8 @@ public class MemberManagement_UI extends JPanel {
                             m.getSex(), //성별
                             m.getPhone(),
                             m.getLeft_time(),
-                            //사용시간
-                            //총사용금액
+                            totalUsageTime,
+                            totalPaymentAmount,
                             m.getBirthday(),
                             m.getReg_date()
                     };
@@ -286,7 +293,7 @@ public class MemberManagement_UI extends JPanel {
 
         String memberNo = String.valueOf(model.getValueAt(selectedRow, 0)); //가져온 회원의 번호
         try {
-            MemberDTO member = memberDAO.findById(memberNo); //회원 정보 가져오기
+            MemberDTO member = memberDAO.findByNo(memberNo); //회원 정보 가져오기
 
             if(member == null) {
                 JOptionPane.showMessageDialog(this, "회원 정보를 가져오지 못했습니다.");
@@ -298,18 +305,18 @@ public class MemberManagement_UI extends JPanel {
             EditMemberDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
 
-            EditMemberPanel = new JPanel(new BorderLayout());
+            EditMemberPanel = new JPanel(new BorderLayout()); //전체 레이아웃을 border로 설정
             EditMember_leftPanel = new JPanel(new GridBagLayout());
             EditMember_rightPanel = new JPanel(new GridBagLayout());
 
             GridBagConstraints gbc = new GridBagConstraints();
-            gbc.insets = new Insets(5, 5, 5, 5);
-            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.insets = new Insets(5, 5, 5, 5); //컴포넌트 간 여백 설정
+            gbc.fill = GridBagConstraints.HORIZONTAL; // 컴포넌트의 너비를 가득 채우도록 설정
 
             EditMember_leftPanel.setBorder(BorderFactory.createTitledBorder("회원 정보"));
 
             // 아이디 필드
-            gbc.gridx = 0; gbc.gridy = 0;
+            gbc.gridx = 0; gbc.gridy = 0; // 컴포넌트의 위치 지정, 열과 행의 위치
             EditMember_leftPanel.add(new JLabel("아이디"), gbc);
             gbc.gridx = 1; gbc.gridy = 0;
             idField = new JTextField(member.getMember_id());

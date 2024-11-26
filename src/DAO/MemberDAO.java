@@ -60,7 +60,7 @@ public class MemberDAO implements DAO<MemberDTO, String>{
     //executeUpdate(): insert, update, delete와 같은 dml에서 실행 결과로 영향을받은 레코드 수를변환
     //행의 개수를 반환하기 때문에 rs를 사용할 필요가 없다.
     @Override
-    public MemberDTO findById(String member_no_search) {
+    public MemberDTO findById(String member_no_search) { // 회원이 사용하는 pc에서 회원가입 시 필요한 메서드
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         MemberDTO member = null;
