@@ -2,8 +2,10 @@ package User_Login;
 
 import DAO.MemberDAO;
 import DAO.SeatDAO;
+import DAO.UsageHistoryDAO;
 import DTO.MemberDTO;
 import DTO.SeatDTO;
+import DTO.UsageHistoryDTO;
 import Jdbc.PCPosDBConnection;
 
 import javax.swing.*;
@@ -19,6 +21,7 @@ public class User_LoginFrame extends JFrame implements ActionListener {
     JPasswordField passwd;
     JButton loginBtn, registerBtn, findBtn, selectSeat;
     JComboBox<Integer> seatChombo; // 좌석 번호는 Integer 타입으로 선언
+    String seatNo;
 
     public User_LoginFrame(String title) {
         setTitle(title);
@@ -121,13 +124,21 @@ public class User_LoginFrame extends JFrame implements ActionListener {
                 MemberDAO memberDAO = new MemberDAO(conn);
                 MemberDTO member = memberDAO.findById(id.getText());
                 SeatDAO seatDAO = new SeatDAO(conn);
+                UsageHistoryDAO usageHistoryDAO = new UsageHistoryDAO(conn);
                 if (member != null) {
                     if (member.getMember_pwd().equals(passwd.getText())) {
+                        int seatNo = (int)seatChombo.getSelectedItem();
                         seatDAO.updateSeat(member.getMember_no(), (int) seatChombo.getSelectedItem());
-                        User_OrderProduct op = new User_OrderProduct();
+                        User_OrderProduct op = new User_OrderProduct(seatNo, member.getMember_no());
                         op.setVisible(true);
                         this.dispose();
                         // //로그인 창 닫기
+
+                        UsageHistoryDTO usageHistory = new UsageHistoryDTO();
+                        usageHistory.setMember_no(member.getMember_no());
+                        usageHistoryDAO.insert(usageHistory);
+
+
                     } else
                         JOptionPane.showMessageDialog(this, "틀렸습니다.");
                 } else

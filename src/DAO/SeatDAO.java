@@ -233,4 +233,28 @@ public class SeatDAO implements DAO<SeatDTO, String> {
         return false;
     }
 
+    public boolean updateSeat2(int seat_no) {
+        PreparedStatement pstmt = null;
+        try {
+            String sql = "update seat set seat_state = '미사용', member_no = null where seat_no = ?";
+            pstmt = conn.prepareStatement(sql);
+
+
+            pstmt.setInt(1, seat_no);
+
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (pstmt != null)
+                    pstmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return false;
+    }
+
 }

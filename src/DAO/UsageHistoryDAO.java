@@ -55,6 +55,26 @@ public class UsageHistoryDAO implements DAO<UsageHistoryDTO, String> {
 
     @Override
     public boolean update(UsageHistoryDTO usageHistoryDTO) {
+        PreparedStatement pstmt = null;
+        try {
+            String sql = "update usage_history set end_time = NOW(), state = '사용종료' where member_no = ? and state = '사용중'";
+            pstmt = conn.prepareStatement(sql);
+
+            pstmt.setInt(1, usageHistoryDTO.getMember_no());
+
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("종료 시간 안찍힘");
+        } finally {
+            try {
+                if (pstmt != null)
+                    pstmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }
         return false;
     }
 
@@ -62,7 +82,27 @@ public class UsageHistoryDAO implements DAO<UsageHistoryDTO, String> {
 
     @Override
     public boolean insert(UsageHistoryDTO usageHistoryDTO) {
-        return false;
+        PreparedStatement pstmt = null;
+        try{
+            String sql = "INSERT INTO usage_history (member_no, start_time) VALUES (?, NOW());";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, usageHistoryDTO.getMember_no());
+
+            pstmt.executeUpdate();
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+            System.out.println("사용 시작 시간 안찍힘");
+            return false;
+        }finally {
+            try {
+                if(pstmt != null)
+                    pstmt.close();
+            }catch (SQLException e){
+                e.printStackTrace();
+            }
+        }
+        return true;
     }
 
     @Override

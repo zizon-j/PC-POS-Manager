@@ -1,8 +1,12 @@
 package User_Login;
 
 import DAO.ProductDAO;
+import DAO.SeatDAO;
+import DAO.UsageHistoryDAO;
 import DTO.ProductDTO;
+import DTO.UsageHistoryDTO;
 import Jdbc.PCPosDBConnection;
+import com.sun.prism.Texture;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -17,15 +21,21 @@ public class User_OrderProduct extends JFrame {
     private JTextField order_details;
     private DefaultTableModel model;
     private JPanel categoryPanel;
+    private JButton endBtn;
+    private int seatNo, member_no;
 
 
-    public User_OrderProduct(){
+
+    public User_OrderProduct(int seatNo, int member_no){
+        this.seatNo = seatNo;
+        this.member_no = member_no;
+
         setTitle("상품 주문");
         Container c = getContentPane();
         c.setLayout(null);
         setVisible(true);
 
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setSize(1600,900);
 
 
@@ -90,6 +100,25 @@ public class User_OrderProduct extends JFrame {
 
         categoryPanel.setBounds(85,21,348,73);
         add(categoryPanel);
+
+        endBtn = new JButton("사용 종료");
+        endBtn.setBounds(1194,21,348,73);
+        add(endBtn);
+
+        // ------------------------------------------ 종료 버튼ㅁ ㅔ소드
+        endBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SeatDAO seatDAO = new SeatDAO(conn);
+                seatDAO.updateSeat2(seatNo);
+
+                UsageHistoryDAO usageHistoryDAO = new UsageHistoryDAO(conn);
+                UsageHistoryDTO usageHistory = new UsageHistoryDTO();
+                usageHistory.setMember_no(member_no);
+                usageHistoryDAO.update(usageHistory);
+                dispose();
+            }
+        });
 
         //전체 선택
         btnCategoryAll.addActionListener(new ActionListener() {
@@ -194,15 +223,7 @@ public class User_OrderProduct extends JFrame {
 
 
     public static void main(String[] args) {
-        new User_OrderProduct();
+
     }
-
-
-
-
-
-
-
-
 
 }
