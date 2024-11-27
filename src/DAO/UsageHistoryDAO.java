@@ -100,4 +100,31 @@ public class UsageHistoryDAO implements DAO<UsageHistoryDTO, String> {
 
         return histories;
     }
+    public int calTotalPaymentAmount(int memberNo) { // 총 사용시간 계산 메서드
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        int totalUsageTime = 0;
+
+        try {
+            String sql = "select sum(usage_time) as total_time from usage_history where member_no = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, memberNo);
+            rs = ps.executeQuery();
+
+            if (rs.next())
+                totalUsageTime = rs.getInt("total_time");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null)
+                    rs.close();
+                if (ps != null)
+                    ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return totalUsageTime;
+    }
 }

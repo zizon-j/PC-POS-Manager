@@ -2,9 +2,7 @@ package DAO;
 
 import DTO.Time_Plus_LogDTO;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class Time_Plus_LogDAO implements DAO<Time_Plus_LogDTO, String> {
@@ -37,7 +35,6 @@ public class Time_Plus_LogDAO implements DAO<Time_Plus_LogDTO, String> {
             pstmt.setString(1, timePlusLog.getMember_id());
             pstmt.setInt(2, timePlusLog.getMoney());
 
-
             pstmt.executeUpdate();
 
         }catch (SQLException e){
@@ -59,5 +56,37 @@ public class Time_Plus_LogDAO implements DAO<Time_Plus_LogDTO, String> {
     @Override
     public ArrayList<Time_Plus_LogDTO> findAll() {
         return null;
+    }
+    public double calTotalUsageMoney(String member_id) {
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        double totalUsageMoney = 0.0;
+
+        try {
+            String sql = "select sum(tl.money) " +
+                    "from time_plus_log tl " +
+                    "join time t on tl.money = t.money " +
+                    "where tl.member_id = ? " +
+                    "group by tl.member_id";
+
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, member_id);
+            rs = pstmt.executeQuery();
+
+            if (rs.next())
+                totalUsageMoney = rs.getDouble(1);
+        }catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null)
+                    rs.close();
+                if (pstmt != null)
+                    pstmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return totalUsageMoney;
     }
 }

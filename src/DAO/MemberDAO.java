@@ -61,7 +61,7 @@ public class MemberDAO implements DAO<MemberDTO, String>{
     //executeUpdate(): insert, update, delete와 같은 dml에서 실행 결과로 영향을받은 레코드 수를변환
     //행의 개수를 반환하기 때문에 rs를 사용할 필요가 없다.
     @Override
-    public MemberDTO findById(String member_no_search) {
+    public MemberDTO findById(String member_no_search) { // 회원이 사용하는 pc에서 회원가입 시 필요한 메서드
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         MemberDTO member = null;
@@ -131,6 +131,35 @@ public class MemberDAO implements DAO<MemberDTO, String>{
         return false;
     }
 
+    public boolean updateMemberInfo(MemberDTO memberDTO) { //회원 수정
+        PreparedStatement pstmt = null;
+
+        try {
+            String sql = "update member " +
+                    "set member_pwd = ?, phone = ?, address = ? " +
+                    "where member_no = ?";
+
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, memberDTO.getMember_pwd());
+            pstmt.setString(2, memberDTO.getPhone());
+            pstmt.setString(3, memberDTO.getAddress());
+            pstmt.setInt(4, memberDTO.getMember_no());
+
+            int editRow = pstmt.executeUpdate();
+            return editRow > 0; //수정된 행이 있다면 true 반환
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (pstmt != null)
+                    pstmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     @Override
     public ArrayList<MemberDTO> findAll() {
         ArrayList<MemberDTO> members = new ArrayList<>();
@@ -177,6 +206,46 @@ public class MemberDAO implements DAO<MemberDTO, String>{
 
 
     }
+
+    public MemberDTO findByNo(String member_no_search) {
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        MemberDTO member = null;
+
+        try{
+            String sql = "SELECT * FROM member WHERE member_no = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, member_no_search);
+            rs = pstmt.executeQuery();
+
+            if(rs.next()){
+                int member_no = rs.getInt("member_no");
+                String member_name = rs.getString("member_name");
+                String member_id = rs.getString("member_id");
+                String member_pwd = rs.getString("member_pwd");
+                Date birthday = rs.getDate("birthday");
+                String sex = rs.getString("sex");
+                Date reg_date = rs.getDate("reg_date");
+                String phone = rs.getString("phone");
+                String address = rs.getString("address");
+                int left_time = rs.getInt("left_time");
+
+                member = new MemberDTO(member_no, member_name, member_id, member_pwd, birthday, sex, reg_date, phone, address, left_time);
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }finally {
+            try {
+                if (rs != null)
+                    rs.close();
+                if (pstmt != null)
+                    pstmt.close();
+            }catch (SQLException e){
+                e.printStackTrace();
+            }
+        }
+        return member;
+    }
     public boolean update_left_time(MemberDTO member, TimeDTO time) { //회원 수정
         PreparedStatement pspmt = null;
         try{
@@ -202,5 +271,5 @@ public class MemberDAO implements DAO<MemberDTO, String>{
         return false;
     }
 
-    
+
 }
