@@ -108,7 +108,7 @@ public class Seat_UI extends JPanel {
                     btnInfos[index].addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            new Seat_UI_InfoFrame();
+                            new Seat_UI_InfoFrame(index+1);
                         }
                     });
 

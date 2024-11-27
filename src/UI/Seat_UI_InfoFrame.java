@@ -1,7 +1,9 @@
 package UI;
 
 import DAO.MemberDAO;
+import DAO.SeatDAO;
 import DTO.MemberDTO;
+import DTO.SeatDTO;
 import Jdbc.PCPosDBConnection;
 
 import javax.swing.*;
@@ -10,7 +12,7 @@ import java.sql.Connection;
 
 public class Seat_UI_InfoFrame extends JFrame {
 
-    public Seat_UI_InfoFrame(){
+    public Seat_UI_InfoFrame( int seat_no){
 
         setTitle("좌석정보");
         JPanel seat_Info = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -58,8 +60,29 @@ public class Seat_UI_InfoFrame extends JFrame {
 //        }
 
         //TODO
-        // - 좌석번호 seat, 이름 member, 닉네임 member, 사용시간,남은시간 usage_history, 좌석상태 seat
+        // - 좌석번호 seat, 이름 member, 닉네임 member, (조인 사용) , 사용시간,남은시간 usage_history, 좌석상태 seat
         // 3개 테이블 불러와야함
+
+        Connection conn = PCPosDBConnection.getConnection();
+        MemberDAO memberDAO = new MemberDAO(conn);
+        SeatDAO seatDAO = new SeatDAO(conn);
+
+        if(conn != null){
+            MemberDTO member = memberDAO.joinSeat(String.valueOf(seat_no));
+            if(member != null){
+                SeatDTO seat = seatDAO.findById(String.valueOf(seat_no));
+
+                seat_1.setText(String.valueOf(seat_no));
+                name_1.setText(member.getMember_name());
+                nickname_1.setText(member.getMember_id());
+                seat_State.setText(seat.getSeat_state());
+
+            }
+            else
+                JOptionPane.showMessageDialog(this, "사용중이 아닙니다. 정보가 없습니다.");
+
+        }
+
 
         setLayout(new GridLayout(6,1,0,10));
         add(seat_Info);
@@ -79,6 +102,5 @@ public class Seat_UI_InfoFrame extends JFrame {
         setVisible(true);
     }
     public static void main(String[] args) {
-        new Seat_UI_InfoFrame();
     }
 }

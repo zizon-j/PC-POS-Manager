@@ -273,4 +273,44 @@ public class MemberDAO implements DAO<MemberDTO, String>{
     }
 
 
+    public MemberDTO joinSeat(String seat_no_search) { // 회원이 사용하는 pc에서 회원가입 시 필요한 메서드
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        MemberDTO member = null;
+
+        try{
+            String sql = "select * from member m join pc_pos_db.seat s on m.member_no = s.member_no where s.seat_no= ? ;";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, seat_no_search);
+            rs = pstmt.executeQuery();
+
+            if(rs.next()){
+                int member_no = rs.getInt("member_no");
+                String member_name = rs.getString("member_name");
+                String member_id = rs.getString("member_id");
+                String member_pwd = rs.getString("member_pwd");
+                Date birthday = rs.getDate("birthday");
+                String sex = rs.getString("sex");
+                Date reg_date = rs.getDate("reg_date");
+                String phone = rs.getString("phone");
+                String address = rs.getString("address");
+                int left_time = rs.getInt("left_time");
+
+                member = new MemberDTO(member_no, member_name, member_id, member_pwd, birthday, sex, reg_date, phone, address, left_time);
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }finally {
+            try {
+                if (rs != null)
+                    rs.close();
+                if (pstmt != null)
+                    pstmt.close();
+            }catch (SQLException e){
+                e.printStackTrace();
+            }
+        }
+        return member;
+    }
+
 }
