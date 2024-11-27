@@ -136,14 +136,15 @@ public class MemberDAO implements DAO<MemberDTO, String>{
 
         try {
             String sql = "update member " +
-                    "set member_pwd = ?, phone = ?, address = ? " +
+                    "set member_pwd = ?, phone = ?, address = ?, sex = ? " +
                     "where member_no = ?";
 
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, memberDTO.getMember_pwd());
             pstmt.setString(2, memberDTO.getPhone());
             pstmt.setString(3, memberDTO.getAddress());
-            pstmt.setInt(4, memberDTO.getMember_no());
+            pstmt.setString(4, memberDTO.getSex());
+            pstmt.setInt(5, memberDTO.getMember_no());
 
             int editRow = pstmt.executeUpdate();
             return editRow > 0; //수정된 행이 있다면 true 반환

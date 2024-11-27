@@ -1,7 +1,6 @@
 package UI;
 
 import DAO.MemberDAO;
-import DAO.PaymentDAO;
 import DAO.Time_Plus_LogDAO;
 import DAO.UsageHistoryDAO;
 import DTO.MemberDTO;
@@ -58,7 +57,7 @@ public class MemberManagement_UI extends JPanel {
             List<MemberDTO> members = memberDAO.findAll(); //모든 회원정보 가져옴
             model.setRowCount(0); // 기존 데이터 초기화
             for (MemberDTO m : members) { //연령, 사용시간, 총 사용금액(아직 못함)
-                int totalUsageTime = usageHistoryDAO.calTotalPaymentAmount(m.getMember_no());
+                int totalUsageTime = usageHistoryDAO.calTotalUsageTime(m.getMember_no());
                 double totalPaymentAmount = time_Plus_LogDAO.calTotalUsageMoney(m.getMember_id());
 
                 Object[] row = {
@@ -106,21 +105,27 @@ public class MemberManagement_UI extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedRow; //열 선택
-                selectedRow = member_table.getSelectedRow(); //선택된 행
-                String memberNo = String.valueOf(model.getValueAt(selectedRow, 0)); //회원 번호
-                String memberName = String.valueOf(model.getValueAt(selectedRow, 1)); //회원 이름
 
-                if (selectedRow != -1) { //선택 됐다면
-                    int option  = JOptionPane.showConfirmDialog(MemberManagement_UI.this,
-                            "정말로 회원 " + memberName + "을(를) 삭제하시겠습니까?", "회원 삭제 확인", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                try {
+                    selectedRow = member_table.getSelectedRow(); //선택된 행
+                    String memberNo = String.valueOf(model.getValueAt(selectedRow, 0)); //회원 번호
+                    String memberName = String.valueOf(model.getValueAt(selectedRow, 1)); //회원 이름
 
-                    if(option == JOptionPane.YES_OPTION) {//확인 버튼을 눌렀다면
-                        model.removeRow(selectedRow); //삭제
-                        memberDAO.delete(memberNo);
+                    if (selectedRow != -1) { //선택 됐다면
+                        int option  = JOptionPane.showConfirmDialog(MemberManagement_UI.this,
+                                "정말로 회원 " + memberName + "을(를) 삭제하시겠습니까?", "회원 삭제 확인", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+                        if(option == JOptionPane.YES_OPTION) {//확인 버튼을 눌렀다면
+                            model.removeRow(selectedRow); //삭제
+                            memberDAO.delete(memberNo);
+                        }
                     }
-                }
-                else
+                    else {
+                        throw new NotSelectedRowException();
+                    }
+                } catch (NotSelectedRowException notselected) {
                     JOptionPane.showMessageDialog(MemberManagement_UI.this, "삭제할 회원을 선택해주세요.");
+                }
             }
         });
 
@@ -144,7 +149,7 @@ public class MemberManagement_UI extends JPanel {
 
                     for (MemberDTO m : member) {
                         if (keyword.equals(m.getMember_name())) { //검색 내용과 같다면
-                            int totalUsageTime = usageHistoryDAO.calTotalPaymentAmount(m.getMember_no());
+                            int totalUsageTime = usageHistoryDAO.calTotalUsageTime(m.getMember_no());
                             double totalPaymentAmount = time_Plus_LogDAO.calTotalUsageMoney(m.getMember_id());
 
                             model.setRowCount(0); // 기존 데이터 초기화
@@ -255,7 +260,12 @@ public class MemberManagement_UI extends JPanel {
            String address = addressField.getText();
 
            if (name.isEmpty() || id.isEmpty() || pwd.isEmpty() || birthday.isEmpty() || phone.isEmpty() || address.isEmpty()) {
-                   JOptionPane.showMessageDialog(AddMemberDialog, "모든 항목을 입력해주세요.");
+               JOptionPane.showMessageDialog(AddMemberDialog, "모든 항목을 입력해주세요.");
+               return;
+           }
+           if (!phone.matches("^01[0-9]-\\d{3,4}-\\d{4}$")) { //정규식 검증
+               JOptionPane.showMessageDialog(AddMemberDialog, "전화번호를 형식에 맞게 입력하세요.");
+               return;
            }
 
            try {
@@ -391,14 +401,15 @@ public class MemberManagement_UI extends JPanel {
             gbcRight.insets = new Insets(5, 5, 5, 5); // 여백 설정
             gbcRight.fill = GridBagConstraints.HORIZONTAL; // 컴포넌트 크기 조정
 
-            int totalUsageTime = usageHistoryDAO.calTotalPaymentAmount(member.getMember_no());
+
+            int totalUsageTime = usageHistoryDAO.calTotalUsageTime(Integer.parseInt(memberNo));
             double totalPaymentAmount = time_Plus_LogDAO.calTotalUsageMoney(member.getMember_id());
 
             //총 사용시간
             gbcRight.gridx = 0; gbcRight.gridy = 0;
             EditMember_rightPanel.add(new JLabel("총 사용시간"), gbcRight);
             gbcRight.gridx = 1; gbcRight.gridy = 0;
-            totalUsage_time = new JTextField(totalUsageTime);
+            totalUsage_time = new JTextField(String.valueOf(totalUsageTime));
             totalUsage_time.setEditable(false); // 수정 불가능
             EditMember_rightPanel.add(totalUsage_time, gbcRight);
 
@@ -443,11 +454,18 @@ public class MemberManagement_UI extends JPanel {
                     String newPwd = pwdField.getText().toString();
                     String newPhone = phoneField.getText().toString();
                     String newAddress = addressField.getText().toString();
+                    String newSex = man.isSelected() ? "남자":"여자"; //선택된 성별 확인
+
+                    if (!newPhone.matches("^01[0-9]-\\d{3,4}-\\d{4}$")) { //정규식 검증
+                        JOptionPane.showMessageDialog(AddMemberDialog, "전화번호를 형식에 맞게 입력하세요.");
+                        return;
+                    }
 
                     MemberDTO member = new MemberDTO();
                     member.setMember_pwd(newPwd);
                     member.setPhone(newPhone);
                     member.setAddress(newAddress);
+                    member.setSex(newSex);
                     member.setMember_no(Integer.parseInt(memberNo));
 
                     memberDAO.updateMemberInfo(member);
