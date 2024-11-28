@@ -57,7 +57,7 @@ public class MemberManagement_UI extends JPanel {
             List<MemberDTO> members = memberDAO.findAll(); //모든 회원정보 가져옴
             model.setRowCount(0); // 기존 데이터 초기화
             for (MemberDTO m : members) { //연령, 사용시간, 총 사용금액(아직 못함)
-                int totalUsageTime = usageHistoryDAO.calTotalUsageTime(m.getMember_no());
+                int totalUsageTime = usageHistoryDAO.calTotalPaymentAmount(m.getMember_no());
                 double totalPaymentAmount = time_Plus_LogDAO.calTotalUsageMoney(m.getMember_id());
 
                 Object[] row = {
@@ -149,7 +149,7 @@ public class MemberManagement_UI extends JPanel {
 
                     for (MemberDTO m : member) {
                         if (keyword.equals(m.getMember_name())) { //검색 내용과 같다면
-                            int totalUsageTime = usageHistoryDAO.calTotalUsageTime(m.getMember_no());
+                            int totalUsageTime = usageHistoryDAO.calTotalPaymentAmount(m.getMember_no());
                             double totalPaymentAmount = time_Plus_LogDAO.calTotalUsageMoney(m.getMember_id());
 
                             model.setRowCount(0); // 기존 데이터 초기화
@@ -402,7 +402,7 @@ public class MemberManagement_UI extends JPanel {
             gbcRight.fill = GridBagConstraints.HORIZONTAL; // 컴포넌트 크기 조정
 
 
-            int totalUsageTime = usageHistoryDAO.calTotalUsageTime(Integer.parseInt(memberNo));
+            int totalUsageTime = usageHistoryDAO.calTotalPaymentAmount(Integer.parseInt(memberNo));
             double totalPaymentAmount = time_Plus_LogDAO.calTotalUsageMoney(member.getMember_id());
 
             //총 사용시간
