@@ -1,8 +1,10 @@
 package DAO;
 
+import DTO.MemberDTO;
 import DTO.UsageHistoryDTO;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class UsageHistoryDAO implements DAO<UsageHistoryDTO, String> {
@@ -54,10 +56,12 @@ public class UsageHistoryDAO implements DAO<UsageHistoryDTO, String> {
     }
 
     @Override
-    public boolean update(UsageHistoryDTO usageHistoryDTO) {
+    public boolean update(UsageHistoryDTO usageHistoryDTO) { //로그아웃
         PreparedStatement pstmt = null;
         try {
-            String sql = "update usage_history set end_time = NOW(), state = '사용종료' where member_no = ? and state = '사용중'";
+            String sql = "update usage_history " +
+                    "set end_time = NOW(), state = '사용종료' " +
+                    "where member_no = ? and state = '사용중'";
             pstmt = conn.prepareStatement(sql);
 
             pstmt.setInt(1, usageHistoryDTO.getMember_no());
@@ -138,18 +142,18 @@ public class UsageHistoryDAO implements DAO<UsageHistoryDTO, String> {
             }
         }
 
-        return histories;
-    }
-    public int calTotalPaymentAmount(int memberNo) { // 총 사용시간 계산 메서드
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        int totalUsageTime = 0;
+            return histories;
+        }
+        public int calTotalUsageTime(int memberNo) { // 총 사용시간 계산 메서드
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+            int totalUsageTime = 0;
 
-        try {
-            String sql = "select sum(usage_time) as total_time from usage_history where member_no = ?";
-            ps = conn.prepareStatement(sql);
-            ps.setInt(1, memberNo);
-            rs = ps.executeQuery();
+            try {
+                String sql = "select sum(timestampdiff(minute, start_time, end_time)) as total_time from usage_history where member_no = ?";
+                ps = conn.prepareStatement(sql);
+                ps.setInt(1, memberNo);
+                rs = ps.executeQuery();
 
             if (rs.next())
                 totalUsageTime = rs.getInt("total_time");
@@ -166,5 +170,35 @@ public class UsageHistoryDAO implements DAO<UsageHistoryDTO, String> {
             }
         }
         return totalUsageTime;
+    }
+    public LocalDateTime getLoginTime(MemberDTO member_no) { // 로그인 시간을 가져오는 메서드
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        LocalDateTime loginTime = null;
+
+
+        try {
+            String sql = "select start_time from usage_history where member_no = ? order by start_time desc limit 1";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, member_no.getMember_no());
+            rs = pstmt.executeQuery();
+
+            if(rs.next()) {
+                loginTime = rs.getTimestamp("start_time").toLocalDateTime();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs!=null)
+                    rs.close();
+                if (pstmt != null)
+                    pstmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return loginTime;
     }
 }

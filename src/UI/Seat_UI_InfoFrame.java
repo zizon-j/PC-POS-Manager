@@ -2,13 +2,18 @@ package UI;
 
 import DAO.MemberDAO;
 import DAO.SeatDAO;
+import DAO.UsageHistoryDAO;
 import DTO.MemberDTO;
 import DTO.SeatDTO;
+import DTO.UsageHistoryDTO;
 import Jdbc.PCPosDBConnection;
 
 import javax.swing.*;
 import java.awt.*;
 import java.sql.Connection;
+import java.sql.Time;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class Seat_UI_InfoFrame extends JFrame {
 
@@ -66,9 +71,25 @@ public class Seat_UI_InfoFrame extends JFrame {
         Connection conn = PCPosDBConnection.getConnection();
         MemberDAO memberDAO = new MemberDAO(conn);
         SeatDAO seatDAO = new SeatDAO(conn);
+        UsageHistoryDAO usageHistoryDAO = new UsageHistoryDAO(conn);
+        MemberDTO member;
+
 
         if (conn != null) {
-            MemberDTO member = memberDAO.joinSeat(String.valueOf(seat_no));
+            member = memberDAO.joinSeat(String.valueOf(seat_no));
+            LocalDateTime loginTime = usageHistoryDAO.getLoginTime(member);
+            Timer timer = new Timer(1000, e -> { //서정우가 함, 1초마다 e를 수행
+                LocalDateTime now = LocalDateTime.now(); //현재 시간을 가져옴
+                Duration duration = Duration.between(loginTime, now); //로그인 시작 시간과 현재 시간의 차이를 계산
+
+                //전체 초 계산
+                long totalSeconds = duration.getSeconds();
+                long hours = totalSeconds / 3600; //시
+                long minutes = (totalSeconds % 3600) / 60; //분(전체 초에서 시간에 해당하는 초를 제외하고 게산)
+                long seconds = totalSeconds % 60; //초
+                usedTime_1.setText(hours + "시간 " + minutes + "분 " + seconds + "초"); //시간 표시
+            });
+            timer.start();
             if (member != null) {
                 SeatDTO seat = seatDAO.findById(String.valueOf(seat_no));
 
@@ -78,7 +99,6 @@ public class Seat_UI_InfoFrame extends JFrame {
                 seat_State.setText(seat.getSeat_state());
             }
         }
-
 
         setLayout(new GridLayout(6, 1, 0, 10));
         add(seat_Info);
