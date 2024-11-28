@@ -1,5 +1,6 @@
 package UI;
 
+import Common_Panel.Time_Plus_Jpanel;
 import DAO.SeatDAO;
 import DTO.SeatDTO;
 import Jdbc.PCPosDBConnection;
@@ -14,19 +15,31 @@ public class Seat_UI_Exists extends JPanel {
 
     public Seat_UI_Exists(JFrame parentFrame){ //JFrame 참조 추가
 
+
         //생성 버튼 필요업이 바로 좌석 시트로 감
 
         setLayout(new BorderLayout());
 
+
+
+
         // 자리 배치창
         JPanel editPanel = new JPanel(); // 버튼 편집 버튼 묶기
         editPanel.setLayout(new FlowLayout());
+
+        //시간 추가 패널
+        Time_Plus_Jpanel time_plus_jpanel = new Time_Plus_Jpanel();
+        editPanel.add(time_plus_jpanel);
+
+
         JButton btnEdit = new JButton("편집");
         JButton btnReset = new JButton("초기화");
 
         editPanel.add(btnEdit);
         editPanel.add(btnReset);
         JPanel seat_panel = new JPanel();
+
+
 
         //버튼 패널
         //borderlayout은하나의 영역에하나의 컴포넌트만 배치가능
@@ -93,12 +106,14 @@ public class Seat_UI_Exists extends JPanel {
             btnInfos[index].addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new Seat_UI_InfoFrame();
+                    new Seat_UI_InfoFrame(index + 1);
                 }
             });
 
 
         }
+
+
 
         editPanel.setVisible(true);
 

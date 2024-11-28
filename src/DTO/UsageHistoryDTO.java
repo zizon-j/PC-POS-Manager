@@ -3,7 +3,9 @@ package DTO;
 public class UsageHistoryDTO {
     private int history_no, member_no, usage_time;
     private java.sql.Date usage_date;
+    private String state;
 
+    public UsageHistoryDTO(){}
     public UsageHistoryDTO(int history_no, int member_no, int usage_time, java.sql.Date usage_date) {
         this.history_no = history_no;
         this.member_no = member_no;
@@ -42,4 +44,11 @@ public class UsageHistoryDTO {
         this.usage_date = usage_date;
     }
 
+    public String getState(){
+        return state;
+    }
+
+    public void setState(String state){
+        this.state = state;
+    }
 }
