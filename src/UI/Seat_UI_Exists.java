@@ -1,7 +1,9 @@
 package UI;
 
 import Common_Panel.Time_Plus_Jpanel;
+import DAO.MemberDAO;
 import DAO.SeatDAO;
+import DTO.MemberDTO;
 import DTO.SeatDTO;
 import Jdbc.PCPosDBConnection;
 
@@ -106,7 +108,18 @@ public class Seat_UI_Exists extends JPanel {
             btnInfos[index].addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new Seat_UI_InfoFrame(index + 1);
+                    Connection conn = PCPosDBConnection.getConnection();
+                    MemberDAO memberDAO = new MemberDAO(conn);
+                    SeatDAO seatDAO = new SeatDAO(conn);
+                    if (conn != null) {
+                        MemberDTO member = memberDAO.joinSeat(String.valueOf(index+1));
+                        if (member != null) {
+                            new Seat_UI_InfoFrame(index+1);
+
+                        } else
+                            JOptionPane.showMessageDialog(null, "사용중이 아닙니다. 정보가 없습니다.");
+
+                    }
                 }
             });
 

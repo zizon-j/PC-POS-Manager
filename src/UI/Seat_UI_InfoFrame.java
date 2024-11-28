@@ -12,7 +12,7 @@ import java.sql.Connection;
 
 public class Seat_UI_InfoFrame extends JFrame {
 
-    public Seat_UI_InfoFrame( int seat_no){
+    public Seat_UI_InfoFrame(int seat_no) {
 
         setTitle("좌석정보");
         JPanel seat_Info = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -67,24 +67,20 @@ public class Seat_UI_InfoFrame extends JFrame {
         MemberDAO memberDAO = new MemberDAO(conn);
         SeatDAO seatDAO = new SeatDAO(conn);
 
-        if(conn != null){
+        if (conn != null) {
             MemberDTO member = memberDAO.joinSeat(String.valueOf(seat_no));
-            if(member != null){
+            if (member != null) {
                 SeatDTO seat = seatDAO.findById(String.valueOf(seat_no));
 
                 seat_1.setText(String.valueOf(seat_no));
                 name_1.setText(member.getMember_name());
                 nickname_1.setText(member.getMember_id());
                 seat_State.setText(seat.getSeat_state());
-
             }
-            else
-                JOptionPane.showMessageDialog(this, "사용중이 아닙니다. 정보가 없습니다.");
-
         }
 
 
-        setLayout(new GridLayout(6,1,0,10));
+        setLayout(new GridLayout(6, 1, 0, 10));
         add(seat_Info);
         add(name_Info);
         add(nickname_Info);
@@ -101,6 +97,7 @@ public class Seat_UI_InfoFrame extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setVisible(true);
     }
+
     public static void main(String[] args) {
     }
 }
