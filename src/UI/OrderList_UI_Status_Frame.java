@@ -1,193 +1,201 @@
 package UI;
 
-
-
+import DAO.OrderDAO;
+import DTO.OrderDTO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.sql.Connection;
 import java.util.List;
 
+/**
+ * 주문 현황을 상태별로 보여주는 창
+ * 주문 대기, 준비 중, 완료, 취소 상태를 탭으로 구분하여 표시
+ * 각 상태별로 주문 상태 변경 가능
+ */
 public class OrderList_UI_Status_Frame extends JFrame {
+    // 각 상태별 테이블 컴포넌트
+    private JTable waitingTable; // 주문 대기 테이블
+    private JTable preparingTable; // 준비 중 테이블
+    private JTable completedTable; // 완료된 주문 테이블
+    private JTable cancelledTable; // 취소된 주문 테이블
 
-    private List<Order> orderList;
-    private DefaultTableModel newOrderTableModel;
-    private DefaultTableModel preparingOrderTableModel;
-    private DefaultTableModel completedOrderTableModel;
-    private DefaultTableModel cancelledOrderTableModel;
+    // 각 테이블의 데이터 모델
+    private DefaultTableModel waitingModel;
+    private DefaultTableModel preparingModel;
+    private DefaultTableModel completedModel;
+    private DefaultTableModel cancelledModel;
 
-    public OrderList_UI_Status_Frame(List<Order> sharedOrders) {
-        // 데이터 공유 및 기본 설정
-        this.orderList = sharedOrders;
-        setTitle("현재 주문 현황");
-        setSize(850, 600);
+    // 데이터 처리 관련
+    private OrderDAO orderDAO; // 주문 데이터 처리 객체
+    private List<OrderDTO> allOrders; // 전체 주문 목록
+
+    /**
+     * 생성자: 주문 현황 창 초기화
+     * 
+     * @param conn 데이터베이스 연결 객체
+     */
+    public OrderList_UI_Status_Frame(Connection conn) {
+        // 창 기본 설정
+        setTitle("주문 현황");
+        setSize(800, 600);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-        // TabbedPane 생성
-        JTabbedPane tabbedPane = new JTabbedPane();
-
-        // 탭 생성 및 추가
-        tabbedPane.addTab("신규 주문", createOrderTab("준비 중", "주문 취소", "주문 대기", newOrderTableModel = new DefaultTableModel()));
-        tabbedPane.addTab("준비 중", createOrderTab("결제 완료", "주문 취소", "준비 중", preparingOrderTableModel = new DefaultTableModel()));
-        tabbedPane.addTab("결제 완료", createOrderTab(null, null, "결제 완료", completedOrderTableModel = new DefaultTableModel()));
-        tabbedPane.addTab("주문 취소", createOrderTab(null, null, "주문 취소", cancelledOrderTableModel = new DefaultTableModel()));
-
-        add(tabbedPane, BorderLayout.CENTER);
-
-        // 테이블 데이터 초기화
-        refreshOrderTables();
+        orderDAO = new OrderDAO(conn);
+        makeUI(); // UI 구성
+        refreshData(); // 초기 데이터 로드
     }
 
-    private JPanel createOrderTab(String firstButtonText, String secondButtonText, String orderStatus, DefaultTableModel tableModel) {
-        JPanel tabPanel = new JPanel(new BorderLayout());
-        JTable orderTable = new JTable(tableModel);
+    // UI 구성요소 생성 및 배치
+    private void makeUI() {
+        JTabbedPane tabs = new JTabbedPane();
 
-        // 테이블 설정
-        tableModel.setColumnIdentifiers(new String[]{"주문 번호", "회원 ID", "좌석 번호", "상품", "가격", "결제 방법", "상태", "결재 일시"});
-        JScrollPane scrollPane = new JScrollPane(orderTable);
-        tabPanel.add(scrollPane, BorderLayout.CENTER);
+        // 각 상태별 탭 추가
+        tabs.addTab("주문 대기", makeOrderPanel("주문 대기", true));
+        tabs.addTab("준비 중", makeOrderPanel("준비 중", true));
+        tabs.addTab("완료", makeOrderPanel("결제 완료", false));
+        tabs.addTab("취소", makeOrderPanel("주문 취소", false));
 
-        // 버튼 패널
-        if (firstButtonText != null || secondButtonText != null) {
-            JPanel buttonPanel = new JPanel();
+        add(tabs);
+    }
 
-            if (firstButtonText != null) {
-                JButton firstButton = new JButton(firstButtonText);
-                firstButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        updateOrderStatus(orderTable, firstButtonText);
-                    }
-                });
-                buttonPanel.add(firstButton);
-            }
+    // 각 상태별 주문 패널 생성
+    private JPanel makeOrderPanel(String status, boolean needButtons) {
+        JPanel panel = new JPanel(new BorderLayout());
 
-            if (secondButtonText != null) {
-                JButton secondButton = new JButton(secondButtonText);
-                secondButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        updateOrderStatus(orderTable, secondButtonText);
-                    }
-                });
-                buttonPanel.add(secondButton);
-            }
+        // 테이블 생성
+        DefaultTableModel model = new DefaultTableModel(
+                new String[] { "주문번호", "회원ID", "좌석번호", "주문내역", "금액", "결제방법", "상태", "주문시간" }, 0);
 
-            tabPanel.add(buttonPanel, BorderLayout.SOUTH);
+        JTable table = new JTable(model);
+        panel.add(new JScrollPane(table), BorderLayout.CENTER);
+
+        saveTableReference(status, table, model);
+
+        // 상태 변경 버튼이 필요한 경우에만 추가
+        if (needButtons) {
+            panel.add(makeButtonPanel(table, status), BorderLayout.SOUTH);
         }
 
-        return tabPanel;
+        return panel;
     }
 
-    private void updateOrderStatus(JTable orderTable, String newStatus) {
-        int selectedRow = orderTable.getSelectedRow();
+    // 테이블과 모델 참조 저장
+    private void saveTableReference(String status, JTable table, DefaultTableModel model) {
+        switch (status) {
+            case "주문 대기":
+                waitingTable = table;
+                waitingModel = model;
+                break;
+            case "준비 중":
+                preparingTable = table;
+                preparingModel = model;
+                break;
+            case "결제 완료":
+                completedTable = table;
+                completedModel = model;
+                break;
+            case "주문 취소":
+                cancelledTable = table;
+                cancelledModel = model;
+                break;
+        }
+    }
 
-        // 선택된 행이 없는 경우 MessageDialog 사용
-        if (selectedRow == -1) {
-            Login.Login_MessageDialog loginMessageDialog = new Login.Login_MessageDialog(this, "알림", true, "먼저 주문을 선택하세요.");
-            loginMessageDialog.setLocationRelativeTo(this);
-            loginMessageDialog.setVisible(true);
+    // 상태 변경 버튼 패널 생성
+    private JPanel makeButtonPanel(JTable table, String status) {
+        JPanel buttonPanel = new JPanel();
+
+        // 현재 상태에 따라 가능한 상태 변경 버튼 추가
+        if ("주문 대기".equals(status)) {
+            addStateChangeButton(buttonPanel, table, "준비 중");
+            addStateChangeButton(buttonPanel, table, "주문 취소");
+        } else if ("준비 중".equals(status)) {
+            addStateChangeButton(buttonPanel, table, "결제 완료");
+            addStateChangeButton(buttonPanel, table, "주문 취소");
+        }
+
+        return buttonPanel;
+    }
+
+    // 상태 변경 버튼 추가
+    private void addStateChangeButton(JPanel panel, JTable table, String newStatus) {
+        JButton button = new JButton(newStatus);
+        button.addActionListener(e -> changeOrderStatus(table, newStatus));
+        panel.add(button);
+    }
+
+    // 주문 상태 변경
+    private void changeOrderStatus(JTable table, String newStatus) {
+        int row = table.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "주문을 선택해주세요!");
             return;
         }
 
-        // 주문 ID로 상태 변경
-        String orderId = orderTable.getValueAt(selectedRow, 0).toString();
-        for (Order order : orderList) {
-            if (order.getOrderID().equals(orderId)) {
-                order.setStatus(newStatus);
+        try {
+            int orderNo = Integer.parseInt(table.getValueAt(row, 0).toString());
+            if (orderDAO.updateOrderState(orderNo, newStatus)) {
+                refreshData(); // 상태 변경 성공시 데이터 새로고침
+            } else {
+                JOptionPane.showMessageDialog(this, "상태 변경 실패!");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "오류 발생!");
+        }
+    }
+
+    // 모든 테이블 데이터 새로고침
+    private void refreshData() {
+        try {
+            allOrders = orderDAO.findOrdersWithDetails();
+            clearAllTables();
+
+            // 각 주문을 해당하는 상태의 테이블에 추가
+            for (OrderDTO order : allOrders) {
+                addOrderToTable(order);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "데이터 로드 실패!");
+        }
+    }
+
+    // 모든 테이블 초기화
+    private void clearAllTables() {
+        waitingModel.setRowCount(0);
+        preparingModel.setRowCount(0);
+        completedModel.setRowCount(0);
+        cancelledModel.setRowCount(0);
+    }
+
+    // 주문을 해당하는 상태의 테이블에 추가
+    private void addOrderToTable(OrderDTO order) {
+        Object[] rowData = {
+                order.getOrder_no(),
+                order.getMember_id(),
+                order.getSeat_no(),
+                order.getProductDetails(),
+                order.getTotal_price(),
+                order.getPayment_type(),
+                order.getOrder_state(),
+                order.getOrder_time()
+        };
+
+        // 주문 상태에 따라 해당하는 테이블에 추가
+        switch (order.getOrder_state()) {
+            case "주문 대기":
+                waitingModel.addRow(rowData);
                 break;
-            }
+            case "준비 중":
+                preparingModel.addRow(rowData);
+                break;
+            case "결제 완료":
+                completedModel.addRow(rowData);
+                break;
+            case "주문 취소":
+                cancelledModel.addRow(rowData);
+                break;
         }
-
-        // 테이블 업데이트
-        refreshOrderTables();
-    }
-
-    private void refreshOrderTables() {
-        // 모든 테이블 초기화
-        newOrderTableModel.setRowCount(0);
-        preparingOrderTableModel.setRowCount(0);
-        completedOrderTableModel.setRowCount(0);
-        cancelledOrderTableModel.setRowCount(0);
-
-        // 상태별 데이터 추가
-        for (Order order : orderList) {
-            String[] rowData = {order.getOrderID(), order.getMemberID(), order.getSeatNumber(), order.getProduct(), order.getPrice(), order.getPaymentMethod(), order.getStatus(), order.getTime()};
-
-            switch (order.getStatus()) {
-                case "주문 대기":
-                    newOrderTableModel.addRow(rowData);
-                    break;
-                case "준비 중":
-                    preparingOrderTableModel.addRow(rowData);
-                    break;
-                case "결제 완료":
-                    completedOrderTableModel.addRow(rowData);
-                    break;
-                case "주문 취소":
-                    cancelledOrderTableModel.addRow(rowData);
-                    break;
-            }
-        }
-    }
-    public static class Order {
-        private String orderID;
-        private String memberID;
-        private String seatNumber;
-        private String product;
-        private String price;
-        private String paymentMethod;
-        private String status;
-        private String time;
-
-        public Order(String orderID, String memberID, String seatNumber, String product, String price, String paymentMethod, String status, String time) {
-            this.orderID = orderID;
-            this.memberID = memberID;
-            this.seatNumber = seatNumber;
-            this.product = product;
-            this.price = price;
-            this.paymentMethod = paymentMethod;
-            this.status = status;
-            this.time = time;
-        }
-
-        public String getOrderID() {
-            return orderID;
-        }
-
-        public String getMemberID() {
-            return memberID;
-        }
-
-        public String getSeatNumber() {
-            return seatNumber;
-        }
-
-        public String getProduct() {
-            return product;
-        }
-
-        public String getPrice() {
-            return price;
-        }
-
-        public String getPaymentMethod() {
-            return paymentMethod;
-        }
-
-        public String getStatus() {
-            return status;
-        }
-
-        public void setStatus(String status) {
-            this.status = status;
-        }
-
-        public String getTime() {
-            return time;
-        }
-
     }
 }

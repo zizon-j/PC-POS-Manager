@@ -11,39 +11,39 @@ import User_Login.User_OrderProduct;
 import javax.swing.*;
 import java.sql.Connection;
 
-public class Main extends JFrame{
+public class Main extends JFrame {
 
-    //창 전환
+    // 창 전환
     JTabbedPane main = new JTabbedPane();
 
-    //panel 객체 선언
+    // panel 객체 선언
     Seat_UI seat_ui = new Seat_UI();
 
     MemberManagement_UI memberManagement_ui = new MemberManagement_UI();
     Product_UI product_ui = new Product_UI();
     OrderList_UI orderList_ui = new OrderList_UI();
     Sales_UI sales_ui = new Sales_UI();
-//    Log_UI log_ui = new Log_UI();
-    public Main(){
+
+    // Log_UI log_ui = new Log_UI();
+    public Main() {
         super("PC방 POS");
         // 각 add 뒤에 자신이 만든 페이지 추가 , JPanel을 받아와야됨
-        //x,y 값 존재 할때 안할때 관리
+        // x,y 값 존재 할때 안할때 관리
 
         Connection conn = PCPosDBConnection.getConnection();
 
-
         SeatDAO seatDAO = new SeatDAO(conn);
         SeatDTO seatXY = seatDAO.findById("1");
-        if (seatXY != null){
+        if (seatXY != null) {
             Seat_UI_Exists seat_ui_exists = new Seat_UI_Exists(this);
             main.add("좌석관리", seat_ui_exists);
-        }else
+        } else
             main.add("좌석관리", seat_ui);
-        main.add("회원관리",memberManagement_ui);
+        main.add("회원관리", memberManagement_ui);
         main.add("운영매출", sales_ui);
-        main.add("상품관리",product_ui);
+        main.add("상품관리", product_ui);
         main.add("주문내역", orderList_ui);
-//        main.add("로그분석", log_ui); 보류
+        // main.add("로그분석", log_ui); 보류
 
         add(main);
 
@@ -62,7 +62,7 @@ public class Main extends JFrame{
             loginFrame.setVisible(true);
         });
 
-        //user login 창
+        // user login 창
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
