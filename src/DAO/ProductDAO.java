@@ -5,9 +5,10 @@ import DTO.ProductDTO;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class ProductDAO implements DAO{
-    private Connection conn;
-    public ProductDAO(Connection conn){
+public class ProductDAO implements DAO {
+    private final Connection conn;
+
+    public ProductDAO(Connection conn) {
         this.conn = conn;
     }
 
@@ -37,12 +38,12 @@ public class ProductDAO implements DAO{
         Statement stmt = null;
         ResultSet rs = null;
 
-        try{
+        try {
             String sql = "SELECT * FROM product";
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
 
-            while (rs.next()){
+            while (rs.next()) {
                 int product_no = rs.getInt("product_no");
                 String product_name = rs.getString("product_name");
                 int price = rs.getInt("price");
@@ -54,9 +55,9 @@ public class ProductDAO implements DAO{
                 //Arraylist에 저저아
 
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 if (rs != null)
                     rs.close();
@@ -74,13 +75,13 @@ public class ProductDAO implements DAO{
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
-        try{
+        try {
             String sql = "SELECT * FROM product where category_no = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, category_no_search);
             rs = pstmt.executeQuery();
 
-            while (rs.next()){
+            while (rs.next()) {
                 int product_no = rs.getInt("product_no");
                 String product_name = rs.getString("product_name");
                 int price = rs.getInt("price");
@@ -92,9 +93,9 @@ public class ProductDAO implements DAO{
                 //Arraylist에 저저아
 
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 if (rs != null)
                     rs.close();

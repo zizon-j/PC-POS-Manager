@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-class User_FindFrame extends JFrame implements ActionListener {
+class User_FindFrame extends JFrame {
     JTextField userIdField, userNameField;
     JButton confirmButton, cancelButton;
 
@@ -51,52 +51,39 @@ class User_FindFrame extends JFrame implements ActionListener {
         ct.add(bottomPanel, BorderLayout.SOUTH);
 
         cancelButton = new JButton("취소");
-        cancelButton.addActionListener(this);
         bottomPanel.add(cancelButton);
 
         confirmButton = new JButton("확인");
-        confirmButton.addActionListener(this);
         bottomPanel.add(confirmButton);
-    }
 
-    public void actionPerformed(ActionEvent ae) {
-        String s = ae.getActionCommand();
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                dispose();
+            }
+        });
 
-        if (s.equals("취소")) {
-            dispose();
-        } else if (s.equals("확인")) {
-            String id = userIdField.getText();
-            String name = userNameField.getText();
+        confirmButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                String id = userIdField.getText();
+                String name = userNameField.getText();
 
-            if (id.isEmpty() || name.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "항목을 모두 입력해주세요");
-            } else {
+                if (id.isEmpty() || name.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "항목을 모두 입력해주세요");
+                } else {
                     Connection conn = null;
-                try {
                     conn = PCPosDBConnection.getConnection();
                     MemberDAO memberDAO = new MemberDAO(conn);
                     MemberDTO member = memberDAO.findById(userIdField.getText());
 
-                    if(member.getMember_name().equals(userNameField.getText())){
-                        JOptionPane.showMessageDialog(this, "비밀번호: "+ member.getMember_pwd());
-                    }else
-                        JOptionPane.showMessageDialog(this, ":꺼져");
-                } finally {
-                    try {
-                        if (conn != null)
-                            conn.close();
-                    } catch (SQLException e){
-                        e.printStackTrace();
-                    }
+                    if (member.getMember_name().equals(userNameField.getText())) {
+                        JOptionPane.showMessageDialog(null, "비밀번호: " + member.getMember_pwd());
+                    } else
+                        JOptionPane.showMessageDialog(null, ":꺼져");
+
                 }
-
-
-                //dto객체 passwd 프린트
-                //id와 이름이 일치할때 passwd 출려갸
-                //완료
-                
-                
             }
-        }
+        });
     }
 }

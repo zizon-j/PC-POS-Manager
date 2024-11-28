@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class UsageHistoryDAO implements DAO<UsageHistoryDTO, String> {
-    private Connection conn;
+    private final Connection conn;
 
     public UsageHistoryDAO(Connection conn) {
         this.conn = conn;
@@ -26,7 +26,7 @@ public class UsageHistoryDAO implements DAO<UsageHistoryDTO, String> {
             ps.setString(1, memberNo);
             rs = ps.executeQuery();
 
-            if(rs.next()) {
+            if (rs.next()) {
                 int history_no = rs.getInt("history_no");
                 int usage_time = rs.getInt("usage_time");
                 int member_no = rs.getInt("member_no");
@@ -35,7 +35,7 @@ public class UsageHistoryDAO implements DAO<UsageHistoryDTO, String> {
 
                 history = new UsageHistoryDTO(history_no, member_no, usage_time, usage_date);
             }
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             try {
@@ -83,26 +83,24 @@ public class UsageHistoryDAO implements DAO<UsageHistoryDTO, String> {
     }
 
 
-
     @Override
     public boolean insert(UsageHistoryDTO usageHistoryDTO) {
         PreparedStatement pstmt = null;
-        try{
+        try {
             String sql = "INSERT INTO usage_history (member_no, start_time) VALUES (?, NOW());";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, usageHistoryDTO.getMember_no());
 
             pstmt.executeUpdate();
-        }
-        catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("사용 시작 시간 안찍힘");
             return false;
-        }finally {
+        } finally {
             try {
-                if(pstmt != null)
+                if (pstmt != null)
                     pstmt.close();
-            }catch (SQLException e){
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
@@ -142,18 +140,19 @@ public class UsageHistoryDAO implements DAO<UsageHistoryDTO, String> {
             }
         }
 
-            return histories;
-        }
-        public int calTotalUsageTime(int memberNo) { // 총 사용시간 계산 메서드
-            PreparedStatement ps = null;
-            ResultSet rs = null;
-            int totalUsageTime = 0;
+        return histories;
+    }
 
-            try {
-                String sql = "select sum(timestampdiff(minute, start_time, end_time)) as total_time from usage_history where member_no = ?";
-                ps = conn.prepareStatement(sql);
-                ps.setInt(1, memberNo);
-                rs = ps.executeQuery();
+    public int calTotalUsageTime(int memberNo) { // 총 사용시간 계산 메서드
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        int totalUsageTime = 0;
+
+        try {
+            String sql = "select sum(timestampdiff(minute, start_time, end_time)) as total_time from usage_history where member_no = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, memberNo);
+            rs = ps.executeQuery();
 
             if (rs.next())
                 totalUsageTime = rs.getInt("total_time");
@@ -171,6 +170,7 @@ public class UsageHistoryDAO implements DAO<UsageHistoryDTO, String> {
         }
         return totalUsageTime;
     }
+
     public LocalDateTime getLoginTime(MemberDTO member_no) { // 로그인 시간을 가져오는 메서드
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -183,7 +183,7 @@ public class UsageHistoryDAO implements DAO<UsageHistoryDTO, String> {
             pstmt.setInt(1, member_no.getMember_no());
             rs = pstmt.executeQuery();
 
-            if(rs.next()) {
+            if (rs.next()) {
                 loginTime = rs.getTimestamp("start_time").toLocalDateTime();
             }
 
@@ -191,7 +191,7 @@ public class UsageHistoryDAO implements DAO<UsageHistoryDTO, String> {
             e.printStackTrace();
         } finally {
             try {
-                if (rs!=null)
+                if (rs != null)
                     rs.close();
                 if (pstmt != null)
                     pstmt.close();

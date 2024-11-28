@@ -6,7 +6,7 @@ import DTO.TimeDTO;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class MemberDAO implements DAO<MemberDTO, String>{
+public class MemberDAO implements DAO<MemberDTO, String> {
     //db 연결을 위한 connection을 가져온다
     //sql문을 담은 Preparedstatement를 만든다
     //만들어진 Preparedstatement를 실행한다.
@@ -16,9 +16,9 @@ public class MemberDAO implements DAO<MemberDTO, String>{
 
     //DAO가 DB에서 데이터를 가져옴
     //가져온 데이터를 DTO로 만들어서 반환
-    private Connection conn;
+    private final Connection conn;
 
-    public MemberDAO(Connection conn){
+    public MemberDAO(Connection conn) {
         this.conn = conn;
     }
 
@@ -26,27 +26,27 @@ public class MemberDAO implements DAO<MemberDTO, String>{
     @Override
     public boolean insert(MemberDTO member) {
         PreparedStatement pstmt = null;
-        try{
+        try {
             String sql = "INSERT INTO member (member_name, member_id, member_pwd, birthday, sex, phone, address) VALUES (?,?,?,?,?,?,?)";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, member.getMember_name());
             pstmt.setString(2, member.getMember_id());
             pstmt.setString(3, member.getMember_pwd());
-            pstmt.setDate(4,member.getBirthday());
+            pstmt.setDate(4, member.getBirthday());
             pstmt.setString(5, member.getSex());
             pstmt.setString(6, member.getPhone());
             pstmt.setString(7, member.getAddress());
 
             pstmt.executeUpdate();
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
-        }finally {
-            try{
+        } finally {
+            try {
                 if (pstmt != null)
                     pstmt.close();
-            }catch (SQLException e){
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
@@ -57,7 +57,7 @@ public class MemberDAO implements DAO<MemberDTO, String>{
     //member_id로 검색
     //executequery(): select 쿼리문 실행
     // 쿼리를 실행하고, r겨로가를 ResultSet 객체로 변환
-    
+
     //executeUpdate(): insert, update, delete와 같은 dml에서 실행 결과로 영향을받은 레코드 수를변환
     //행의 개수를 반환하기 때문에 rs를 사용할 필요가 없다.
     @Override
@@ -66,13 +66,13 @@ public class MemberDAO implements DAO<MemberDTO, String>{
         ResultSet rs = null;
         MemberDTO member = null;
 
-        try{
+        try {
             String sql = "SELECT * FROM member WHERE member_id = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, member_no_search);
             rs = pstmt.executeQuery();
 
-            if(rs.next()){
+            if (rs.next()) {
                 int member_no = rs.getInt("member_no");
                 String member_name = rs.getString("member_name");
                 String member_id = rs.getString("member_id");
@@ -86,15 +86,15 @@ public class MemberDAO implements DAO<MemberDTO, String>{
 
                 member = new MemberDTO(member_no, member_name, member_id, member_pwd, birthday, sex, reg_date, phone, address, left_time);
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 if (rs != null)
                     rs.close();
                 if (pstmt != null)
                     pstmt.close();
-            }catch (SQLException e){
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
@@ -164,15 +164,15 @@ public class MemberDAO implements DAO<MemberDTO, String>{
     @Override
     public ArrayList<MemberDTO> findAll() {
         ArrayList<MemberDTO> members = new ArrayList<>();
-        Statement stmt =null;
+        Statement stmt = null;
         ResultSet rs = null;
 
-        try{
+        try {
             String sql = "SELECT * FROM member";
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
 
-            while (rs.next()){
+            while (rs.next()) {
                 int member_no = rs.getInt("member_no");
                 String member_name = rs.getString("member_name");
                 String member_id = rs.getString("member_id");
@@ -188,22 +188,19 @@ public class MemberDAO implements DAO<MemberDTO, String>{
                 members.add(member);
                 //arraylist에 저장
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 if (rs != null)
                     rs.close();
                 if (stmt != null)
                     stmt.close();
-            }catch (SQLException e){
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
         return members;
-
-
-
 
 
     }
@@ -213,13 +210,13 @@ public class MemberDAO implements DAO<MemberDTO, String>{
         ResultSet rs = null;
         MemberDTO member = null;
 
-        try{
+        try {
             String sql = "SELECT * FROM member WHERE member_no = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, member_no_search);
             rs = pstmt.executeQuery();
 
-            if(rs.next()){
+            if (rs.next()) {
                 int member_no = rs.getInt("member_no");
                 String member_name = rs.getString("member_name");
                 String member_id = rs.getString("member_id");
@@ -233,23 +230,24 @@ public class MemberDAO implements DAO<MemberDTO, String>{
 
                 member = new MemberDTO(member_no, member_name, member_id, member_pwd, birthday, sex, reg_date, phone, address, left_time);
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 if (rs != null)
                     rs.close();
                 if (pstmt != null)
                     pstmt.close();
-            }catch (SQLException e){
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
         return member;
     }
+
     public boolean update_left_time(MemberDTO member, TimeDTO time) { //회원 수정
         PreparedStatement pspmt = null;
-        try{
+        try {
             String sql = "update member set left_time = left_time + ? where member_id = ?";
             pspmt = conn.prepareStatement(sql);
             pspmt.setInt(1, time.getPlus_time());
@@ -258,14 +256,13 @@ public class MemberDAO implements DAO<MemberDTO, String>{
             pspmt.executeUpdate();
 
 
-
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 if (pspmt != null)
                     pspmt.close();
-            }catch (SQLException e){
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
@@ -278,13 +275,13 @@ public class MemberDAO implements DAO<MemberDTO, String>{
         ResultSet rs = null;
         MemberDTO member = null;
 
-        try{
+        try {
             String sql = "select * from member m join pc_pos_db.seat s on m.member_no = s.member_no where s.seat_no= ? ;";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, seat_no_search);
             rs = pstmt.executeQuery();
 
-            if(rs.next()){
+            if (rs.next()) {
                 int member_no = rs.getInt("member_no");
                 String member_name = rs.getString("member_name");
                 String member_id = rs.getString("member_id");
@@ -298,15 +295,15 @@ public class MemberDAO implements DAO<MemberDTO, String>{
 
                 member = new MemberDTO(member_no, member_name, member_id, member_pwd, birthday, sex, reg_date, phone, address, left_time);
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 if (rs != null)
                     rs.close();
                 if (pstmt != null)
                     pstmt.close();
-            }catch (SQLException e){
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }

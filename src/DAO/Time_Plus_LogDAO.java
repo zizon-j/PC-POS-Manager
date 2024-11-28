@@ -8,9 +8,11 @@ import java.util.ArrayList;
 public class Time_Plus_LogDAO implements DAO<Time_Plus_LogDTO, String> {
 
     Connection conn;
-    public Time_Plus_LogDAO(Connection conn){
+
+    public Time_Plus_LogDAO(Connection conn) {
         this.conn = conn;
     }
+
     @Override
     public Time_Plus_LogDTO findById(String s) {
         return null;
@@ -29,7 +31,7 @@ public class Time_Plus_LogDAO implements DAO<Time_Plus_LogDTO, String> {
     @Override
     public boolean insert(Time_Plus_LogDTO timePlusLog) {
         PreparedStatement pstmt = null;
-        try{
+        try {
             String sql = "INSERT INTO time_plus_log (member_id, money) VALUES (?,?)";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, timePlusLog.getMember_id());
@@ -37,14 +39,14 @@ public class Time_Plus_LogDAO implements DAO<Time_Plus_LogDTO, String> {
 
             pstmt.executeUpdate();
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
-        }finally {
-            try{
+        } finally {
+            try {
                 if (pstmt != null)
                     pstmt.close();
-            }catch (SQLException e){
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
@@ -57,6 +59,7 @@ public class Time_Plus_LogDAO implements DAO<Time_Plus_LogDTO, String> {
     public ArrayList<Time_Plus_LogDTO> findAll() {
         return null;
     }
+
     public double calTotalUsageMoney(String member_id) {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -75,7 +78,7 @@ public class Time_Plus_LogDAO implements DAO<Time_Plus_LogDTO, String> {
 
             if (rs.next())
                 totalUsageMoney = rs.getDouble(1);
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             try {

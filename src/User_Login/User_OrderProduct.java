@@ -17,16 +17,16 @@ import java.sql.Connection;
 import java.util.List;
 
 public class User_OrderProduct extends JFrame {
-    private JButton orderBtn;
-    private JTextField order_details;
-    private DefaultTableModel model;
-    private JPanel categoryPanel;
-    private JButton endBtn;
-    private int seatNo, member_no;
+    private final JButton orderBtn;
+    private final JTextField order_details;
+    private final DefaultTableModel model;
+    private final JPanel categoryPanel;
+    private final JButton endBtn;
+    private final int seatNo;
+    private final int member_no;
 
 
-
-    public User_OrderProduct(int seatNo, int member_no){
+    public User_OrderProduct(int seatNo, int member_no) {
         this.seatNo = seatNo;
         this.member_no = member_no;
 
@@ -36,8 +36,7 @@ public class User_OrderProduct extends JFrame {
         setVisible(true);
 
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        setSize(1600,900);
-
+        setSize(1600, 900);
 
 
         // 테이블 상품 표시
@@ -48,7 +47,7 @@ public class User_OrderProduct extends JFrame {
         ProductDAO productDAO = new ProductDAO(conn);
         List<ProductDTO> products = productDAO.findAll();
 
-        if(products !=null) {
+        if (products != null) {
             for (ProductDTO p : products) {
                 Object[] row = {
                         p.getProduct_name(),
@@ -62,14 +61,12 @@ public class User_OrderProduct extends JFrame {
         JTable product_table = new JTable(model);
         JScrollPane scrollPane = new JScrollPane(product_table);
 
-        scrollPane.setBounds(85,111,1057 , 675);
+        scrollPane.setBounds(85, 111, 1057, 675);
         add(scrollPane);
 
 
-
-
         order_details = new JTextField();
-        order_details.setBounds(1194,111,348,562);
+        order_details.setBounds(1194, 111, 348, 562);
         add(order_details);
 
         orderBtn = new JButton("주문하기");
@@ -98,11 +95,11 @@ public class User_OrderProduct extends JFrame {
         categoryPanel.add(btnCategoryBab);
         categoryPanel.add(btnCategoryDrink);
 
-        categoryPanel.setBounds(85,21,348,73);
+        categoryPanel.setBounds(85, 21, 348, 73);
         add(categoryPanel);
 
         endBtn = new JButton("사용 종료");
-        endBtn.setBounds(1194,21,348,73);
+        endBtn.setBounds(1194, 21, 348, 73);
         add(endBtn);
 
         // ------------------------------------------ 종료 버튼ㅁ ㅔ소드
@@ -124,7 +121,7 @@ public class User_OrderProduct extends JFrame {
         btnCategoryAll.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(products !=null) {
+                if (products != null) {
                     model.setRowCount(0);
                     for (ProductDTO p : products) {
                         Object[] row = {
@@ -140,7 +137,7 @@ public class User_OrderProduct extends JFrame {
                 JScrollPane scrollPane = new JScrollPane(product_table);
             }
         });
-        
+
         //라면 선택
         btnCategoryRamyeon.addActionListener(new ActionListener() {
             @Override
@@ -148,8 +145,7 @@ public class User_OrderProduct extends JFrame {
                 List<ProductDTO> products = productDAO.findbyCategoryAll(1);
 
 
-
-                if(products !=null) {
+                if (products != null) {
                     model.setRowCount(0);
                     for (ProductDTO p : products) {
                         Object[] row = {
@@ -173,8 +169,7 @@ public class User_OrderProduct extends JFrame {
                 List<ProductDTO> products = productDAO.findbyCategoryAll(2);
 
 
-
-                if(products !=null) {
+                if (products != null) {
                     model.setRowCount(0);
                     for (ProductDTO p : products) {
                         Object[] row = {
@@ -190,7 +185,7 @@ public class User_OrderProduct extends JFrame {
                 JScrollPane scrollPane = new JScrollPane(product_table);
             }
         });
-        
+
         //음료 선택
         btnCategoryDrink.addActionListener(new ActionListener() {
             @Override
@@ -198,8 +193,7 @@ public class User_OrderProduct extends JFrame {
                 List<ProductDTO> products = productDAO.findbyCategoryAll(3);
 
 
-
-                if(products !=null) {
+                if (products != null) {
                     model.setRowCount(0);
                     for (ProductDTO p : products) {
                         Object[] row = {
@@ -215,15 +209,9 @@ public class User_OrderProduct extends JFrame {
                 JScrollPane scrollPane = new JScrollPane(product_table);
             }
         });
-
-
-
-
     }
 
 
     public static void main(String[] args) {
-
     }
-
 }

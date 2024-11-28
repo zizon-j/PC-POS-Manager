@@ -2,7 +2,7 @@ package DAO;
 
 import java.util.ArrayList;
 
-public class OrderDEatialsDAO implements DAO{
+public class OrderDEatialsDAO implements DAO {
     @Override
     public Object findById(Object o) {
         return null;

@@ -35,50 +35,56 @@ public class User_LoginFrame extends JFrame {
         Container ct = getContentPane();
         ct.setLayout(null);
 
+        //제목
         JLabel titleLabel = new JLabel("사용자 키오스크");
         titleLabel.setFont(new Font("나눔고딕", Font.BOLD, 30));
-        titleLabel.setBounds(198, 28, 203, 79);
+        titleLabel.setBounds(250, 30, 300, 50);
         ct.add(titleLabel);
 
+        //아이디
         JLabel idLabel = new JLabel("아이디    : ");
-        idLabel.setBounds(138, 134, 60, 15);
+        idLabel.setBounds(200, 120, 80, 30);
         ct.add(idLabel);
 
+        //아이디 입려
         id = new JTextField();
-        id.setBounds(210, 131, 180, 21);
+        id.setBounds(300, 120, 200, 30);
         ct.add(id);
 
+        //비밀번호
         JLabel pwdLabel = new JLabel("비밀번호 : ");
-        pwdLabel.setBounds(138, 178, 80, 15);
+        pwdLabel.setBounds(200, 180, 80, 30);
         ct.add(pwdLabel);
 
+        //비밀번호 입력
         passwd = new JPasswordField();
-        passwd.setBounds(210, 175, 180, 21);
+        passwd.setBounds(300, 180, 200, 30);
         ct.add(passwd);
 
+        //로그인버튼
         loginBtn = new JButton("로그인");
-        loginBtn.setBounds(118, 265, 97, 23);
-
+        loginBtn.setBounds(200, 300, 120, 30);
         ct.add(loginBtn);
 
+        //회원가입 버튼
         registerBtn = new JButton("회원가입");
-        registerBtn.setBounds(364, 265, 97, 23);
-
+        registerBtn.setBounds(380, 300, 120, 30);
         ct.add(registerBtn);
 
+        //비밀번호 찾기 버튼
         findBtn = new JButton("비밀번호 찾기");
-        findBtn.setBounds(210, 232, 165, 23);
-
+        findBtn.setBounds(300, 240, 200, 30);
         ct.add(findBtn);
 
-//        selectSeat = new JButton("좌석 선택");
-//        selectSeat.setBounds(210, 298, 165, 23);
-//        selectSeat.addActionListener(this);
-//        ct.add(selectSeat);
+        // 좌석 선택 라벨
+        JLabel seatLabel = new JLabel("좌석 선택:");
+        seatLabel.setFont(new Font("나눔고딕", Font.PLAIN, 16));
+        seatLabel.setBounds(200, 360, 80, 30);
+        ct.add(seatLabel);
 
         // JComboBox 초기화 및 데이터 추가
         seatChombo = new JComboBox<>();
-        seatChombo.setBounds(210, 331, 165, 23);
+        seatChombo.setBounds(300, 360, 200, 30);
         ct.add(seatChombo);
 
         loadAvailableSeats();
@@ -98,13 +104,14 @@ public class User_LoginFrame extends JFrame {
                     UsageHistoryDAO usageHistoryDAO = new UsageHistoryDAO(conn);
                     if (member != null) {
                         if (member.getMember_pwd().equals(passwd.getText())) {
-                            int seatNo = (int)seatChombo.getSelectedItem();
+                            int seatNo = (int) seatChombo.getSelectedItem();
                             seatDAO.updateSeat(member.getMember_no(), (int) seatChombo.getSelectedItem());
                             User_OrderProduct op = new User_OrderProduct(seatNo, member.getMember_no());
                             op.setVisible(true);
                             dispose();
                             // //로그인 창 닫기
 
+                            //사용 시작 시간 저장
                             UsageHistoryDTO usageHistory = new UsageHistoryDTO();
                             usageHistory.setMember_no(member.getMember_no());
                             usageHistoryDAO.insert(usageHistory);
@@ -116,8 +123,7 @@ public class User_LoginFrame extends JFrame {
                         JOptionPane.showMessageDialog(null, "없는 ID 입니다.");
 
                     //좌석 선택 버튼 필요없음
-                }
-                else
+                } else
                     JOptionPane.showMessageDialog(null, "좌석을 선택하세요");
             }
         });
@@ -158,64 +164,6 @@ public class User_LoginFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "좌석 데이터를 불러오는 중 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
         }
     }
-
-//    @Override
-//    public void actionPerformed(ActionEvent ae) {
-//        String s = ae.getActionCommand();
-//
-//
-//        if (s.equals("회원가입")) {
-//            User_RegisterFrame userRegisterFrame = new User_RegisterFrame("회원가입");
-//            userRegisterFrame.setVisible(true);
-//        } else if (s.equals("비밀번호 찾기")) {
-//            //userFindFrame 에서 작업
-//            User_FindFrame userFindFrame = new User_FindFrame("비밀번호 찾기");
-//            userFindFrame.setVisible(true);
-//        } else if (s.equals("로그인")) {
-////            //e드가자
-////            // id 와 passwd 가 일치할때 로그인
-////            // id를 사용해서 dto 객체를 가져와서 받은 pwd와 dto.pwd가 같은지 화깅ㄴ
-////            //로그인 성공시 좌석 상태 변경 update seat -> 이건 trigger 가 낫지 않냐? -> trigger 해도 할게 많네
-////            if (seatChombo.getSelectedItem() != null) {
-////                Connection conn = PCPosDBConnection.getConnection();
-////                MemberDAO memberDAO = new MemberDAO(conn);
-////                MemberDTO member = memberDAO.findById(id.getText());
-////                SeatDAO seatDAO = new SeatDAO(conn);
-////                UsageHistoryDAO usageHistoryDAO = new UsageHistoryDAO(conn);
-////                if (member != null) {
-////                    if (member.getMember_pwd().equals(passwd.getText())) {
-////                        int seatNo = (int)seatChombo.getSelectedItem();
-////                        seatDAO.updateSeat(member.getMember_no(), (int) seatChombo.getSelectedItem());
-////                        User_OrderProduct op = new User_OrderProduct(seatNo, member.getMember_no());
-////                        op.setVisible(true);
-////                        this.dispose();
-////                        // //로그인 창 닫기
-////
-////                        UsageHistoryDTO usageHistory = new UsageHistoryDTO();
-////                        usageHistory.setMember_no(member.getMember_no());
-////                        usageHistoryDAO.insert(usageHistory);
-////
-////
-////                    } else
-////                        JOptionPane.showMessageDialog(this, "틀렸습니다.");
-////                } else
-////                    JOptionPane.showMessageDialog(this, "없는 ID 입니다.");
-////
-////                //좌석 선택 버튼 필요없음
-////            }
-////            else
-////                    JOptionPane.showMessageDialog(this, "좌석을 선택하세요");
-////        }
-////                else if (s.equals("좌석 선택")) {
-////                Integer selectedSeat = (Integer) seatChombo.getSelectedItem();
-////                if (selectedSeat != null) {
-////                    JOptionPane.showMessageDialog(this, "선택된 좌석: " + selectedSeat, "좌석 선택", JOptionPane.INFORMATION_MESSAGE);
-////                } else {
-////                    JOptionPane.showMessageDialog(this, "좌석을 선택하세요.", "경고", JOptionPane.WARNING_MESSAGE);
-////                }
-////            }
-//
-//    }
 
     public static void main(String[] args) {
         User_LoginFrame userLoginFrame = new User_LoginFrame("명전 피시방 사용자 키오스크");

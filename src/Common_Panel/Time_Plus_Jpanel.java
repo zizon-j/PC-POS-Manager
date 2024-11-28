@@ -25,10 +25,10 @@ public class Time_Plus_Jpanel extends JPanel {
 
     JTextField id_search_field;
     JComboBox money_select;
-    String[] money_list= {"1000","2000","5000","10000"};
+    String[] money_list = {"1000", "2000", "5000", "10000"};
     JButton money_plus_btn;
 
-    public Time_Plus_Jpanel(){
+    public Time_Plus_Jpanel() {
 
         Connection conn = PCPosDBConnection.getConnection();
 
@@ -61,7 +61,7 @@ public class Time_Plus_Jpanel extends JPanel {
                 TimeDTO time = timeDAO.findById(selected_money);
 
 
-                if(member != null){
+                if (member != null) {
                     memberDAO.update_left_time(member, time);
 
                     Time_Plus_LogDTO time_plus = new Time_Plus_LogDTO();
@@ -70,10 +70,10 @@ public class Time_Plus_Jpanel extends JPanel {
 
                     Time_Plus_LogDAO.insert(time_plus);
 
-                    JOptionPane.showMessageDialog(null, time.getPlus_time()+"분 추가 되었습니다.");
+                    JOptionPane.showMessageDialog(null, time.getPlus_time() + "분 추가 되었습니다.");
 
 
-                }else
+                } else
                     JOptionPane.showMessageDialog(null, "없는 ID 입니다.");
 
 
