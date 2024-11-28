@@ -87,6 +87,13 @@ public class Seat_UI_Exists extends JPanel {
             topPanel.add(btnInfos[i]);
             topPanel.add(btnActivates[i]);
 
+            //활성화 비활성화 구분
+            if (seatDAO.findById(String.valueOf(i+1)).getSeat_state().equals("비활성화")){
+                btnPanels[i].setEnabled(false);
+                seat_Infos[i].setEnabled(false);
+                btnInfos[i].setEnabled(false);
+            }
+
             btnPanels[i].add(topPanel, BorderLayout.NORTH);
             btnPanels[i].add(seat_Infos[i], BorderLayout.CENTER);
             seat_panel.add(btnPanels[i]);
@@ -118,7 +125,7 @@ public class Seat_UI_Exists extends JPanel {
 
         //자리 수정, 자리 활성화 | 비활성화 메소드
         //자리 선점중인지 확인하고 활성화 비활성화 체크
-        //Todo. 자리 선점
+        //Todo완료 자리 선점
         // 편집 완료 버튼 추가
         btnEdit.addActionListener(new ActionListener() {
             @Override
@@ -141,10 +148,29 @@ public class Seat_UI_Exists extends JPanel {
                     btnActivates[index].addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            boolean t = btnPanels[index].isEnabled();
-                            btnPanels[index].setEnabled(!t);
-                            seat_Infos[index].setEnabled(!t);
-                            btnInfos[index].setEnabled(!t);
+                            Connection conn = PCPosDBConnection.getConnection();
+                            SeatDTO is_seat_using = seatDAO.findById(String.valueOf(index + 1));
+                            if(is_seat_using.getSeat_state().equals("사용중")){
+                                JOptionPane.showMessageDialog(null, "사용중입니다. 비활성화 불가능합니다.");
+                            }
+                            else {
+                                boolean t = btnPanels[index].isEnabled();
+                                btnPanels[index].setEnabled(!t);
+                                seat_Infos[index].setEnabled(!t);
+                                btnInfos[index].setEnabled(!t);
+                                JOptionPane.showMessageDialog(null, "변경되었습니다. ");
+
+                                if(t==true){
+                                    SeatDTO seat = new SeatDTO();
+                                    seat.setSeat_no(index + 1);
+                                    seatDAO.update3(seat);
+                                }
+                                else {
+                                    SeatDTO seat = new SeatDTO();
+                                    seat.setSeat_no(index + 1);
+                                    seatDAO.update4(seat);
+                                }
+                            }
                         }
                     });
                 }

@@ -177,10 +177,31 @@ public class Seat_UI extends JPanel {
                             btnActivates[index].addActionListener(new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
-                                    boolean t = btnPanels[index].isEnabled();
-                                    btnPanels[index].setEnabled(!t);
-                                    seat_Infos[index].setEnabled(!t);
-                                    btnInfos[index].setEnabled(!t);
+
+                                    Connection conn = PCPosDBConnection.getConnection();
+                                    SeatDAO seatDAO = new SeatDAO(conn);
+                                    SeatDTO is_seat_using = seatDAO.findById(String.valueOf(index + 1));
+                                    if(is_seat_using.getSeat_state().equals("사용중")){
+                                        JOptionPane.showMessageDialog(null, "사용중입니다. 비활성화 불가능합니다.");
+                                    }
+                                    else {
+                                        boolean t = btnPanels[index].isEnabled();
+                                        btnPanels[index].setEnabled(!t);
+                                        seat_Infos[index].setEnabled(!t);
+                                        btnInfos[index].setEnabled(!t);
+                                        JOptionPane.showMessageDialog(null, "변경되었습니다. ");
+
+                                        if(t==true){
+                                            SeatDTO seat = new SeatDTO();
+                                            seat.setSeat_no(index + 1);
+                                            seatDAO.update3(seat);
+                                        }
+                                        else {
+                                            SeatDTO seat = new SeatDTO();
+                                            seat.setSeat_no(index + 1);
+                                            seatDAO.update4(seat);
+                                        }
+                                    }
                                 }
                             });
                         }
