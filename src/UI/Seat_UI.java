@@ -87,7 +87,7 @@ public class Seat_UI extends JPanel {
                     btnPanels[i] = new JPanel(new BorderLayout());
                     btnInfos[i] = new JButton("정보보기");
                     btnActivates[i] = new JButton("황성화/비활성화");
-                    seat_Infos[i] = new JTextArea((i + 1) + "좌석 정보");
+                    seat_Infos[i] = new JTextArea((i + 1) + "번 좌석");
                     seat_Infos[i].setEditable(false);
 
                     //좌석 추가
