@@ -1032,12 +1032,12 @@ pc_pos_db|schema||pc_pos_root||UPDATE|G</Grants>
       <Charset>utf8mb4</Charset>
     </collation>
     <schema id="324" parent="1" name="information_schema">
-      <LastIntrospectionLocalTimestamp>2024-11-29.22:19:40</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2024-11-29.23:20:37</LastIntrospectionLocalTimestamp>
       <CollationName>utf8_general_ci</CollationName>
     </schema>
     <schema id="325" parent="1" name="pc_pos_db">
       <Current>1</Current>
-      <LastIntrospectionLocalTimestamp>2024-11-29.22:19:40</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2024-11-29.23:20:38</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_general_ci</CollationName>
     </schema>
     <user id="326" parent="1" name="pc_pos_root"/>
@@ -5656,7 +5656,7 @@ pc_pos_db|schema||pc_pos_root||UPDATE|G</Grants>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
     <column id="1267" parent="411" name="product_no">
-      <AutoIncrement>26</AutoIncrement>
+      <AutoIncrement>28</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>int(11)|0s</StoredType>
