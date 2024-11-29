@@ -1,5 +1,6 @@
 package UI;
 
+import Common_Panel.Time_Plus_Jpanel;
 import DAO.MemberDAO;
 import DAO.Time_Plus_LogDAO;
 import DAO.UsageHistoryDAO;
@@ -26,7 +27,7 @@ public class MemberManagement_UI extends JPanel {
             totalUsage_Money, totalUsage_time, joinDate;
     private JRadioButton man, woman;
     private ButtonGroup group;
-
+    Time_Plus_Jpanel time_plus_jpanel; //시간 추가 패널
     private MemberDAO memberDAO; //회원DAO 객체
     private UsageHistoryDAO usageHistoryDAO; // 사용기록DAO 객체
     private Time_Plus_LogDAO time_Plus_LogDAO;
@@ -38,6 +39,9 @@ public class MemberManagement_UI extends JPanel {
             memberDAO = new MemberDAO(conn);
             usageHistoryDAO = new UsageHistoryDAO(conn);
             time_Plus_LogDAO = new Time_Plus_LogDAO(conn);
+            time_plus_jpanel = new Time_Plus_Jpanel();
+            add(time_plus_jpanel);
+
 
             //UI 구성요소
             create_search();
@@ -165,7 +169,7 @@ public class MemberManagement_UI extends JPanel {
                                     m.getReg_date()
                             };
                             model.addRow(row);
-                        } else if (keyword.isEmpty())
+                        } else if (keyword.isEmpty()) //비어 있으면 테이블 업데이트
                             fetchAndUpdateTable();
                     }
                 } catch (Exception ex) {
@@ -268,7 +272,7 @@ public class MemberManagement_UI extends JPanel {
                return;
            }
 
-           try {
+           try { //회원 정보 추가
                MemberDTO newMeber = new MemberDTO();
                newMeber.setMember_name(name);
                newMeber.setMember_id(id);
@@ -295,7 +299,7 @@ public class MemberManagement_UI extends JPanel {
         AddMemberDialog.setLocationRelativeTo(null);
         AddMemberDialog.setVisible(true);
     }
-    private void EditMemberDialog() { //회원 수정 다이얼로그 생성
+    private void EditMemberDialog() { //회원 수정 다이얼로그 생성, 그리드백 레이아웃으로 그리드레이아웃보다 더 유연한 배치 가능
         int selectedRow = member_table.getSelectedRow(); //선택한 회원
         if (selectedRow == -1){ //선택하지 않았다면 return
             JOptionPane.showMessageDialog(this, "수정할 회원을 선택해주세요.");
@@ -448,7 +452,7 @@ public class MemberManagement_UI extends JPanel {
                     EditMemberDialog.dispose();
                 }
             });
-            saveEditBtn.addActionListener(new ActionListener() {
+            saveEditBtn.addActionListener(new ActionListener() { //입력된 정보 가져와서 정보 수정
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     String newPwd = pwdField.getText().toString();
