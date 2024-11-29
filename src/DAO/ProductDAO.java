@@ -7,7 +7,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductDAO implements DAO<ProductDTO,String>{
+public class ProductDAO implements DAO<ProductDTO, String> {
     //db 연결을 위한 connection을 가져온다
     //sql문을 담은 Preparedstatement를 만든다
     //만들어진 Preparedstatement를 실행한다.
@@ -19,51 +19,54 @@ public class ProductDAO implements DAO<ProductDTO,String>{
     //가져온 데이터를 DTO로 만들어서 반환
     private Connection conn;
 
-    public ProductDAO(Connection conn){this.conn = conn;}
+    public ProductDAO(Connection conn) {
+        this.conn = conn;
+    }
 
     //메뉴 추가
     @Override
     public boolean insert(ProductDTO product) {
         PreparedStatement pstmt = null;
-        try{
+        try {
             String sql = "INSERT INTO product (product_name, price, stock, category_no) VALUES (?,?,?,?)";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, product.getProduct_name());
-            pstmt.setInt(2,product.getPrice());
-            pstmt.setInt(3,product.getStock());
-            pstmt.setInt(4,product.getCategory_no());
+            pstmt.setInt(2, product.getPrice());
+            pstmt.setInt(3, product.getStock());
+            pstmt.setInt(4, product.getCategory_no());
             pstmt.executeUpdate();
 
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
-        }finally {
-            try{
+        } finally {
+            try {
                 if (pstmt != null)
                     pstmt.close();
-            }catch (SQLException e){
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
         return true;
     }
+
     //카테고리 추가
     public boolean insertC(CategoryDTO category) {
         PreparedStatement pstmt = null;
-        try{
+        try {
             String sql = "INSERT INTO category (category_name) VALUES (?)";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, category.getCategory_name());
             pstmt.executeUpdate();
 
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
-        }finally {
-            try{
+        } finally {
+            try {
                 if (pstmt != null)
                     pstmt.close();
-            }catch (SQLException e){
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
@@ -149,7 +152,7 @@ public class ProductDAO implements DAO<ProductDTO,String>{
             pstmt.setString(2, product.getProduct_name());
             pstmt.setInt(3, product.getPrice());
             pstmt.setInt(4, product.getStock());
-            pstmt.setInt(5,product.getProduct_no());
+            pstmt.setInt(5, product.getProduct_no());
 
             int rowsAffected = pstmt.executeUpdate();
 
@@ -206,12 +209,12 @@ public class ProductDAO implements DAO<ProductDTO,String>{
         Statement stmt = null;
         ResultSet rs = null;
 
-        try{
+        try {
             String sql = "SELECT * FROM product_2 order by product_no asc";
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
 
-            while (rs.next()){
+            while (rs.next()) {
                 int product_no = rs.getInt("product_no");
                 String category_name = rs.getString("category_name");
                 String product_name = rs.getString("product_name");
@@ -223,9 +226,9 @@ public class ProductDAO implements DAO<ProductDTO,String>{
                 //Arraylist에 저장
 
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 if (rs != null)
                     rs.close();
@@ -252,29 +255,29 @@ public class ProductDAO implements DAO<ProductDTO,String>{
 
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, category_search); //카테고리가 null이면 전체
-            pstmt.setString(2,category_search);
-            pstmt.setString(3,"%" + product_name_search + "%");
+            pstmt.setString(2, category_search);
+            pstmt.setString(3, "%" + product_name_search + "%");
             rs = pstmt.executeQuery();
 
-            while(rs.next()) {
+            while (rs.next()) {
                 int product_no = rs.getInt("product_no");
                 String category_name = rs.getString("category_name");
                 String product_name = rs.getString("product_name");
                 int price = rs.getInt("price");
                 int stock = rs.getInt("stock");
 
-                ProductDTO product = new ProductDTO(product_no,category_name,product_name, price, stock);
+                ProductDTO product = new ProductDTO(product_no, category_name, product_name, price, stock);
                 products.add(product);
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 if (rs != null)
                     rs.close();
                 if (pstmt != null)
                     pstmt.close();
-            }catch (SQLException e){
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
@@ -287,12 +290,12 @@ public class ProductDAO implements DAO<ProductDTO,String>{
         Statement stmt = null;
         ResultSet rs = null;
 
-        try{
+        try {
             String sql = "SELECT * FROM category";
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
 
-            while (rs.next()){
+            while (rs.next()) {
                 int category_no = rs.getInt("category_no");
                 String category_name = rs.getString("category_name");
 
@@ -301,9 +304,9 @@ public class ProductDAO implements DAO<ProductDTO,String>{
                 //Arraylist에 저장
 
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 if (rs != null)
                     rs.close();
@@ -315,18 +318,19 @@ public class ProductDAO implements DAO<ProductDTO,String>{
         }
         return categorys;
     }
+
     public ArrayList findbyCategoryAll(int category_no_search) {
         ArrayList<ProductDTO> products = new ArrayList<>();
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
-        try{
+        try {
             String sql = "SELECT * FROM product where category_no = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, category_no_search);
             rs = pstmt.executeQuery();
 
-            while (rs.next()){
+            while (rs.next()) {
                 int product_no = rs.getInt("product_no");
                 String product_name = rs.getString("product_name");
                 int price = rs.getInt("price");
@@ -338,9 +342,9 @@ public class ProductDAO implements DAO<ProductDTO,String>{
                 //Arraylist에 저저아
 
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 if (rs != null)
                     rs.close();
