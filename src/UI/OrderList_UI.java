@@ -1,93 +1,143 @@
 package UI;
 
+import DAO.OrderDAO;
+import DTO.OrderDTO;
+import Jdbc.PCPosDBConnection;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.sql.Connection;
 import java.util.List;
 
+/**
+ * 주문 목록을 보여주는 메인 화면
+ * 모든 주문을 테이블 형태로 보여주고, 검색 기능과 주문 현황 창을 열 수 있는 기능 제공
+ */
+
 public class OrderList_UI extends JPanel {
+    // UI 구성요소들
+    private JTable orderTable; // 주문 목록을 보여주는 테이블
+    private DefaultTableModel tableModel; // 테이블의 데이터 모델
+    private JTextField searchTextField; // 검색어 입력 필드
+    private JButton searchBtn; // 검색 버튼
+    private JButton orderStatusBtn; // 주문 현황 창 열기 버튼
 
-    private DefaultTableModel tableModel;
-    private List<OrderList_UI_Status_Frame.Order> orders;
+    // 데이터베이스 관련
+    private Connection conn; // DB 연결 객체
+    private OrderDAO orderDAO; // 주문 데이터 처리 객체
+    private List<OrderDTO> orders; // 주문 목록 데이터
 
+    // 생성자: UI 초기화 및 데이터 로드
     public OrderList_UI() {
+        connectDatabase(); // DB 연결
+        makeUI(); // UI 구성요소 생성
+        refreshTable(); // 초기 데이터 로드
+    }
+
+    // 데이터베이스 연결 설정
+    private void connectDatabase() {
+        try {
+            conn = PCPosDBConnection.getConnection();
+            orderDAO = new OrderDAO(conn);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "DB 연결 실패!");
+        }
+    }
+
+    // UI 구성요소 생성 및 배치
+    private void makeUI() {
         setLayout(new BorderLayout());
 
-        // 초기 주문 데이터 생성
-        orders = createSampleOrders();
+        // 1. 상단 검색 패널 구성
+        JPanel topPanel = new JPanel();
+        searchTextField = new JTextField(20);
+        searchBtn = new JButton("검색");
+        orderStatusBtn = new JButton("주문 현황 보기");
 
-        // 상단 패널 (검색 및 주문 현황 버튼)
-        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JTextField searchTextField = new JTextField(15);
-        JButton searchBtn = new JButton("검색");
-        JButton currentOrdersBtn = new JButton("현재 주문 현황");
+        topPanel.add(searchTextField);
+        topPanel.add(searchBtn);
+        topPanel.add(orderStatusBtn);
+        add(topPanel, BorderLayout.NORTH);
 
-        headerPanel.add(searchTextField);
-        headerPanel.add(searchBtn);
-        headerPanel.add(currentOrdersBtn);
-        add(headerPanel, BorderLayout.NORTH);
+        // 2. 주문 목록 테이블 구성
+        String[] columns = { "주문번호", "회원ID", "좌석번호", "주문내역", "금액", "결제방법", "상태", "주문시간" };
+        tableModel = new DefaultTableModel(columns, 0);
+        orderTable = new JTable(tableModel);
+        add(new JScrollPane(orderTable), BorderLayout.CENTER);
 
-        // 테이블의 컬럼 이름들
-        String[] tableColumns = {"주문 번호", "회원 ID", "좌석 번호", "상품", "가격", "결제 방법", "상태", "결제 일시"};
-
-        tableModel = new DefaultTableModel(tableColumns, 0);
-        JTable orderTable = new JTable(tableModel);
-        JScrollPane tableScrollPane = new JScrollPane(orderTable);
-        add(tableScrollPane, BorderLayout.CENTER);
-
-        loadOrdersToTable();
-
-        // 검색 버튼 동작 정의
-        searchBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String keyword = searchTextField.getText().toLowerCase();
-
-                // 기존 데이터 초기화
-                tableModel.setRowCount(0);
-
-                // 데이터 필터 부분
-                for (OrderList_UI_Status_Frame.Order order : orders) {
-                    if (keyword.isEmpty() || order.getProduct().toLowerCase().contains(keyword)) {
-                        tableModel.addRow(new Object[]{order.getOrderID(), order.getMemberID(), order.getSeatNumber(), order.getProduct(), order.getPrice(), order.getPaymentMethod(), order.getStatus(), order.getTime()});
-                    }
-                }
-            }
-        });
-
-        // 현재 주문 현황 버튼 동작 정의
-        currentOrdersBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // OrderStatusFrame 열기
-                OrderList_UI_Status_Frame orderStatusFrame = new OrderList_UI_Status_Frame(orders);
-                orderStatusFrame.setVisible(true);
-            }
-        });
-    }
-    
-        // 추후 데이터베이스 연동 시 수정
-    private List<OrderList_UI_Status_Frame.Order> createSampleOrders() {
-        List<OrderList_UI_Status_Frame.Order> sampleOrders = new ArrayList<>();
-
-        // 주문 1
-        sampleOrders.add(new OrderList_UI_Status_Frame.Order("001", "user123", "1", "짜파게티, 웰치스 포도", "5,000원", "카드", "주문 대기","2024-11-21-12:00"));
-
-        // 주문 2
-        sampleOrders.add(new OrderList_UI_Status_Frame.Order("002", "user456", "2", "매콤라볶이, 꿀복숭아에이드", "5,000원", "카드", "주문 대기", "2024-11-21-13:00"));
-
-        // 주문 3
-        sampleOrders.add(new OrderList_UI_Status_Frame.Order("003", "user789", "3", "매콤닭갈비덮밥", "5,000원", "현금", "주문 대기", "2024-11-21-14:00"));
-
-        return sampleOrders;
+        // 3. 버튼 동작 설정
+        addButtonActions();
     }
 
-    private void loadOrdersToTable() {
-        for (OrderList_UI_Status_Frame.Order order : orders) {
-            tableModel.addRow(new Object[]{order.getOrderID(), order.getMemberID(), order.getSeatNumber(), order.getProduct(), order.getPrice(), order.getPaymentMethod(), order.getStatus(), order.getTime()});
+    // 버튼 클릭 이벤트 처리 설정
+
+    private void addButtonActions() {
+        // 검색 버튼 클릭 시
+        searchBtn.addActionListener(e -> {
+            String keyword = searchTextField.getText().toLowerCase();
+            searchOrders(keyword);
+        });
+
+        // 주문 현황 버튼 클릭 시
+        orderStatusBtn.addActionListener(e -> {
+            openOrderStatusWindow();
+        });
+    }
+
+    // 주문 검색 기능
+    private void searchOrders(String keyword) {
+        tableModel.setRowCount(0); // 테이블 초기화
+
+        // 키워드가 포함된 주문만 필터링하여 표시
+        for (OrderDTO order : orders) {
+            if (keyword.isEmpty() ||
+                    order.getProductDetails().toLowerCase().contains(keyword)) {
+                addOrderToTable(order);
+            }
         }
+    }
+
+    // 주문 현황 창 열기
+    private void openOrderStatusWindow() {
+        try {
+            OrderList_UI_Status_Frame statusFrame = new OrderList_UI_Status_Frame(conn);
+            // 창이 닫힐 때 테이블 새로고침
+            statusFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+                public void windowClosed(java.awt.event.WindowEvent e) {
+                    refreshTable();
+                }
+            });
+            statusFrame.setVisible(true);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "주문 현황 창을 열 수 없습니다!");
+        }
+    }
+
+    // 테이블 데이터 새로고침
+    private void refreshTable() {
+        try {
+            orders = orderDAO.findOrdersWithDetails(); // DB에서 최신 데이터 조회
+            tableModel.setRowCount(0); // 테이블 초기화
+            for (OrderDTO order : orders) {
+                addOrderToTable(order); // 각 주문을 테이블에 추가
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "데이터 로드 실패!");
+        }
+    }
+
+    // 주문 데이터를 테이블에 추가
+
+    private void addOrderToTable(OrderDTO order) {
+        tableModel.addRow(new Object[] {
+                order.getOrder_no(),
+                order.getMember_id(),
+                order.getSeat_no(),
+                order.getProductDetails(),
+                order.getTotal_price(),
+                order.getPayment_type(),
+                order.getOrder_state(),
+                order.getOrder_time()
+        });
     }
 }
