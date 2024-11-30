@@ -6,6 +6,8 @@ import DTO.SalesDTO;
 import DTO.SeatDTO;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -182,7 +184,7 @@ public class OrderDAO implements DAO<OrderDTO, String> {
                     "          AND o2.order_state = '결제 완료') AS total_sum " +
                     "FROM orders o " +
                     "WHERE o.order_state = '결제 완료' " +
-                    "ORDER BY o.order_time DESC";
+                    "ORDER BY o.order_time";
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
 
@@ -220,5 +222,86 @@ public class OrderDAO implements DAO<OrderDTO, String> {
         return orders;
     }
 
+    // 날짜 조회
+    public ArrayList<SalesDTO> searchRange(LocalDate startDate, LocalDate endDate) {
+        ArrayList<SalesDTO> salesList = new ArrayList<>();
+        Statement stmt = null;  // SQL 문을 저장할 객체
+        ResultSet rs = null;    // SQL 문에서 조회한 결과를 저장할 객체
 
+        try {
+            String sql = "SELECT o.order_no, " +
+                    "       o.order_time, " +
+                    "       o.total_price, " +
+                    "       o.payment_type, " +
+                    "       (SELECT SUM(o2.total_price) " +
+                    "        FROM orders o2 " +
+                    "        WHERE o2.order_time <= o.order_time " +
+                    "          AND o2.order_state = '결제 완료') AS total_sum " +
+                    "FROM orders o " +
+                    "WHERE o.order_state = '결제 완료' ";
+
+            // 날짜 범위가 주어졌다면 조건 추가
+            if (startDate != null) {
+                sql += "AND o.order_time >= ? ";
+            }
+            if (endDate != null) {
+                sql += "AND o.order_time <= ? ";
+            }
+
+            sql += "ORDER BY o.order_time";  // 결제 시간 기준으로 정렬
+
+            stmt = conn.createStatement();
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                int index = 1;
+                // 날짜 파라미터를 설정 (startDate와 endDate가 있을 경우)
+                if (startDate != null) {
+                    pstmt.setDate(index++, Date.valueOf(startDate));
+                }
+                if (endDate != null) {
+                    LocalDateTime endDateTime = endDate.atTime(23, 59, 59);  // 23:59:59로 설정
+                    pstmt.setTimestamp(index++, Timestamp.valueOf(endDateTime)); // localdate를 타임스탬프로 변환하지않으면 당일 조회가 안됌
+                }
+
+                rs = pstmt.executeQuery();  // 쿼리 실행
+
+                while (rs.next()) {
+                    int order_no = rs.getInt("order_no");
+                    int total_price = rs.getInt("total_price");
+                    String payment_type = rs.getString("payment_type");
+                    Date order_time = rs.getDate("order_time");
+                    int total_sum = rs.getInt("total_sum");
+
+                    // 조회된 결과로 SalesDTO 객체 생성 후 리스트에 추가
+                    SalesDTO salesDTO = new SalesDTO(order_no, total_price, payment_type, order_time, total_sum);
+                    salesList.add(salesDTO);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();  // SQL 쿼리 실행 중 오류 발생 시 출력
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();  // 자원 해제 중 오류 발생 시 출력
+            }
+        }
+
+        return salesList;
+
+    }
+
+    // 주문 취소 메소드
+    public boolean cancelOrder(int orderNo) {
+        String sql = "UPDATE orders SET order_state = '결제 취소' WHERE order_no = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, orderNo);
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;  // 업데이트가 성공했으면 true 반환
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
