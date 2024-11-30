@@ -9,6 +9,7 @@ public class Sales_UI_Month extends JPanel {
     private LocalDate currentDate; // 현재 날짜
     private JLabel monthLabel; // 월 표시
     private JPanel gridPanel; // 날짜 버튼 그리드 패널
+    private JLabel totalSales;
 
     public Sales_UI_Month() {
         setLayout(new BorderLayout());
@@ -19,6 +20,11 @@ public class Sales_UI_Month extends JPanel {
         JButton prevButton = new JButton("<");
         JButton nextButton = new JButton(">");
         monthLabel = new JLabel(getMonthTitle(), JLabel.CENTER);
+
+        // 총 매출
+        totalSales = new JLabel("총 매출: ", JLabel.CENTER);
+        totalSales.setFont(new Font("굴림", Font.BOLD, 20));
+        headerPanel.add(totalSales, BorderLayout.NORTH);
 
         prevButton.addActionListener(e -> updateMonth(-1)); // 이전 달로 이동
         nextButton.addActionListener(e -> updateMonth(1)); // 다음 달로 이동
@@ -76,9 +82,24 @@ public class Sales_UI_Month extends JPanel {
 
         // 날짜 버튼 추가
         for (int day = 1; day <= daysInMonth; day++) {
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.setLayout(new BorderLayout()); // BorderLayout을 사용하여 텍스트 추가
+
+            // 날짜 버튼 생성
             JButton dayButton = new JButton(String.valueOf(day));
-            dayButton.setFocusPainted(false);
-            gridPanel.add(dayButton);
+            dayButton.setFocusPainted(false); // 버튼의 포커스를 표시하지 않음
+
+            // "매출: " 텍스트 추가
+            JLabel salesLabel = new JLabel("매출: ", JLabel.CENTER);
+            buttonPanel.add(salesLabel, BorderLayout.NORTH); // 텍스트를 버튼 위에 배치
+
+            // 날짜 버튼과 텍스트를 panel에 추가
+            buttonPanel.add(dayButton, BorderLayout.CENTER);
+
+            // 버튼을 그리드에 추가
+            gridPanel.add(buttonPanel);
         }
+
     }
+
 }
