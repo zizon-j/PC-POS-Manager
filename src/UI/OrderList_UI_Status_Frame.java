@@ -30,11 +30,7 @@ public class OrderList_UI_Status_Frame extends JFrame {
     private OrderDAO orderDAO; // 주문 데이터 처리 객체
     private List<OrderDTO> allOrders; // 전체 주문 목록
 
-    /**
-     * 생성자: 주문 현황 창 초기화
-     * 
-     * @param conn 데이터베이스 연결 객체
-     */
+    // 생성자: 주문 현황 창 초기화
     public OrderList_UI_Status_Frame(Connection conn) {
         // 창 기본 설정
         setTitle("주문 현황");
@@ -66,7 +62,7 @@ public class OrderList_UI_Status_Frame extends JFrame {
 
         // 테이블 생성
         DefaultTableModel model = new DefaultTableModel(
-                new String[] { "주문번호", "회원ID", "좌석번호", "주문내역", "금액", "결제방법", "상태", "주문시간" }, 0);
+                new String[] { "주문번호", "회원ID", "좌석번호", "주문내역", "금액", "요청사항", "결제방법", "상태", "주문시간" }, 0);
 
         JTable table = new JTable(model);
         panel.add(new JScrollPane(table), BorderLayout.CENTER);
@@ -177,6 +173,7 @@ public class OrderList_UI_Status_Frame extends JFrame {
                 order.getSeat_no(),
                 order.getProductDetails(),
                 order.getTotal_price(),
+                order.getOrder_request(),
                 order.getPayment_type(),
                 order.getOrder_state(),
                 order.getOrder_time()

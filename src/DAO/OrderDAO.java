@@ -65,7 +65,7 @@ public class OrderDAO implements DAO<OrderDTO, String> {
         String sql = "SELECT * FROM orders ORDER BY order_time DESC";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+                ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
                 orderList.add(createOrderFromResultSet(rs));
@@ -105,7 +105,7 @@ public class OrderDAO implements DAO<OrderDTO, String> {
                 "ORDER BY o.order_time DESC";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+                ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
                 OrderDTO order = new OrderDTO();
@@ -176,10 +176,10 @@ public class OrderDAO implements DAO<OrderDTO, String> {
 
             // set Int, STring , (인수, 들어갈값)
             // ? 위치가 인수임 ㅇㅇ
-//            pstmt.setTimestamp(1, timestamp);
+            // pstmt.setTimestamp(1, timestamp);
 
             while (rs.next()) {
-                int order_no= rs.getInt("order_no");
+                int order_no = rs.getInt("order_no");
                 String member_id = rs.getString("member_id");
                 int seat_no = rs.getInt("seat_no");
                 int total_price = rs.getInt("total_price");
@@ -188,14 +188,14 @@ public class OrderDAO implements DAO<OrderDTO, String> {
                 String order_state = rs.getString("order_state");
                 Timestamp order_time = rs.getTimestamp("order_time");
 
-                OrderDTO order = new OrderDTO(order_no,member_id, seat_no, total_price, order_request, payment_type, order_state, order_time);
+                OrderDTO order = new OrderDTO(order_no, member_id, seat_no, total_price, order_request, payment_type,
+                        order_state, order_time);
                 orders.add(order);
             }
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
-        }
-        finally {
+        } finally {
             try {
                 if (rs != null)
                     rs.close();
@@ -208,5 +208,28 @@ public class OrderDAO implements DAO<OrderDTO, String> {
         return orders;
     }
 
+    public int insertOrderAndGetId(OrderDTO order) {
+        String sql = "INSERT INTO orders (member_id, seat_no, total_price, order_request, payment_type, order_state) " +
+                "VALUES (?, ?, ?, ?, ?, '주문 대기')";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setString(1, order.getMember_id());
+            pstmt.setInt(2, order.getSeat_no());
+            pstmt.setInt(3, order.getTotal_price());
+            pstmt.setString(4, order.getOrder_request());
+            pstmt.setString(5, order.getPayment_type());
+
+            pstmt.executeUpdate();
+
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("주문 추가 중 오류 발생: " + e.getMessage());
+        }
+        return 0;
+    }
 
 }

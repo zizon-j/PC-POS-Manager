@@ -127,4 +127,19 @@ public class OrderDetailsDAO {
                 rs.getInt("product_no"),
                 rs.getInt("quantity"));
     }
+
+    public boolean insertOrderDetail(OrderDetailDTO orderDetail) {
+        String sql = "INSERT INTO order_details (order_no, product_no, quantity) VALUES (?, ?, ?)";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, orderDetail.getOrder_no());
+            pstmt.setInt(2, orderDetail.getProduct_no());
+            pstmt.setInt(3, orderDetail.getQuantity());
+
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("주문 상세 추가 중 오류 발생: " + e.getMessage());
+            return false;
+        }
+    }
 }
