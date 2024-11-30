@@ -74,9 +74,12 @@ public class User_OrderProduct extends JFrame {
         add(orderBtn);
 
 
+        //주문 버튼시 상호작용
         orderBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                
+                
 
             }
         });

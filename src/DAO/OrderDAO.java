@@ -2,6 +2,8 @@ package DAO;
 
 import DTO.OrderDTO;
 import DTO.OrderDetailDTO;
+import DTO.SeatDTO;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +11,7 @@ import java.util.List;
 /**
  * 주문 관련 데이터베이스 작업을 처리하는 클래스
  */
-public class OrderDAO {
+public class OrderDAO implements DAO<OrderDTO, String> {
     private Connection conn; // 데이터베이스 연결 객체
 
     // 생성자: 데이터베이스 연결을 받아옴
@@ -63,7 +65,7 @@ public class OrderDAO {
         String sql = "SELECT * FROM orders ORDER BY order_time DESC";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql);
-                ResultSet rs = pstmt.executeQuery()) {
+             ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
                 orderList.add(createOrderFromResultSet(rs));
@@ -103,7 +105,7 @@ public class OrderDAO {
                 "ORDER BY o.order_time DESC";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql);
-                ResultSet rs = pstmt.executeQuery()) {
+             ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
                 OrderDTO order = new OrderDTO();
@@ -135,4 +137,76 @@ public class OrderDAO {
                 rs.getString("order_state"),
                 rs.getTimestamp("order_time"));
     }
+
+    @Override
+    public OrderDTO findById(String s) {
+        return null;
+    }
+
+    @Override
+    public boolean delete(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean update(OrderDTO orderDTO) {
+        return false;
+    }
+
+    @Override
+    public boolean insert(OrderDTO orderDTO) {
+        return false;
+    }
+
+    @Override
+    public ArrayList<OrderDTO> findAll() {
+        return null;
+    }
+
+    // 결제 완료 콜럼 조회용 메소드
+    public ArrayList<OrderDTO> findFinsih() {
+        ArrayList<OrderDTO> orders = new ArrayList<>();
+        Statement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            String sql = "SELECT * FROM orders where order_state = '결제 완료'";
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(sql);
+
+            // set Int, STring , (인수, 들어갈값)
+            // ? 위치가 인수임 ㅇㅇ
+//            pstmt.setTimestamp(1, timestamp);
+
+            while (rs.next()) {
+                int order_no= rs.getInt("order_no");
+                String member_id = rs.getString("member_id");
+                int seat_no = rs.getInt("seat_no");
+                int total_price = rs.getInt("total_price");
+                String order_request = rs.getString("order_request");
+                String payment_type = rs.getString("payment_type");
+                String order_state = rs.getString("order_state");
+                Timestamp order_time = rs.getTimestamp("order_time");
+
+                OrderDTO order = new OrderDTO(order_no,member_id, seat_no, total_price, order_request, payment_type, order_state, order_time);
+                orders.add(order);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+        finally {
+            try {
+                if (rs != null)
+                    rs.close();
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return orders;
+    }
+
+
 }
