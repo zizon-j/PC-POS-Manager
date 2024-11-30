@@ -75,7 +75,7 @@ public class Seat_UI_InfoFrame extends JFrame {
         if (conn != null) {
             member = memberDAO.joinSeat(String.valueOf(seat_no));
             LocalDateTime loginTime = usageHistoryDAO.getLoginTime(member);
-            Timer timer = new Timer(1000, e -> { //서정우가 함, 1초마다 e를 수행
+            Timer Usage_timer = new Timer(1000, e -> { //서정우가 함, 1초마다 e를 수행, 사용 시간을 실시간으로 계산하는 타이머
                 LocalDateTime now = LocalDateTime.now(); //현재 시간을 가져옴
                 Duration duration = Duration.between(loginTime, now); //로그인 시작 시간과 현재 시간의 차이를 계산
 
@@ -86,7 +86,34 @@ public class Seat_UI_InfoFrame extends JFrame {
                 long seconds = totalSeconds % 60; //초
                 usedTime_1.setText(hours + "시간 " + minutes + "분 " + seconds + "초"); //시간 표시
             });
-            timer.start();
+
+            Timer left_time = new Timer(1000, e -> { //서정우가 함, 남은 시간을 실시간으로 계산하는 타이머
+                LocalDateTime now = LocalDateTime.now();
+                LocalDateTime endTime = loginTime.plusMinutes(member.getLeft_time()); //종료 시간을 가져온다.
+                Duration duration = Duration.between(now, endTime);
+
+                if (!duration.isNegative() && !duration.isZero()) { //음수 또는 0이 안들어갔는지
+                    long totalSeconds = duration.getSeconds();
+                    long hours = totalSeconds / 3600; //시
+                    long minutes = (totalSeconds % 3600) / 60; //분(전체 초에서 시간에 해당하는 초를 제외하고 게산)
+                    long seconds = totalSeconds % 60; //초
+                    leftTime_1.setText(hours + "시간 " + minutes + "분" + seconds + "초");
+                } else { //시간이 다 됐다면
+                    ((Timer) e.getSource()).stop(); //종료
+                    Usage_timer.stop();
+
+                    boolean UpdateSuccess = seatDAO.updateSeat2(seat_no);
+                    if (UpdateSuccess) { //성공했다면
+                        seat_State.setText("사용 중 아님");
+                        UsageHistoryDTO usageHistoryDTO = new UsageHistoryDTO();
+                        usageHistoryDAO.update(usageHistoryDTO);
+                    }
+                }
+            });
+
+            Usage_timer.start();
+            left_time.start();
+
             if (member != null) {
                 SeatDTO seat = seatDAO.findById(String.valueOf(seat_no));
 
