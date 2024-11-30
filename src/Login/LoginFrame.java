@@ -158,7 +158,7 @@ public class LoginFrame extends JFrame implements ActionListener {
                 if (isAdmin) {
                     if ("관리자".equals(user.getPriority())) {
                         showMessage("로그인 성공", "관리자님 환영합니다!");
-                        new Main();
+                        new Main(isAdmin);
                         dispose();
                     } else {
                         showMessage("로그인 실패", "관리자 권한이 없습니다.");
@@ -167,7 +167,7 @@ public class LoginFrame extends JFrame implements ActionListener {
                     // 직원 로그인
                     if ("직원".equals(user.getPriority())) {
                         showMessage("로그인 성공", "직원님 환영합니다!");
-                        new Main();
+                        new Main(isAdmin);
                         dispose();
                     } else {
                         showMessage("로그인 실패", "직원 계정이 아닙니다.");
