@@ -1,8 +1,17 @@
 package UI;
 
+import DAO.OrderDAO;
+import DAO.ProductDAO;
+import DTO.OrderDTO;
+import DTO.ProductDTO;
+import Jdbc.PCPosDBConnection;
+
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.sql.Connection;
 import java.time.LocalDate;
+import java.util.List;
 
 public class Sales_UI extends JPanel {
 
@@ -12,6 +21,7 @@ public class Sales_UI extends JPanel {
     private JPanel centerPanel;
     private CardLayout cardLayout;
     private JButton deleteButton;
+
 
     public Sales_UI() {
         setLayout(new BorderLayout());
@@ -39,10 +49,7 @@ public class Sales_UI extends JPanel {
         JPanel emptyPanel = new JPanel();
         centerPanel.add(emptyPanel, "Empty");
 
-        // 중앙 데이터 테이블
-        table = new JTable(data, columnNames);
-        scrollPane = new JScrollPane(table);
-        centerPanel.add(scrollPane, "Table");
+
 
         // 월별매출 UI 패널 추가
         smonth_UI = new Sales_UI_Month();
@@ -126,17 +133,52 @@ public class Sales_UI extends JPanel {
 
     // 일별매출
     private void showTable() {
-        Object[][] sampleData = {
-                {"2024-11-16 12:34", "상품 A", "10000", "카드", "10000"},
-                {"2024-11-16 13:45", "상품 B", "20000", "현금", "30000"}
-        };
-        // 데이터 갱신
-        table.setModel(new javax.swing.table.DefaultTableModel(
-                sampleData, new String[]{"결제일시" , "상품", "가격", "결제방법", "합계"}
-        ));
+
+         DefaultTableModel model;
+
+//        Object[][] sampleData = {
+//                {"2024-11-16 12:34", "상품 A", "10000", "카드", "10000"},
+//                {"2024-11-16 13:45", "상품 B", "20000", "현금", "30000"}
+//        };
+//        // 데이터 갱신
+//        table.setModel(new javax.swing.table.DefaultTableModel(
+//                sampleData, new String[]{"결제일시" , "상품", "가격", "결제방법", "합계"}
+//        ));
+//
+//        deleteButton.setEnabled(false);
+//        cardLayout.show(centerPanel, "Table");
+
+        // 중앙 데이터 테이블
+
+
+        // 테이블 상품 표시
+        String[] columns = {"결제일시" , "상품", "가격", "결제방법", "합계"};
+        model = new DefaultTableModel(columns, 0); //테이블 모델 초기화
+
+        Connection conn = PCPosDBConnection.getConnection();
+        OrderDAO orderDAO = new OrderDAO(conn);
+        List<OrderDTO> orders = orderDAO.findFinsih();
+
+        if (orders != null) {
+            for (OrderDTO o : orders) {
+                Object[] row = {
+                        o.getOrder_time(),
+                        o.getOrder_state(),
+                        o.getTotal_price(),
+                        o.getPayment_type(),
+                        o.getMember_id()
+                };
+                model.addRow(row);// 테이블에 행 추가
+            }
+        }
+        table = new JTable(model);
+        scrollPane = new JScrollPane(table);
+        centerPanel.add(scrollPane, "Table");
 
         deleteButton.setEnabled(false);
         cardLayout.show(centerPanel, "Table");
+
+
     }
 
     // 월별매출
