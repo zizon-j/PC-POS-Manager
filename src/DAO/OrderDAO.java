@@ -2,6 +2,7 @@ package DAO;
 
 import DTO.OrderDTO;
 import DTO.OrderDetailDTO;
+import DTO.SalesDTO;
 import DTO.SeatDTO;
 
 import java.sql.*;
@@ -164,31 +165,42 @@ public class OrderDAO implements DAO<OrderDTO, String> {
     }
 
     // 결제 완료 콜럼 조회용 메소드
-    public ArrayList<OrderDTO> findFinsih() {
-        ArrayList<OrderDTO> orders = new ArrayList<>();
-        Statement stmt = null;
-        ResultSet rs = null;
+
+    public ArrayList<SalesDTO> findFinsih() {
+        ArrayList<SalesDTO> orders = new ArrayList<>();
+        Statement stmt = null; // sql문을 저장하기 위한 객체
+        ResultSet rs = null; // sql문에서 조회한 거를 저장하는 객체
 
         try {
-            String sql = "SELECT * FROM orders where order_state = '결제 완료'";
+            String sql = "SELECT o.order_no, " +
+                    "       o.order_time, " +
+                    "       o.total_price, " +
+                    "       o.payment_type, " +
+                    "       (SELECT SUM(o2.total_price) " +
+                    "        FROM orders o2 " +
+                    "        WHERE o2.order_time <= o.order_time " +
+                    "          AND o2.order_state = '결제 완료') AS total_sum " +
+                    "FROM orders o " +
+                    "WHERE o.order_state = '결제 완료' " +
+                    "ORDER BY o.order_time DESC";
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
 
+
             // set Int, STring , (인수, 들어갈값)
             // ? 위치가 인수임 ㅇㅇ
-//            pstmt.setTimestamp(1, timestamp);
+
+            // pstmt.setTimestamp(1, timestamp);
 
             while (rs.next()) {
-                int order_no= rs.getInt("order_no");
-                String member_id = rs.getString("member_id");
-                int seat_no = rs.getInt("seat_no");
+                int order_no = rs.getInt("order_no");
                 int total_price = rs.getInt("total_price");
-                String order_request = rs.getString("order_request");
                 String payment_type = rs.getString("payment_type");
-                String order_state = rs.getString("order_state");
-                Timestamp order_time = rs.getTimestamp("order_time");
+                Date order_time = rs.getDate("order_time");
+                int total_sum = rs.getInt("total_sum");
 
-                OrderDTO order = new OrderDTO(order_no,member_id, seat_no, total_price, order_request, payment_type, order_state, order_time);
+
+                SalesDTO order = new SalesDTO(order_no, total_price, payment_type, order_time, total_sum);
                 orders.add(order);
             }
         } catch (SQLException e) {

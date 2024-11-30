@@ -1,5 +1,6 @@
 package DAO;
 
+import DTO.OrderDTO;
 import DTO.OrderDetailDTO;
 import java.sql.*;
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.List;
 /**
  * 주문 상세 정보 관련 데이터베이스 작업을 처리하는 클래스
  */
-public class OrderDetailsDAO {
+public class OrderDetailsDAO implements DAO<OrderDetailDTO, String> {
     private Connection conn; // 데이터베이스 연결 객체
 
     /**
@@ -47,6 +48,16 @@ public class OrderDetailsDAO {
             System.out.println("주문 상세 삭제 중 오류 발생: " + e.getMessage());
             return false;
         }
+    }
+
+    @Override
+    public OrderDetailDTO findById(String s) {
+        return null;
+    }
+
+    @Override
+    public boolean delete(String s) {
+        return false;
     }
 
     // 주문 상세 정보 수정
@@ -127,4 +138,5 @@ public class OrderDetailsDAO {
                 rs.getInt("product_no"),
                 rs.getInt("quantity"));
     }
+
 }

@@ -4,6 +4,7 @@ import DAO.OrderDAO;
 import DAO.ProductDAO;
 import DTO.OrderDTO;
 import DTO.ProductDTO;
+import DTO.SalesDTO;
 import Jdbc.PCPosDBConnection;
 
 import javax.swing.*;
@@ -152,21 +153,21 @@ public class Sales_UI extends JPanel {
 
 
         // 테이블 상품 표시
-        String[] columns = {"결제일시" , "상품", "가격", "결제방법", "합계"};
+        String[] columns = {"결제일" , "상품", "가격", "결제방법", "합계"};
         model = new DefaultTableModel(columns, 0); //테이블 모델 초기화
 
         Connection conn = PCPosDBConnection.getConnection();
         OrderDAO orderDAO = new OrderDAO(conn);
-        List<OrderDTO> orders = orderDAO.findFinsih();
+        List<SalesDTO> orders = orderDAO.findFinsih();
 
         if (orders != null) {
-            for (OrderDTO o : orders) {
+            for (SalesDTO o : orders) {
                 Object[] row = {
                         o.getOrder_time(),
-                        o.getOrder_state(),
+                        o.getOrder_no(),
                         o.getTotal_price(),
                         o.getPayment_type(),
-                        o.getMember_id()
+                        o.getTotal_sum()
                 };
                 model.addRow(row);// 테이블에 행 추가
             }
