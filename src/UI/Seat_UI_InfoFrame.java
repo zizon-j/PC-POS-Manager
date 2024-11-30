@@ -100,6 +100,14 @@ public class Seat_UI_InfoFrame extends JFrame {
                     leftTime_1.setText(hours + "시간 " + minutes + "분" + seconds + "초");
                 } else { //시간이 다 됐다면
                     ((Timer) e.getSource()).stop(); //종료
+                    Usage_timer.stop();
+
+                    boolean UpdateSuccess = seatDAO.updateSeat2(seat_no);
+                    if (UpdateSuccess) { //성공했다면
+                        seat_State.setText("사용 중 아님");
+                        UsageHistoryDTO usageHistoryDTO = new UsageHistoryDTO();
+                        usageHistoryDAO.update(usageHistoryDTO);
+                    }
                 }
             });
 

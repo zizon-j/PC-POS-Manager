@@ -86,15 +86,15 @@ public class MemberDAO implements DAO<MemberDTO, String> {
 
                 member = new MemberDTO(member_no, member_name, member_id, member_pwd, birthday, sex, reg_date, phone, address, left_time);
             }
-        } catch (SQLException e) {
+        }catch (SQLException e){
             e.printStackTrace();
-        } finally {
+        }finally {
             try {
                 if (rs != null)
                     rs.close();
                 if (pstmt != null)
                     pstmt.close();
-            } catch (SQLException e) {
+            }catch (SQLException e){
                 e.printStackTrace();
             }
         }
@@ -128,6 +128,8 @@ public class MemberDAO implements DAO<MemberDTO, String> {
 
     @Override
     public boolean update(MemberDTO memberDTO) { //회원 수정
+
+
         return false;
     }
 
@@ -309,5 +311,5 @@ public class MemberDAO implements DAO<MemberDTO, String> {
         }
         return member;
     }
-
+    
 }
