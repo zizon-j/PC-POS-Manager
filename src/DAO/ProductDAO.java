@@ -251,7 +251,8 @@ public class ProductDAO implements DAO<ProductDTO, String> {
             String sql = "SELECT product_no, category_name, product_name, price, stock " +
                     "FROM product_2 " +
                     "WHERE (? IS NULL OR category_name = ?) " +
-                    "AND product_name LIKE ?";
+                    "AND product_name LIKE ?"+
+                    "order by product_no asc";
 
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, category_search); //카테고리가 null이면 전체
