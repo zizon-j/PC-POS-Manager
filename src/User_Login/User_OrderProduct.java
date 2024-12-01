@@ -135,6 +135,8 @@ public class User_OrderProduct extends JFrame {
         JButton btnCategoryRamyeon = new JButton("라면");
         JButton btnCategoryBab = new JButton("밥");
         JButton btnCategoryDrink = new JButton("음료");
+        JButton btnCatergoryGansik = new JButton("간식");
+        JButton btnCategorySet = new JButton("세트");
 
         categoryPanel = new JPanel();
 
@@ -144,6 +146,8 @@ public class User_OrderProduct extends JFrame {
         categoryPanel.add(btnCategoryRamyeon);
         categoryPanel.add(btnCategoryBab);
         categoryPanel.add(btnCategoryDrink);
+        categoryPanel.add(btnCatergoryGansik);
+        categoryPanel.add(btnCategorySet);
 
         categoryPanel.setBounds(85, 21, 348, 73);
         add(categoryPanel);
@@ -239,6 +243,50 @@ public class User_OrderProduct extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 List<ProductDTO> products = productDAO.findbyCategoryAll(4);
+
+                if (products != null) {
+                    model.setRowCount(0);
+                    for (ProductDTO p : products) {
+                        Object[] row = {
+                                p.getProduct_name(),
+                                p.getPrice(),
+                                p.getStock()
+                        };
+                        model.addRow(row);// 테이블에 행 추가
+                    }
+                }
+
+                JTable product_table = new JTable(model);
+                JScrollPane scrollPane = new JScrollPane(product_table);
+            }
+        });
+
+        btnCatergoryGansik.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                List<ProductDTO> products = productDAO.findbyCategoryAll(5);
+
+                if (products != null) {
+                    model.setRowCount(0);
+                    for (ProductDTO p : products) {
+                        Object[] row = {
+                                p.getProduct_name(),
+                                p.getPrice(),
+                                p.getStock()
+                        };
+                        model.addRow(row);// 테이블에 행 추가
+                    }
+                }
+
+                JTable product_table = new JTable(model);
+                JScrollPane scrollPane = new JScrollPane(product_table);
+            }
+        });
+
+        btnCategorySet.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                List<ProductDTO> products = productDAO.findbyCategoryAll(6);
 
                 if (products != null) {
                     model.setRowCount(0);
