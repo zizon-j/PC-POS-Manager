@@ -192,7 +192,7 @@ public class User_OrderProduct extends JFrame {
         btnCategoryRamyeon.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                List<ProductDTO> products = productDAO.findbyCategoryAll(1);
+                List<ProductDTO> products = productDAO.findbyCategoryAll(2);
 
                 if (products != null) {
                     model.setRowCount(0);
@@ -215,7 +215,7 @@ public class User_OrderProduct extends JFrame {
         btnCategoryBab.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                List<ProductDTO> products = productDAO.findbyCategoryAll(2);
+                List<ProductDTO> products = productDAO.findbyCategoryAll(3);
 
                 if (products != null) {
                     model.setRowCount(0);
@@ -238,7 +238,7 @@ public class User_OrderProduct extends JFrame {
         btnCategoryDrink.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                List<ProductDTO> products = productDAO.findbyCategoryAll(3);
+                List<ProductDTO> products = productDAO.findbyCategoryAll(4);
 
                 if (products != null) {
                     model.setRowCount(0);
