@@ -334,7 +334,9 @@ public class OrderDAO implements DAO<OrderDTO, String> {
 
     public List<SalesDTO> dddSales(int year, int month) {
         List<SalesDTO> salesList = new ArrayList<>();
-        String query = "SELECT * FROM orders WHERE YEAR(order_time) = ? AND MONTH(order_time) = ?";
+        String query = "SELECT order_no, total_price, payment_type, order_time, " +
+                "SUM(total_price) OVER (ORDER BY order_time) AS total_sum " +
+                "FROM orders WHERE YEAR(order_time) = ? AND MONTH(order_time) = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, year);
             stmt.setInt(2, month);
