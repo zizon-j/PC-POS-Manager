@@ -174,17 +174,22 @@ public class OrderDAO implements DAO<OrderDTO, String> {
         ResultSet rs = null; // sql문에서 조회한 거를 저장하는 객체
 
         try {
+
+            java.sql.Date today = new java.sql.Date(System.currentTimeMillis()); // 이거로 오늘날짜 조회
+
             String sql = "SELECT o.order_no, " +
                     "       o.order_time, " +
                     "       o.total_price, " +
                     "       o.payment_type, " +
                     "       (SELECT SUM(o2.total_price) " +
                     "        FROM orders o2 " +
-                    "        WHERE o2.order_time <= o.order_time " +
+                    "        WHERE DATE(o2.order_time) = DATE(o.order_time) " + // 날짜만 비교
                     "          AND o2.order_state = '결제 완료') AS total_sum " +
                     "FROM orders o " +
-                    "WHERE o.order_state = '결제 완료' " +
+                    "WHERE DATE(o.order_time) = DATE('" + today.toString() + "') " + // 오늘 날짜를 문자열로 삽입
+                    "  AND o.order_state = '결제 완료' " +
                     "ORDER BY o.order_time";
+
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
 
@@ -333,7 +338,9 @@ public class OrderDAO implements DAO<OrderDTO, String> {
 
     public List<SalesDTO> dddSales(int year, int month) {
         List<SalesDTO> salesList = new ArrayList<>();
-        String query = "SELECT * FROM orders WHERE YEAR(order_time) = ? AND MONTH(order_time) = ?";
+        String query = "SELECT order_no, total_price, payment_type, order_time, " +
+                "SUM(total_price) OVER (ORDER BY order_time) AS total_sum " +
+                "FROM orders WHERE YEAR(order_time) = ? AND MONTH(order_time) = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, year);
             stmt.setInt(2, month);
