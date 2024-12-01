@@ -2,29 +2,24 @@ package DTO;
 
 import java.sql.Timestamp;
 
-/**
- * 주문 정보를 담는 데이터 클래스
- * 데이터베이스의 orders 테이블과 매핑됨
- */
+// 주문 정보를 담는 클래스
 public class OrderDTO {
-    // 주문 기본 정보
-    private int order_no; // 주문 번호 (기본키)
+    // 주문 기본 정보들
+    private int order_no; // 주문 번호
     private String member_id; // 회원 ID
     private int seat_no; // 좌석 번호
     private int total_price; // 총 주문 금액
-
-    // 주문 상세 정보
-    private String order_request; // 주문 요청사항
+    private String order_request; // 요청사항
     private String payment_type; // 결제 방식
     private String order_state; // 주문 상태
     private Timestamp order_time; // 주문 시간
-    private String productDetails; // 주문한 상품 상세 정보
+    private String productDetails; // 주문 상품 정보
 
     // 기본 생성자
     public OrderDTO() {
     }
 
-    // 모든 필드를 초기화하는 생성자
+    // 모든 정보를 받는 생성자
     public OrderDTO(int order_no, String member_id, int seat_no, int total_price,
             String order_request, String payment_type, String order_state, Timestamp order_time) {
         this.order_no = order_no;
@@ -37,7 +32,7 @@ public class OrderDTO {
         this.order_time = order_time;
     }
 
-    // Getter와 Setter 메소드들
+    // 각 정보를 가져오고 설정하는 메소드들
     public int getOrder_no() {
         return order_no;
     }

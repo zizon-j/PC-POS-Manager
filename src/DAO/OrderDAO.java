@@ -188,7 +188,6 @@ public class OrderDAO implements DAO<OrderDTO, String> {
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
 
-
             // set Int, STring , (인수, 들어갈값)
             // ? 위치가 인수임 ㅇㅇ
 
@@ -354,6 +353,29 @@ public class OrderDAO implements DAO<OrderDTO, String> {
             e.printStackTrace();
         }
         return salesList;
+    }
+    public int insertOrderAndGetId(OrderDTO order) {
+        String sql = "INSERT INTO orders (member_id, seat_no, total_price, order_request, payment_type, order_state) " +
+                "VALUES (?, ?, ?, ?, ?, '주문 대기')";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setString(1, order.getMember_id());
+            pstmt.setInt(2, order.getSeat_no());
+            pstmt.setInt(3, order.getTotal_price());
+            pstmt.setString(4, order.getOrder_request());
+            pstmt.setString(5, order.getPayment_type());
+
+            pstmt.executeUpdate();
+
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("주문 추가 중 오류 발생: " + e.getMessage());
+        }
+        return 0;
     }
 
 }

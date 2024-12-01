@@ -60,7 +60,7 @@ public class OrderList_UI extends JPanel {
         add(topPanel, BorderLayout.NORTH);
 
         // 2. 주문 목록 테이블 구성
-        String[] columns = { "주문번호", "회원ID", "좌석번호", "주문내역", "금액", "결제방법", "상태", "주문시간" };
+        String[] columns = { "주문번호", "회원ID", "좌석번호", "주문내역", "금액", "요청사항", "결제방법", "상태", "주문시간" };
         tableModel = new DefaultTableModel(columns, 0);
         orderTable = new JTable(tableModel);
         add(new JScrollPane(orderTable), BorderLayout.CENTER);
@@ -135,6 +135,7 @@ public class OrderList_UI extends JPanel {
                 order.getSeat_no(),
                 order.getProductDetails(),
                 order.getTotal_price(),
+                order.getOrder_request(),
                 order.getPayment_type(),
                 order.getOrder_state(),
                 order.getOrder_time()
