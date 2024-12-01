@@ -50,10 +50,10 @@ public class Sales_UI extends JPanel {
         JPanel emptyPanel = new JPanel();
         centerPanel.add(emptyPanel, "Empty");
 
-
-
+        // Connection 객체 생성
+        Connection conn = PCPosDBConnection.getConnection();
         // 월별매출 UI 패널 추가
-        smonth_UI = new Sales_UI_Month();
+        smonth_UI = new Sales_UI_Month(conn);
         centerPanel.add(smonth_UI, "Calendar");
 
         add(centerPanel, BorderLayout.CENTER);

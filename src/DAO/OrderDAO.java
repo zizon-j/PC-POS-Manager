@@ -306,105 +306,54 @@ public class OrderDAO implements DAO<OrderDTO, String> {
     }
 
     // 달력에 그 날마다의 매출
-    public ArrayList<SalesDTO> dayTotalSales(LocalDate startDate, LocalDate endDate) {
-        ArrayList<SalesDTO> salesList = new ArrayList<>();
-        Statement stmt = null;
-        ResultSet rs = null;
+    public List<SalesDTO> dayTotalSales(int year, int month) {
+        List<SalesDTO> salesList = new ArrayList<>();
+        String query = "SELECT order_no, total_price, payment_type, order_time, SUM(total_price) as total_sum " +
+                "FROM orders WHERE YEAR(order_time) = ? AND MONTH(order_time) = ? GROUP BY order_time";
 
-        try {
-            String sql = "SELECT o.order_no, " +
-                    "       o.order_time, " +
-                    "       o.total_price, " +
-                    "       o.payment_type, " +
-                    "       (SELECT SUM(o2.total_price) " +
-                    "        FROM orders o2 " +
-                    "        WHERE o2.order_time <= o.order_time " +
-                    "          AND o2.order_state = '결제 완료') AS total_sum " +
-                    "FROM orders o " +
-                    "WHERE o.order_state = '결제 완료' ";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, year);
+            pstmt.setInt(2, month);
+            ResultSet rs = pstmt.executeQuery();
 
-            // 날짜 범위 조건
-            if (startDate != null) {
-                sql += "AND o.order_time >= ? ";
-            }
-            if (endDate != null) {
-                sql += "AND o.order_time <= ? ";
-            }
-
-            sql += "GROUP BY o.order_time " +
-                    "ORDER BY o.order_time";  // 날짜 기준으로 정렬
-
-            stmt = conn.createStatement();
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                int index = 1;
-                if (startDate != null) {
-                    pstmt.setDate(index++, Date.valueOf(startDate));
-                }
-                if (endDate != null) {
-                    LocalDateTime endDateTime = endDate.atTime(23, 59, 59);  // 23:59:59로 설정
-                    pstmt.setTimestamp(index++, Timestamp.valueOf(endDateTime));
-                }
-
-                rs = pstmt.executeQuery();
-
-                while (rs.next()) {
-                    int order_no = rs.getInt("order_no");
-                    int total_price = rs.getInt("total_price");
-                    String payment_type = rs.getString("payment_type");
-                    Date order_time = rs.getDate("order_time");
-                    int total_sum = rs.getInt("total_sum");
-
-                    SalesDTO salesDTO = new SalesDTO(order_no, total_price, payment_type, order_time, total_sum);
-                    salesList.add(salesDTO);
-                }
+            while (rs.next()) {
+                SalesDTO sales = new SalesDTO(
+                        rs.getInt("order_no"),
+                        rs.getInt("total_price"),
+                        rs.getString("payment_type"),
+                        rs.getDate("order_time"),
+                        rs.getInt("total_sum")
+                );
+                salesList.add(sales);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (stmt != null) stmt.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
         return salesList;
     }
 
-    // 달력 총 매출
-    public int monthTotalSales(int year, int month) {
-        int totalSales = 0;
-        Statement stmt = null;
-        ResultSet rs = null;
+    public List<SalesDTO> dddSales(int year, int month) {
+        List<SalesDTO> salesList = new ArrayList<>();
+        String query = "SELECT * FROM orders WHERE YEAR(order_time) = ? AND MONTH(order_time) = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, year);
+            stmt.setInt(2, month);
+            ResultSet rs = stmt.executeQuery();
 
-        try {
-            String sql = "SELECT SUM(o.total_price) AS total_sales " +
-                    "FROM orders o " +
-                    "WHERE o.order_state = '결제 완료' " +
-                    "AND YEAR(o.order_time) = ? " +
-                    "AND MONTH(o.order_time) = ?";
-
-            stmt = conn.createStatement();
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, year);
-                pstmt.setInt(2, month);
-
-                rs = pstmt.executeQuery();
-
-                if (rs.next()) {
-                    totalSales = rs.getInt("total_sales");
-                }
+            while (rs.next()) {
+                SalesDTO sales = new SalesDTO(
+                        rs.getInt("order_no"),
+                        rs.getInt("total_price"),
+                        rs.getString("payment_type"),
+                        rs.getDate("order_time"),
+                        rs.getInt("total_sum")
+                );
+                salesList.add(sales);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (stmt != null) stmt.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
-        return totalSales;
+        return salesList;
     }
+
 }
