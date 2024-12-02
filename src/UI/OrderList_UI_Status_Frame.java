@@ -2,6 +2,7 @@ package UI;
 
 import DAO.OrderDAO;
 import DTO.OrderDTO;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -62,7 +63,7 @@ public class OrderList_UI_Status_Frame extends JFrame {
 
         // 테이블 생성
         DefaultTableModel model = new DefaultTableModel(
-                new String[] { "주문번호", "회원ID", "좌석번호", "주문내역", "금액", "요청사항", "결제방법", "상태", "주문시간" }, 0);
+                new String[]{"주문번호", "회원ID", "좌석번호", "주문내역", "금액", "요청사항", "결제방법", "상태", "주문시간"}, 0);
 
         JTable table = new JTable(model);
         panel.add(new JScrollPane(table), BorderLayout.CENTER);

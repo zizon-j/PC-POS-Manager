@@ -39,6 +39,10 @@ public class Main extends JFrame{
         if (seatXY != null){
             Seat_UI_Exists seat_ui_exists = new Seat_UI_Exists(this);
             main.add("좌석관리", seat_ui_exists);
+            if (!isAdmin){
+                seat_ui_exists.btnReset.setEnabled(false);
+                seat_ui_exists.btnEdit.setEnabled(false);
+            }
         }else
             main.add("좌석관리", seat_ui);
         main.add("회원관리",memberManagement_ui);
@@ -53,6 +57,13 @@ public class Main extends JFrame{
             product_ui.addBtn.setEnabled(false);
             product_ui.updateBtn.setEnabled(false);
             product_ui.DelBtn.setEnabled(false);
+            //좌석
+            seat_ui.btnEdit.setEnabled(false);
+            seat_ui.btnReset.setEnabled(false);
+            //회원
+            memberManagement_ui.addBtn.setEnabled(false);
+            memberManagement_ui.editBtn.setEnabled(false);
+            memberManagement_ui.deleteBtn.setEnabled(false);
         }
 
         add(main);

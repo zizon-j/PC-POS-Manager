@@ -1,5 +1,6 @@
 package User_Login;
 
+import Common_Panel.Time_Plus_Jpanel;
 import DAO.MemberDAO;
 import DAO.SeatDAO;
 import DAO.UsageHistoryDAO;
@@ -10,8 +11,7 @@ import Jdbc.PCPosDBConnection;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,6 +22,7 @@ public class User_LoginFrame extends JFrame {
     JButton loginBtn, registerBtn, findBtn, selectSeat;
     JComboBox<Integer> seatChombo; // 좌석 번호는 Integer 타입으로 선언
     String seatNo;
+    Time_Plus_Jpanel time_plus_jpanel;
 
     public User_LoginFrame(String title) {
         setTitle(title);
@@ -88,6 +89,10 @@ public class User_LoginFrame extends JFrame {
         ct.add(seatChombo);
 
         loadAvailableSeats();
+
+        time_plus_jpanel = new Time_Plus_Jpanel();
+        time_plus_jpanel.setBounds(150, 420, 400, 50);
+        ct.add(time_plus_jpanel);
 
         loginBtn.addActionListener(new ActionListener() {
             @Override
@@ -164,6 +169,7 @@ public class User_LoginFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "좌석 데이터를 불러오는 중 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
     public static void main(String[] args) {
         User_LoginFrame userLoginFrame = new User_LoginFrame("명전 피시방 사용자 키오스크");

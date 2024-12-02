@@ -14,6 +14,9 @@ import java.sql.Connection;
 
 public class Seat_UI extends JPanel {
 
+    public JPanel editPanel;
+    public JButton btnEdit, btnReset;
+
     public Seat_UI() {
         setLayout(new BorderLayout());
 
@@ -35,10 +38,10 @@ public class Seat_UI extends JPanel {
         add(inputPanel, BorderLayout.NORTH);
 
         // 자리 배치창
-        JPanel editPanel = new JPanel(); // 버튼 편집 버튼 묶기
+        editPanel= new JPanel(); // 버튼 편집 버튼 묶기
         editPanel.setLayout(new FlowLayout());
-        JButton btnEdit = new JButton("편집");
-        JButton btnReset = new JButton("초기화");
+        btnEdit = new JButton("편집");
+        btnReset = new JButton("초기화");
 
         editPanel.add(btnEdit);
         editPanel.add(btnReset);

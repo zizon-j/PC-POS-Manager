@@ -108,7 +108,7 @@ public class Sales_UI extends JPanel {
         }*/
 
         // 테이블 초기화
-        String[] columns = {"결제일" , "상품", "가격", "결제방법", "합계"};
+        String[] columns = {"결제일", "상품", "가격", "결제방법", "합계"};
 
         DefaultTableModel model;
         model = new DefaultTableModel(columns, 0); //테이블 모델 초기화
@@ -182,7 +182,7 @@ public class Sales_UI extends JPanel {
     // 일별매출
     private void showTable() {
 
-         DefaultTableModel model;
+        DefaultTableModel model;
 
 //        Object[][] sampleData = {
 //                {"2024-11-16 12:34", "상품 A", "10000", "카드", "10000"},
@@ -200,7 +200,7 @@ public class Sales_UI extends JPanel {
 
 
         // 테이블 상품 표시
-        String[] columns = {"결제일" , "상품", "가격", "결제방법", "합계"};
+        String[] columns = {"결제일", "상품", "가격", "결제방법", "합계"};
         model = new DefaultTableModel(columns, 0); //테이블 모델 초기화
 
         Connection conn = PCPosDBConnection.getConnection();
