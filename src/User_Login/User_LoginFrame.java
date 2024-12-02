@@ -107,22 +107,25 @@ public class User_LoginFrame extends JFrame {
                     MemberDTO member = memberDAO.findById(id.getText());
                     SeatDAO seatDAO = new SeatDAO(conn);
                     UsageHistoryDAO usageHistoryDAO = new UsageHistoryDAO(conn);
-                    if (member != null) {
-                        if (member.getMember_pwd().equals(passwd.getText())) {
-                            int seatNo = (int) seatChombo.getSelectedItem();
-                            seatDAO.updateSeat(member.getMember_no(), (int) seatChombo.getSelectedItem());
-                            User_OrderProduct op = new User_OrderProduct(seatNo, member.getMember_no());
-                            op.setVisible(true);
-                            dispose();
-                            // //로그인 창 닫기
+                    if (member != null) { // id를 통해 가져오는 정보가잇는지 확인
+                        if (member.getMember_pwd().equals(passwd.getText())) { // id, pwd 일치한지 확인
+                            if (member.getLeft_time() != 0) { // 남은 시간 없으면 안됨
+                                int seatNo = (int) seatChombo.getSelectedItem();
+                                seatDAO.updateSeat(member.getMember_no(), (int) seatChombo.getSelectedItem());
+                                User_OrderProduct op = new User_OrderProduct(seatNo, member.getMember_no());
+                                op.setVisible(true);
+                                dispose();
+                                // //로그인 창 닫기
 
-                            //사용 시작 시간 저장
-                            UsageHistoryDTO usageHistory = new UsageHistoryDTO();
-                            usageHistory.setMember_no(member.getMember_no());
-                            usageHistoryDAO.insert(usageHistory);
+                                //사용 시작 시간 저장
+                                UsageHistoryDTO usageHistory = new UsageHistoryDTO();
+                                usageHistory.setMember_no(member.getMember_no());
+                                usageHistoryDAO.insert(usageHistory);
 
 
-                        } else
+                            }
+                            else JOptionPane.showMessageDialog(null, "시간을 충전해주세요 감사합니다.");
+                        }else
                             JOptionPane.showMessageDialog(null, "틀렸습니다.");
                     } else
                         JOptionPane.showMessageDialog(null, "없는 ID 입니다.");
@@ -133,6 +136,7 @@ public class User_LoginFrame extends JFrame {
             }
         });
 
+        //회원가입버튼
         registerBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -143,6 +147,7 @@ public class User_LoginFrame extends JFrame {
             }
         });
 
+        //비밀번호 잦기 버튼
         findBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
