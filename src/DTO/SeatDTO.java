@@ -4,14 +4,15 @@ public class SeatDTO {
     int seat_no, member_no, x, y;
     String seat_state;
 
-    public SeatDTO(){}
+    public SeatDTO() {
+    }
 
-    public SeatDTO( int seat_no
-    ){
+    public SeatDTO(int seat_no
+    ) {
         this.seat_no = seat_no;
     }
 
-    public SeatDTO(int seat_no, String seat_state, int member_no, int x, int y){
+    public SeatDTO(int seat_no, String seat_state, int member_no, int x, int y) {
         this.seat_no = seat_no;
         this.seat_state = seat_state;
         this.member_no = member_no;
@@ -43,15 +44,15 @@ public class SeatDTO {
         this.seat_state = seat_state;
     }
 
-    public int getX(){
+    public int getX() {
         return x;
     }
 
-    public void setX(int x){
+    public void setX(int x) {
         this.x = x;
     }
 
-    public int getY(){
+    public int getY() {
         return y;
     }
 

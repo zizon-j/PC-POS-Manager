@@ -22,6 +22,9 @@ public class Login_MessageDialog extends JDialog implements ActionListener {
         add(ps, BorderLayout.SOUTH); // 하단에 패널 추가
 
         pack(); // 다이얼로그 크기를 내용에 맞게 조정
+
+        // 화면 중앙에 위치하도록 설정
+        setLocationRelativeTo(parent);
     }
 
     // 버튼 클릭 시 호출되는 메서드

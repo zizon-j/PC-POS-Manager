@@ -6,7 +6,8 @@ import java.util.ArrayList;
 //신경 안써됨
 //dao만 implement 하면 되게 설계 해놓음
 
-public interface NoPKDAO <E>{
-    public boolean insert(E e);
-    public ArrayList<E> findAll();
+public interface NoPKDAO<E> {
+    boolean insert(E e);
+
+    ArrayList<E> findAll();
 }

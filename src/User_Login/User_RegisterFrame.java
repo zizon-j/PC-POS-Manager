@@ -13,12 +13,12 @@ import java.sql.Connection;
 // 생일 입력 보완
 //버튼 마다 메소드 쪼개기
 
-class User_RegisterFrame extends JFrame implements ActionListener {
+class User_RegisterFrame extends JFrame {
     JTextField idField, nameField, phoneField, addressField, birthdayField;
     JPasswordField passwordField;
     JComboBox<String> phoneComboBox, sexComboBox;
     JButton idCheckButton, confirmButton, cancelButton;
-    String[] sexCodes ={"남자", "여자"};
+    String[] sexCodes = {"남자", "여자"};
 
     public User_RegisterFrame(String title) {
         setTitle(title);
@@ -39,12 +39,10 @@ class User_RegisterFrame extends JFrame implements ActionListener {
 
         //취소버튼
         cancelButton = new JButton("취소");
-        cancelButton.addActionListener(this);
         bottomPanel.add(cancelButton);
 
         //확인버튼
         confirmButton = new JButton("확인");
-        confirmButton.addActionListener(this);
         bottomPanel.add(confirmButton);
 
         //입력필드
@@ -58,7 +56,6 @@ class User_RegisterFrame extends JFrame implements ActionListener {
         idField = new JTextField(8);
         //중복 확인 버튼
         idCheckButton = new JButton("ID 중복 확인");
-        idCheckButton.addActionListener(this);
         p1.add(idLabel);
         p1.add(idField);
         p1.add(idCheckButton);
@@ -85,7 +82,7 @@ class User_RegisterFrame extends JFrame implements ActionListener {
         //전화번호
         // YYYY-MM-DD 표시해줘야함
         phoneField = new JTextField(14);
-        
+
         p4.add(phoneLabel);
         p4.add(phoneField);
         topPanel.add(p4);
@@ -113,67 +110,74 @@ class User_RegisterFrame extends JFrame implements ActionListener {
         p7.add(sexLabel);
         p7.add(sexComboBox);
         topPanel.add(p7);
-    }
 
-    public void actionPerformed(ActionEvent ae) {
-        String s = ae.getActionCommand();
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
 
-    if (s.equals("취소")) {
-        dispose();
-    } else if (s.equals("확인")) {
-        //비지 않았나 확인
-        if (idField != null && passwordField != null && nameField != null && phoneField != null && addressField != null && birthdayField != null) {
+        confirmButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //비지 않았나 확인
+                if (idField != null && passwordField != null && nameField != null && phoneField != null && addressField != null && birthdayField != null) {
 
 
-            if (!idCheckButton.isEnabled()) {
+                    if (!idCheckButton.isEnabled()) {
 
-                // 입력 데이트를 MemberDTO로 변환
-                MemberDTO member = new MemberDTO();
-                member.setMember_id(idField.getText().trim()); // trim -> 공백 없앰
-                member.setMember_pwd(passwordField.getText().trim());
-                member.setMember_name(nameField.getText().trim());
-                member.setPhone(phoneField.getText().trim());
-                member.setAddress(addressField.getText().trim());
+                        // 입력 데이트를 MemberDTO로 변환
+                        MemberDTO member = new MemberDTO();
+                        member.setMember_id(idField.getText().trim()); // trim -> 공백 없앰
+                        member.setMember_pwd(passwordField.getText().trim());
+                        member.setMember_name(nameField.getText().trim());
+                        member.setPhone(phoneField.getText().trim());
+                        member.setAddress(addressField.getText().trim());
 
-                //String -> java.sql.Date 변환
-                java.sql.Date d = java.sql.Date.valueOf(birthdayField.getText());
-                member.setBirthday(d);
-                member.setSex(sexComboBox.getSelectedItem().toString());
+                        //String -> java.sql.Date 변환
+                        java.sql.Date d = java.sql.Date.valueOf(birthdayField.getText());
+                        member.setBirthday(d);
+                        member.setSex(sexComboBox.getSelectedItem().toString());
 
+                        Connection conn = PCPosDBConnection.getConnection();
+                        if (conn != null) {
+                            MemberDAO memberDAO = new MemberDAO(conn);
+                            boolean success = memberDAO.insert(member);
+                            if (success) {
+                                JOptionPane.showMessageDialog(null, "회원가입 성공");
+                                dispose();
+                            } else {
+                                JOptionPane.showMessageDialog(null, "db연결 시패");
+                            }
+                        }
+                    } else
+                        JOptionPane.showMessageDialog(null, "모든 정보를 입력해주세요");
+
+                } else JOptionPane.showMessageDialog(null, "ID 중복 확인을 해주세요 감사합니다.");
+            }
+        });
+
+        idCheckButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //구현완료요
+                String enteredId = idField.getText().trim();
                 Connection conn = PCPosDBConnection.getConnection();
                 if (conn != null) {
                     MemberDAO memberDAO = new MemberDAO(conn);
-                    boolean success = memberDAO.insert(member);
-                    if (success) {
-                        JOptionPane.showMessageDialog(this, "회원가입 성공");
-                        dispose();
-                    } else {
-                        JOptionPane.showMessageDialog(this, "db연결 시패");
+                    MemberDTO member;
+                    member = memberDAO.findById(enteredId);
+                    if (member != null)
+                        JOptionPane.showMessageDialog(null, "중복된 ID 입니다 다시 입력해주세요");
+                    else {
+                        JOptionPane.showMessageDialog(null, "사용 가능한 ID 입니다.");
+                        idCheckButton.setEnabled(false);
                     }
                 }
-            } else
-                JOptionPane.showMessageDialog(this, "모든 정보를 입력해주세요");
-
-        } else JOptionPane.showMessageDialog(this, "ID 중복 확인을 해주세요 감사합니다.");
-
-    } else if (s.equals("ID 중복 확인")) {
-        //구현완료요
-        String enteredId = idField.getText().trim();
-        Connection conn = PCPosDBConnection.getConnection();
-        if (conn != null) {
-            MemberDAO memberDAO = new MemberDAO(conn);
-            MemberDTO member;
-            member = memberDAO.findById(enteredId);
-            if (member != null)
-                JOptionPane.showMessageDialog(this, "중복된 ID 입니다 다시 입력해주세요");
-            else {
-                JOptionPane.showMessageDialog(this, "사용 가능한 ID 입니다.");
-                idCheckButton.setEnabled(false);
             }
-        }
+        });
     }
-}
-
 }
 
 

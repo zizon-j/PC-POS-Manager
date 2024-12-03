@@ -5,17 +5,21 @@ public class UsageHistoryDTO {
     private java.sql.Date usage_date;
     private String state;
 
-    public UsageHistoryDTO(){}
+    public UsageHistoryDTO() {
+    }
+
     public UsageHistoryDTO(int history_no, int member_no, int usage_time, java.sql.Date usage_date) {
         this.history_no = history_no;
         this.member_no = member_no;
         this.usage_time = usage_time;
         this.usage_date = usage_date;
     }
+
     //사용기록 번호
     public int getHistory_no() {
         return history_no;
     }
+
     public void setHistory_no(int history_no) {
         this.history_no = history_no;
     }
@@ -24,6 +28,7 @@ public class UsageHistoryDTO {
     public int getMember_no() {
         return member_no;
     }
+
     public void setMember_no(int member_no) {
         this.member_no = member_no;
     }
@@ -32,6 +37,7 @@ public class UsageHistoryDTO {
     public int getUsage_time() {
         return usage_time;
     }
+
     public void setUsage_time(int usage_time) {
         this.usage_time = usage_time;
     }
@@ -40,15 +46,16 @@ public class UsageHistoryDTO {
     public java.sql.Date getUsage_date() {
         return usage_date;
     }
+
     public void setUsage_date(java.sql.Date usage_date) {
         this.usage_date = usage_date;
     }
 
-    public String getState(){
+    public String getState() {
         return state;
     }
 
-    public void setState(String state){
+    public void setState(String state) {
         this.state = state;
     }
 }

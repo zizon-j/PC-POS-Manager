@@ -1,11 +1,12 @@
 package DAO;
 
 import DTO.EmployeeDTO;
+
 import java.sql.*;
 import java.util.ArrayList;
 
 public class EmployeeDAO implements DAO<EmployeeDTO, String> {
-    private Connection conn;
+    private final Connection conn;
 
     public EmployeeDAO(Connection conn) {
         this.conn = conn;

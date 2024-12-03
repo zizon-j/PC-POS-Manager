@@ -87,9 +87,8 @@ public class Seat_UI extends JPanel {
                     btnPanels[i] = new JPanel(new BorderLayout());
                     btnInfos[i] = new JButton("정보보기");
                     btnActivates[i] = new JButton("황성화/비활성화");
-                    seat_Infos[i] = new JTextArea((i+1)+"좌석 정보");
+                    seat_Infos[i] = new JTextArea((i + 1) + "번 좌석");
                     seat_Infos[i].setEditable(false);
-
 
                     //좌석 추가
                     JPanel topPanel = new JPanel(new FlowLayout());
@@ -102,7 +101,6 @@ public class Seat_UI extends JPanel {
                     btnActivates[i].setVisible(false);
                     btnActivates[i].setEnabled(false);
 
-
                     //정보보기 버튼 클릭시 정보창 팝업
                     int index = i;
                     btnInfos[index].addActionListener(new ActionListener() {
@@ -112,13 +110,12 @@ public class Seat_UI extends JPanel {
                             MemberDAO memberDAO = new MemberDAO(conn);
                             SeatDAO seatDAO = new SeatDAO(conn);
                             if (conn != null) {
-                                MemberDTO member = memberDAO.joinSeat(String.valueOf(index+1));
+                                MemberDTO member = memberDAO.joinSeat(String.valueOf(index + 1));
                                 if (member != null) {
-                                    new Seat_UI_InfoFrame(index+1);
+                                    new Seat_UI_InfoFrame(index + 1);
 
                                 } else
                                     JOptionPane.showMessageDialog(null, "사용중이 아닙니다. 정보가 없습니다.");
-
                             }
                         }
                     });
@@ -144,7 +141,7 @@ public class Seat_UI extends JPanel {
                 if (success) {
                     JOptionPane.showMessageDialog(null, "생성되었습니다."); // 올바른 사용법
                     try {
-                         // 현재 창 닫기
+                        // 현재 창 닫기
                     } catch (Exception ex) {
                         throw new RuntimeException(ex);
                     }
@@ -152,10 +149,8 @@ public class Seat_UI extends JPanel {
                     JOptionPane.showMessageDialog(null, "오류가 발생했습니다."); // 올바른 사용법
                 }
 
-
                 editPanel.setVisible(true);
                 inputPanel.setVisible(false);
-
 
                 //자리 수정, 자리 활성화 | 비활성화 메소드
                 //자리 선점중인지 확인하고 활성화 비활성화 체크
@@ -182,14 +177,34 @@ public class Seat_UI extends JPanel {
                             btnActivates[index].addActionListener(new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
-                                    boolean t = btnPanels[index].isEnabled();
-                                    btnPanels[index].setEnabled(!t);
-                                    seat_Infos[index].setEnabled(!t);
-                                    btnInfos[index].setEnabled(!t);
+
+                                    Connection conn = PCPosDBConnection.getConnection();
+                                    SeatDAO seatDAO = new SeatDAO(conn);
+                                    SeatDTO is_seat_using = seatDAO.findById(String.valueOf(index + 1));
+                                    if(is_seat_using.getSeat_state().equals("사용중")){
+                                        JOptionPane.showMessageDialog(null, "사용중입니다. 비활성화 불가능합니다.");
+                                    }
+                                    else {
+                                        boolean t = btnPanels[index].isEnabled();
+                                        btnPanels[index].setEnabled(!t);
+                                        seat_Infos[index].setEnabled(!t);
+                                        btnInfos[index].setEnabled(!t);
+                                        JOptionPane.showMessageDialog(null, "변경되었습니다. ");
+
+                                        if(t==true){
+                                            SeatDTO seat = new SeatDTO();
+                                            seat.setSeat_no(index + 1);
+                                            seatDAO.update3(seat);
+                                        }
+                                        else {
+                                            SeatDTO seat = new SeatDTO();
+                                            seat.setSeat_no(index + 1);
+                                            seatDAO.update4(seat);
+                                        }
+                                    }
                                 }
                             });
                         }
-
 
                         //편집 완료 버튼 메소드
                         btnEditFinish.addActionListener(new ActionListener() {
@@ -224,37 +239,27 @@ public class Seat_UI extends JPanel {
 
                 //자리 초기화 deleteAll 메소드
                 Connection conn = PCPosDBConnection.getConnection();
-                if(conn != null){
+                if (conn != null) {
                     SeatDAO seatDAO = new SeatDAO(conn);
                     boolean success = seatDAO.deleteAll();
                     seatDAO.resetAuto_increment();
-                    if(success){
+                    if (success) {
                         JOptionPane.showMessageDialog(null, "초기화 완료");
                         try {
 
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
-                    }else {
+                    } else {
                         JOptionPane.showMessageDialog(null, "db연결 시패");
                     }
                 }
-
-
-
             }
         });
 
-
-
-
-
         setVisible(true);
         setSize(1600, 900);
-
-
     }
-
 
     public static void main(String[] args) {
         new Seat_UI();
