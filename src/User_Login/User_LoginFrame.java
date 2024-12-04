@@ -142,8 +142,8 @@ public class User_LoginFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
 
                 //userFindFrame 에서 작업
-                User_FindFrame userFindFrame = new User_FindFrame("비밀번호 찾기");
-                userFindFrame.setVisible(true);
+                User_RegisterFrame user_registerFrame = new User_RegisterFrame("회원가입");
+                user_registerFrame.setVisible(true);
             }
         });
 
