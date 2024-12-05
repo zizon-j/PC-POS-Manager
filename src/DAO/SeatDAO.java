@@ -209,6 +209,37 @@ public class SeatDAO implements DAO<SeatDTO, String> {
 
     }
 
+    public ArrayList<SeatDTO> choose_using() {
+        ArrayList<SeatDTO> seats_not_using = new ArrayList<>();
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            String sql = "select seat_no from seat where seat_state='사용중' ";
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                int seat_no = rs.getInt("seat_no");
+
+                SeatDTO seat = new SeatDTO(seat_no);
+                seats_not_using.add(seat);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null)
+                    rs.close();
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return seats_not_using;
+
+    }
+
     public boolean updateSeat(int member_no, int seat_no) {
         PreparedStatement pstmt = null;
         try {

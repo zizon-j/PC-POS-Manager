@@ -5,12 +5,16 @@ import DAO.SeatDAO;
 import DTO.MemberDTO;
 import DTO.SeatDTO;
 import Jdbc.PCPosDBConnection;
+import User_Login.User_LoginFrame;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+class UsingSeatsException extends Exception{}
 
 public class Seat_UI extends JPanel {
 
@@ -242,20 +246,29 @@ public class Seat_UI extends JPanel {
 
                 //자리 초기화 deleteAll 메소드
                 Connection conn = PCPosDBConnection.getConnection();
-                if (conn != null) {
-                    SeatDAO seatDAO = new SeatDAO(conn);
-                    boolean success = seatDAO.deleteAll();
-                    seatDAO.resetAuto_increment();
-                    if (success) {
-                        JOptionPane.showMessageDialog(null, "초기화 완료");
-                        try {
+                SeatDAO seatDAO = new SeatDAO(conn);
+                ArrayList<SeatDTO> seats = seatDAO.choose_using();
+                try{
+                    if (seats != null)
+                        throw new UsingSeatsException();
 
-                        } catch (Exception ex) {
-                            throw new RuntimeException(ex);
+                    if (conn != null) {
+                        boolean success = seatDAO.deleteAll();
+                        seatDAO.resetAuto_increment();
+                        if (success) {
+                            JOptionPane.showMessageDialog(null, "초기화 완료");
+                            try {
+
+                            } catch (Exception ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "db연결 시패");
                         }
-                    } else {
-                        JOptionPane.showMessageDialog(null, "db연결 시패");
                     }
+
+                }catch (UsingSeatsException ea){
+                    JOptionPane.showMessageDialog(null, "사용중인 좌석이 있습니다. 초기화가 불가능합니다.");
                 }
             }
         });
@@ -263,6 +276,8 @@ public class Seat_UI extends JPanel {
         setVisible(true);
         setSize(1600, 900);
     }
+
+
 
     public static void main(String[] args) {
         new Seat_UI();
