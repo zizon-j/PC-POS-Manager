@@ -3,16 +3,17 @@ package DAO;
 import DTO.OrderDTO;
 import DTO.OrderDetailDTO;
 import DTO.User_OrderProductDTO;
+
 import java.sql.*;
 import java.util.List;
 
 // 사용자 주문 처리를 담당하는 클래스
 public class User_OrderProductDAO {
     // 데이터베이스 연결
-    private Connection conn;
+    private final Connection conn;
     // 주문 처리를 위한 DAO 객체들
-    private OrderDAO orderDAO;
-    private OrderDetailsDAO orderDetailsDAO;
+    private final OrderDAO orderDAO;
+    private final OrderDetailsDAO orderDetailsDAO;
 
     // 데이터베이스 연결을 받아서 초기화하는 생성자
     public User_OrderProductDAO(Connection conn) {
@@ -78,7 +79,7 @@ public class User_OrderProductDAO {
 
     // 주문을 처리하는 메소드
     public boolean processOrder(List<User_OrderProductDTO> items, String memberId,
-            int seatNo, String orderRequest, String paymentType) throws SQLException {
+                                int seatNo, String orderRequest, String paymentType) throws SQLException {
 
         // 트랜잭션 시작
         try {

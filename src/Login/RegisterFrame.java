@@ -7,6 +7,7 @@ import java.awt.event.*;
 import DAO.EmployeeDAO;
 import DTO.EmployeeDTO;
 import Jdbc.PCPosDBConnection;
+
 import java.sql.Connection;
 
 class RegisterFrame extends JFrame implements ActionListener {
@@ -18,7 +19,7 @@ class RegisterFrame extends JFrame implements ActionListener {
     JButton checkPosBtn, checkIdBtn, okBtn, cancelBtn;
 
     // 전화번호 앞자리
-    String[] phoneStart = { "010", "070", "02", "031", "032" };
+    String[] phoneStart = {"010", "070", "02", "031", "032"};
 
     // 체크 여부
     boolean isPosIdOk = false;

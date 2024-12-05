@@ -19,7 +19,8 @@ import java.sql.Date;
 import java.util.List;
 class NotSelectedRowException extends Exception {}
 public class MemberManagement_UI extends JPanel {
-    private JButton searchBtn, addBtn, editBtn, deleteBtn, saveEditBtn, cancelEditBtn, resetpwdBtn;
+    private JButton searchBtn, saveEditBtn, cancelEditBtn, resetpwdBtn;
+    public JButton addBtn, editBtn, deleteBtn;
     private JPanel search, btnPanel, EditMember_leftPanel, EditMember_rightPanel, EditMemberPanel, AddMemberPanel;
     private JTable member_table; //회원 테이블
     private DefaultTableModel model;

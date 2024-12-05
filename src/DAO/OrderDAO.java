@@ -15,7 +15,7 @@ import java.util.List;
  * 주문 관련 데이터베이스 작업을 처리하는 클래스
  */
 public class OrderDAO implements DAO<OrderDTO, String> {
-    private Connection conn; // 데이터베이스 연결 객체
+    private final Connection conn; // 데이터베이스 연결 객체
 
     // 생성자: 데이터베이스 연결을 받아옴
     public OrderDAO(Connection conn) {
@@ -186,7 +186,7 @@ public class OrderDAO implements DAO<OrderDTO, String> {
                     "        WHERE DATE(o2.order_time) = DATE(o.order_time) " + // 날짜만 비교
                     "          AND o2.order_state = '결제 완료') AS total_sum " +
                     "FROM orders o " +
-                    "WHERE DATE(o.order_time) = DATE('" + today.toString() + "') " + // 오늘 날짜를 문자열로 삽입
+                    "WHERE DATE(o.order_time) = DATE('" + today + "') " + // 오늘 날짜를 문자열로 삽입
                     "  AND o.order_state = '결제 완료' " +
                     "ORDER BY o.order_time";
 
@@ -212,8 +212,7 @@ public class OrderDAO implements DAO<OrderDTO, String> {
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
-        }
-        finally {
+        } finally {
             try {
                 if (rs != null)
                     rs.close();
@@ -361,6 +360,7 @@ public class OrderDAO implements DAO<OrderDTO, String> {
         }
         return salesList;
     }
+
     public int insertOrderAndGetId(OrderDTO order) {
         String sql = "INSERT INTO orders (member_id, seat_no, total_price, order_request, payment_type, order_state) " +
                 "VALUES (?, ?, ?, ?, ?, '주문 대기')";

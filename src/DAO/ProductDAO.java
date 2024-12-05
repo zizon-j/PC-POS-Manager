@@ -17,7 +17,7 @@ public class ProductDAO implements DAO<ProductDTO, String> {
 
     //DAO가 DB에서 데이터를 가져옴
     //가져온 데이터를 DTO로 만들어서 반환
-    private Connection conn;
+    private final Connection conn;
 
     public ProductDAO(Connection conn) {
         this.conn = conn;
@@ -251,7 +251,7 @@ public class ProductDAO implements DAO<ProductDTO, String> {
             String sql = "SELECT product_no, category_name, product_name, price, stock " +
                     "FROM product_2 " +
                     "WHERE (? IS NULL OR category_name = ?) " +
-                    "AND product_name LIKE ?"+
+                    "AND product_name LIKE ?" +
                     "order by product_no asc";
 
             pstmt = conn.prepareStatement(sql);

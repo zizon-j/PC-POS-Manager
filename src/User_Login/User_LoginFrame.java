@@ -1,5 +1,6 @@
 package User_Login;
 
+import Common_Panel.Time_Plus_Jpanel;
 import DAO.MemberDAO;
 import DAO.SeatDAO;
 import DAO.UsageHistoryDAO;
@@ -10,8 +11,7 @@ import Jdbc.PCPosDBConnection;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,6 +22,7 @@ public class User_LoginFrame extends JFrame {
     JButton loginBtn, registerBtn, findBtn, selectSeat;
     JComboBox<Integer> seatChombo; // 좌석 번호는 Integer 타입으로 선언
     String seatNo;
+    Time_Plus_Jpanel time_plus_jpanel;
 
     public User_LoginFrame(String title) {
         setTitle(title);
@@ -89,6 +90,10 @@ public class User_LoginFrame extends JFrame {
 
         loadAvailableSeats();
 
+        time_plus_jpanel = new Time_Plus_Jpanel();
+        time_plus_jpanel.setBounds(150, 420, 400, 50);
+        ct.add(time_plus_jpanel);
+
         loginBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -102,22 +107,25 @@ public class User_LoginFrame extends JFrame {
                     MemberDTO member = memberDAO.findById(id.getText());
                     SeatDAO seatDAO = new SeatDAO(conn);
                     UsageHistoryDAO usageHistoryDAO = new UsageHistoryDAO(conn);
-                    if (member != null) {
-                        if (member.getMember_pwd().equals(passwd.getText())) {
-                            int seatNo = (int) seatChombo.getSelectedItem();
-                            seatDAO.updateSeat(member.getMember_no(), (int) seatChombo.getSelectedItem());
-                            User_OrderProduct op = new User_OrderProduct(seatNo, member.getMember_no());
-                            op.setVisible(true);
-                            dispose();
-                            // //로그인 창 닫기
+                    if (member != null) { // id를 통해 가져오는 정보가잇는지 확인
+                        if (member.getMember_pwd().equals(passwd.getText())) { // id, pwd 일치한지 확인
+                            if (member.getLeft_time() != 0) { // 남은 시간 없으면 안됨
+                                int seatNo = (int) seatChombo.getSelectedItem();
+                                seatDAO.updateSeat(member.getMember_no(), (int) seatChombo.getSelectedItem());
+                                User_OrderProduct op = new User_OrderProduct(seatNo, member.getMember_no());
+                                op.setVisible(true);
+                                dispose();
+                                // //로그인 창 닫기
 
-                            //사용 시작 시간 저장
-                            UsageHistoryDTO usageHistory = new UsageHistoryDTO();
-                            usageHistory.setMember_no(member.getMember_no());
-                            usageHistoryDAO.insert(usageHistory);
+                                //사용 시작 시간 저장
+                                UsageHistoryDTO usageHistory = new UsageHistoryDTO();
+                                usageHistory.setMember_no(member.getMember_no());
+                                usageHistoryDAO.insert(usageHistory);
 
 
-                        } else
+                            }
+                            else JOptionPane.showMessageDialog(null, "시간을 충전해주세요 감사합니다.");
+                        }else
                             JOptionPane.showMessageDialog(null, "틀렸습니다.");
                     } else
                         JOptionPane.showMessageDialog(null, "없는 ID 입니다.");
@@ -128,16 +136,18 @@ public class User_LoginFrame extends JFrame {
             }
         });
 
+        //회원가입버튼
         registerBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
                 //userFindFrame 에서 작업
-                User_FindFrame userFindFrame = new User_FindFrame("비밀번호 찾기");
-                userFindFrame.setVisible(true);
+                User_RegisterFrame user_registerFrame = new User_RegisterFrame("회원가입");
+                user_registerFrame.setVisible(true);
             }
         });
 
+        //비밀번호 잦기 버튼
         findBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -164,6 +174,7 @@ public class User_LoginFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "좌석 데이터를 불러오는 중 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
     public static void main(String[] args) {
         User_LoginFrame userLoginFrame = new User_LoginFrame("명전 피시방 사용자 키오스크");

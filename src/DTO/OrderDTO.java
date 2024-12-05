@@ -21,7 +21,7 @@ public class OrderDTO {
 
     // 모든 정보를 받는 생성자
     public OrderDTO(int order_no, String member_id, int seat_no, int total_price,
-            String order_request, String payment_type, String order_state, Timestamp order_time) {
+                    String order_request, String payment_type, String order_state, Timestamp order_time) {
         this.order_no = order_no;
         this.member_id = member_id;
         this.seat_no = seat_no;

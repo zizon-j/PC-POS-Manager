@@ -2,6 +2,7 @@ package DAO;
 
 import DTO.OrderDTO;
 import DTO.OrderDetailDTO;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
  * 주문 상세 정보 관련 데이터베이스 작업을 처리하는 클래스
  */
 public class OrderDetailsDAO implements DAO<OrderDetailDTO, String> {
-    private Connection conn; // 데이터베이스 연결 객체
+    private final Connection conn; // 데이터베이스 연결 객체
 
     /**
      * 생성자: 데이터베이스 연결을 받아옴
@@ -100,7 +101,7 @@ public class OrderDetailsDAO implements DAO<OrderDetailDTO, String> {
         String sql = "SELECT * FROM order_details ORDER BY orderdetail_no";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql);
-                ResultSet rs = pstmt.executeQuery()) {
+             ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
                 orderDetails.add(createFromResultSet(rs));

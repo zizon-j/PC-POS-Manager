@@ -3,11 +3,11 @@ package DTO;
 // 사용자가 주문한 상품의 정보를 담는 클래스
 public class User_OrderProductDTO {
     // 상품 이름
-    private String productName;
+    private final String productName;
     // 주문 수량
     private int quantity;
     // 상품 가격
-    private int price;
+    private final int price;
     // 상품 번호 (데이터베이스에서 사용)
     private int productNo;
 

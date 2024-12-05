@@ -45,7 +45,7 @@ public class Sales_UI_Month extends JPanel {
 
         // 중앙 달력 그리드 패널
         gridPanel = new JPanel();
-        gridPanel.setLayout(new GridLayout(0,7)); // 7열(요일)
+        gridPanel.setLayout(new GridLayout(0, 7)); // 7열(요일)
 
         // 초기 달력 생성
         createCalendarGrid();
@@ -89,7 +89,7 @@ public class Sales_UI_Month extends JPanel {
 
         // 요일 추가
         String[] days = {"일", "월", "화", "수", "목", "금", "토"};
-        for(String day : days) {
+        for (String day : days) {
             JLabel dayLabel = new JLabel(day, JLabel.CENTER);
             gridPanel.add(dayLabel);
         }

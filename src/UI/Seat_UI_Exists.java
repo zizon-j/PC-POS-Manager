@@ -14,6 +14,8 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 
 public class Seat_UI_Exists extends JPanel {
+    public JPanel editPanel;
+    public JButton btnEdit, btnReset;
 
     public Seat_UI_Exists(JFrame parentFrame) { //JFrame 참조 추가
 
@@ -21,15 +23,15 @@ public class Seat_UI_Exists extends JPanel {
         setLayout(new BorderLayout());
 
         // 자리 배치창
-        JPanel editPanel = new JPanel(); // 버튼 편집 버튼 묶기
+        editPanel = new JPanel(); // 버튼 편집 버튼 묶기
         editPanel.setLayout(new FlowLayout());
 
         //시간 추가 패널
         Time_Plus_Jpanel time_plus_jpanel = new Time_Plus_Jpanel();
         editPanel.add(time_plus_jpanel);
 
-        JButton btnEdit = new JButton("편집");
-        JButton btnReset = new JButton("초기화");
+        btnEdit = new JButton("편집");
+        btnReset = new JButton("초기화");
 
         editPanel.add(btnEdit);
         editPanel.add(btnReset);
