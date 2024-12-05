@@ -99,7 +99,7 @@ public class OrderDAO implements DAO<OrderDTO, String> {
 
         String sql = "SELECT o.order_no, o.member_id, o.seat_no, " +
                 "GROUP_CONCAT(CONCAT(p.product_name, '(', od.quantity, ')') SEPARATOR ', ') as product_details, " +
-                "o.total_price, o.payment_type, o.order_state, o.order_time " +
+                "o.total_price, o.payment_type,o.order_request, o.order_state, o.order_time " +
                 "FROM orders o " +
                 "LEFT JOIN order_details od ON o.order_no = od.order_no " +
                 "LEFT JOIN product p ON od.product_no = p.product_no " +
@@ -117,6 +117,7 @@ public class OrderDAO implements DAO<OrderDTO, String> {
                 order.setSeat_no(rs.getInt("seat_no"));
                 order.setProductDetails(rs.getString("product_details"));
                 order.setTotal_price(rs.getInt("total_price"));
+                order.setOrder_request(rs.getString("order_request"));
                 order.setPayment_type(rs.getString("payment_type"));
                 order.setOrder_state(rs.getString("order_state"));
                 order.setOrder_time(rs.getTimestamp("order_time"));
