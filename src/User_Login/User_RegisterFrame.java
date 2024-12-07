@@ -8,6 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 
 // 생일 입력 보완
@@ -110,6 +112,19 @@ class User_RegisterFrame extends JFrame {
         p7.add(sexLabel);
         p7.add(sexComboBox);
         topPanel.add(p7);
+
+        //로그인필드에서 엔터한 경우 로그인 버튼 이벤트 강제로 발생
+        this.birthdayField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                super.keyPressed(e);
+                if(e.getKeyCode() == KeyEvent.VK_ENTER) { //입력한 키가 enter와 같다면
+                    System.out.println("Click !");
+                    confirmButton.doClick(); //클릭 이벤트를 강제로 발생
+                }
+
+            }
+        });
 
         cancelButton.addActionListener(new ActionListener() {
             @Override
