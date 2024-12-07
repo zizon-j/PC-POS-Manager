@@ -137,9 +137,8 @@ public class User_LoginFrame extends JFrame {
                                 usageHistoryDAO.insert(usageHistory);
 
 
-                            }
-                            else JOptionPane.showMessageDialog(null, "시간을 충전해주세요 감사합니다.");
-                        }else
+                            } else JOptionPane.showMessageDialog(null, "시간을 충전해주세요 감사합니다.");
+                        } else
                             JOptionPane.showMessageDialog(null, "틀렸습니다.");
                     } else
                         JOptionPane.showMessageDialog(null, "없는 ID 입니다.");
