@@ -72,7 +72,7 @@ public class MemberManagement_UI extends JPanel {
                         m.getMember_name(), //이름
                         m.getSex(), //성별
                         m.getPhone(),
-                        m.getLeft_time(),
+                        m.getLeft_time() + "분",
                         totalUsageTime + "분",
                         totalPaymentAmount,
                         m.getBirthday(),
@@ -165,7 +165,7 @@ public class MemberManagement_UI extends JPanel {
                                     m.getMember_name(), //이름
                                     m.getSex(), //성별
                                     m.getPhone(),
-                                    m.getLeft_time(),
+                                    m.getLeft_time() + "분",
                                     totalUsageTime + "분",
                                     totalPaymentAmount,
                                     m.getBirthday(),
@@ -195,14 +195,22 @@ public class MemberManagement_UI extends JPanel {
     }
 
     private void create_memberTable() { //테이블 생성 및 설정
-        String[] colums = {"회원번호", "이름", "성별", "연락처", "남은시간", "사용시간", "총사용금액", "생년월일", "가입날짜"};
+        String[] columns = {"회원번호", "이름", "성별", "연락처", "남은시간", "사용시간", "총사용금액", "생년월일", "가입날짜"};
 
-        model = new DefaultTableModel(colums, 0); //테이블 모델 초기화
+        // 테이블 모델 초기화 및 수정 불가능하게 설정
+        model = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // 모든 셀을 수정 불가능하게 설정
+            }
+        };
+
         member_table = new JTable(model); //테이블 생성
         member_table.setRowHeight(20); //행 높이 설정
 
         JScrollPane jScrollPane = new JScrollPane(member_table); //스크롤 패널
         jScrollPane.setPreferredSize(new Dimension(1580, 860)); //테이블 사이즈
+        member_table.getTableHeader().setReorderingAllowed(false); // 드래그로 순서 재배치 비활성화
 
         add(jScrollPane, BorderLayout.CENTER);
     }
