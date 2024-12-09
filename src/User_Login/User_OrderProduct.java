@@ -149,7 +149,7 @@ public class User_OrderProduct extends JFrame {
         categoryPanel.add(btnCatergoryGansik);
         categoryPanel.add(btnCategorySet);
 
-        categoryPanel.setBounds(85, 21, 348, 73);
+        categoryPanel.setBounds(85, 21, 500, 73);
         add(categoryPanel);
 
         endBtn = new JButton("사용 종료");
@@ -196,7 +196,7 @@ public class User_OrderProduct extends JFrame {
         btnCategoryRamyeon.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                List<ProductDTO> products = productDAO.findbyCategoryAll(2);
+                List<ProductDTO> products = productDAO.findbyCategoryAll(1);
 
                 if (products != null) {
                     model.setRowCount(0);
@@ -219,7 +219,7 @@ public class User_OrderProduct extends JFrame {
         btnCategoryBab.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                List<ProductDTO> products = productDAO.findbyCategoryAll(3);
+                List<ProductDTO> products = productDAO.findbyCategoryAll(2);
 
                 if (products != null) {
                     model.setRowCount(0);
@@ -242,7 +242,7 @@ public class User_OrderProduct extends JFrame {
         btnCategoryDrink.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                List<ProductDTO> products = productDAO.findbyCategoryAll(4);
+                List<ProductDTO> products = productDAO.findbyCategoryAll(3);
 
                 if (products != null) {
                     model.setRowCount(0);
@@ -264,7 +264,7 @@ public class User_OrderProduct extends JFrame {
         btnCatergoryGansik.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                List<ProductDTO> products = productDAO.findbyCategoryAll(5);
+                List<ProductDTO> products = productDAO.findbyCategoryAll(4);
 
                 if (products != null) {
                     model.setRowCount(0);
@@ -286,7 +286,7 @@ public class User_OrderProduct extends JFrame {
         btnCategorySet.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                List<ProductDTO> products = productDAO.findbyCategoryAll(6);
+                List<ProductDTO> products = productDAO.findbyCategoryAll(5);
 
                 if (products != null) {
                     model.setRowCount(0);
