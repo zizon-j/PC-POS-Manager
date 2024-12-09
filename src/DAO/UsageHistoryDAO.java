@@ -201,4 +201,45 @@ public class UsageHistoryDAO implements DAO<UsageHistoryDTO, String> {
         }
         return loginTime;
     }
+
+    public void updateLeftTime(int memberNo) { // 시간 사용에 따른 시간 차감
+        PreparedStatement ps = null;
+        PreparedStatement updatePs = null;
+        ResultSet rs = null;
+
+        try {
+            // 1. 사용 시간을 계산
+            String usageSql = "select SUM(timestampdiff(minute, start_time, end_time)) as total_usage " +
+                    "from usage_history " +
+                    "where member_no = ? and state = '사용종료'";
+            ps = conn.prepareStatement(usageSql);
+            ps.setInt(1, memberNo);
+            rs = ps.executeQuery();
+
+
+            int totalUsageTime = 0;
+            if (rs.next()) {
+                totalUsageTime = rs.getInt("total_usage");
+            }
+
+            // 2. 남은 시간을 차감
+            String updateSql = "update member set left_time = GREATEST(left_time - ?, 0) where member_no = ?";
+            updatePs = conn.prepareStatement(updateSql);
+            updatePs.setInt(1, totalUsageTime);
+            updatePs.setInt(2, memberNo);
+            updatePs.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+                if (updatePs != null) updatePs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
