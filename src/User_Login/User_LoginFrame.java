@@ -94,6 +94,20 @@ public class User_LoginFrame extends JFrame {
         time_plus_jpanel.setBounds(150, 420, 400, 50);
         ct.add(time_plus_jpanel);
 
+        //로그인 필드에성 ㅔㄴ터한 경우 로그인 버튼 이벤트 강제로 발생
+        this.passwd.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                super.keyPressed(e);
+                System.out.println("Click!" + e.getKeyCode());
+                if (e.getKeyCode() == KeyEvent.VK_ENTER){
+                    //입력한 키가 enter와 같다면
+                    System.out.println("Click!");
+                    loginBtn.doClick();
+                }
+            }
+        });
+
         loginBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
