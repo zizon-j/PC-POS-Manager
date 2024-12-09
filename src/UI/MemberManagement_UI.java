@@ -64,7 +64,11 @@ public class MemberManagement_UI extends JPanel {
             List<MemberDTO> members = memberDAO.findAll(); //모든 회원정보 가져옴
             model.setRowCount(0); // 기존 데이터 초기화
             for (MemberDTO m : members) { //연령, 사용시간, 총 사용금액(아직 못함)
-                int totalUsageTime = usageHistoryDAO.calTotalUsageTime(m.getMember_no());
+                usageHistoryDAO.updateLeftTime(m.getMember_no()); // 총 사용 시간 갱신
+
+                // 갱신된 남은 시간 가져오기
+                int updatedLeftTime = memberDAO.findByNo(String.valueOf(m.getMember_no())).getLeft_time();
+                int totalUsageTime = usageHistoryDAO.calTotalUsageTime(m.getMember_no()); //총 사용시간
                 double totalPaymentAmount = time_Plus_LogDAO.calTotalUsageMoney(m.getMember_id());
 
                 Object[] row = {
@@ -72,7 +76,7 @@ public class MemberManagement_UI extends JPanel {
                         m.getMember_name(), //이름
                         m.getSex(), //성별
                         m.getPhone(),
-                        m.getLeft_time() + "분",
+                        updatedLeftTime + "분",
                         totalUsageTime + "분",
                         totalPaymentAmount,
                         m.getBirthday(),
@@ -156,6 +160,10 @@ public class MemberManagement_UI extends JPanel {
 
                     for (MemberDTO m : member) {
                         if (keyword.equals(m.getMember_name())) { //검색 내용과 같다면
+                            usageHistoryDAO.updateLeftTime(m.getMember_no()); // 총 사용 시간 갱신
+
+                            // 갱신된 남은 시간 가져오기
+                            int updatedLeftTime = memberDAO.findByNo(String.valueOf(m.getMember_no())).getLeft_time();
                             int totalUsageTime = usageHistoryDAO.calTotalUsageTime(m.getMember_no());
                             double totalPaymentAmount = time_Plus_LogDAO.calTotalUsageMoney(m.getMember_id());
 
@@ -165,7 +173,7 @@ public class MemberManagement_UI extends JPanel {
                                     m.getMember_name(), //이름
                                     m.getSex(), //성별
                                     m.getPhone(),
-                                    m.getLeft_time() + "분",
+                                    updatedLeftTime + "분",
                                     totalUsageTime + "분",
                                     totalPaymentAmount,
                                     m.getBirthday(),
